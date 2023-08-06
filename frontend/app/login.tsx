@@ -5,8 +5,6 @@ import { UserCard } from "./userCard";
 
 export default function Login() {
 	const { data: session } = useSession();
-	console.log(session);
-
 	if (session) {
 		return (
 			<>
@@ -19,7 +17,7 @@ export default function Login() {
 	} else {
 		return (
 			<>
-				<button onClick={() => signIn()} type="button">
+				<button onClick={() => signIn("google")} type="button">
 					Sign in
 				</button>
 			</>
