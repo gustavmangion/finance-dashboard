@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import styles from "./page.module.css";
-import { signIn } from "next-auth/react";
 import Login from "./login";
+import useSWR from "swr";
 
 export default function Home() {
 	return (
