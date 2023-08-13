@@ -2,7 +2,6 @@
 
 import styles from "./page.module.css";
 import Login from "./login";
-import useSWR from "swr";
 
 export default function Home() {
 	return (

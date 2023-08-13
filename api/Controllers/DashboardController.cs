@@ -8,7 +8,11 @@ namespace api.Controllers
     {
         [HttpGet("Test", Name = "GetTestMessage")]
         public ActionResult<string> GetTestMessage() {
-            return new JsonResult("Hello world");
+            object result = new
+            {
+                text = "Hello world"
+            };
+            return Ok(result);
         }
     }
 }
