@@ -9,7 +9,7 @@ export default function DashboardPage(): React.ReactNode {
 	});
 
 	const { isLoading, isFetching, data, error } = useGetTestMessageQuery(null);
-
+	if (!session) return null;
 	return (
 		<>
 			<h2>This is your secure dashboard</h2>
