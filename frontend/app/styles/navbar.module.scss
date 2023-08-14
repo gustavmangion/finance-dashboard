@@ -41,6 +41,13 @@
 		}
 	}
 
+	.signIn {
+		color: $primary;
+		background-color: $white;
+		border-radius: 10%;
+		padding: 0.6em;
+	}
+
 	@media (min-width: $mobile-screen-width) {
 		.drawerToggle {
 			display: none;
@@ -87,16 +94,5 @@
 		&:hover {
 			color: darken($primary, 10%);
 		}
-	}
-}
-
-.signIn {
-	background-color: $white;
-	border-radius: 10%;
-	padding: 0.4em;
-
-	&:hover {
-		background-color: darken($white, 10%);
-		cursor: pointer;
 	}
 }

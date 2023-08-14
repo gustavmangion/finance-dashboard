@@ -6,6 +6,7 @@ import {
 	AppBar,
 	Avatar,
 	Box,
+	Button,
 	Divider,
 	Drawer,
 	IconButton,
@@ -98,7 +99,13 @@ export default function Navbar() {
 							</Avatar>
 						</div>
 					) : (
-						<></>
+						<Button
+							variant="contained"
+							className={styles.signIn}
+							onClick={() => signIn("google")}
+						>
+							Sign In
+						</Button>
 					)}
 				</Toolbar>
 			</AppBar>
