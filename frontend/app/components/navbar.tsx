@@ -93,7 +93,9 @@ export default function Navbar() {
 								className={styles.userIcon}
 								alt="Profile picture"
 								src={session.user?.image as string}
-							/>
+							>
+								{session.user?.name?.substring(0, 1)}
+							</Avatar>
 						</div>
 					) : (
 						<></>
