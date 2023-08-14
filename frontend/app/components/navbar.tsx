@@ -15,7 +15,6 @@ import {
 	ListItemButton,
 	ListItemText,
 	Toolbar,
-	styled,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Image from "next/image";
