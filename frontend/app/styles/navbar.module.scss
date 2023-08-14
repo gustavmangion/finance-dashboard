@@ -1,23 +1,29 @@
 @import "./variables";
 
 .navbar {
-	position: fixed;
-	top: 0;
-	width: 100vw;
-	z-index: 10;
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
 	background-color: $navbar-background;
-	height: 4rem;
 	padding: 0.5em 2em;
-	box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 
-	.avatar {
+	.drawerToggle {
+		color: $white;
+	}
+
+	.logo {
 		position: relative;
+		height: 4em;
+	}
+
+	.navLinks {
+		display: none;
+	}
+
+	.userIcon {
 		background-color: $white;
 		height: 3em;
 		width: 3em;
+		padding: 0.15em;
 		border-radius: 40%;
 		color: $secondary;
 
@@ -28,7 +34,6 @@
 
 		img {
 			border-radius: 40%;
-			padding: 0.2em;
 
 			&:hover {
 				filter: brightness(90%);
@@ -36,24 +41,52 @@
 		}
 	}
 
-	.signIn {
-		background-color: $white;
-		border-radius: 10%;
-		padding: 0.4em;
+	@media (min-width: $mobile-screen-width) {
+		.drawerToggle {
+			display: none;
+		}
 
-		&:hover {
-			background-color: darken($white, 10%);
-			cursor: pointer;
+		.navLinks {
+			display: flex;
+
+			.navLink {
+				color: $white;
+				text-decoration: none;
+				padding-right: 1em;
+				font-size: 1rem;
+
+				&:hover {
+					color: darken($white, 10%);
+				}
+			}
 		}
 	}
-
-	h1 {
-		font-size: 2rem;
-		color: $white;
+}
+.drawer {
+	.drawerHeader {
+		height: 5rem;
+		background-color: $navbar-background;
 	}
 
-	h2 {
-		font-size: 1rem;
+	.navLink {
 		color: $primary;
+		text-decoration: none;
+		padding-right: 1em;
+		font-size: 1rem;
+
+		&:hover {
+			color: darken($primary, 10%);
+		}
+	}
+}
+
+.signIn {
+	background-color: $white;
+	border-radius: 10%;
+	padding: 0.4em;
+
+	&:hover {
+		background-color: darken($white, 10%);
+		cursor: pointer;
 	}
 }
