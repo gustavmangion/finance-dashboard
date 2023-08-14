@@ -21,9 +21,18 @@
 		border-radius: 40%;
 		color: $secondary;
 
+		&:hover {
+			background-color: darken($white, 10%);
+			cursor: pointer;
+		}
+
 		img {
 			border-radius: 40%;
 			padding: 0.2em;
+
+			&:hover {
+				filter: brightness(90%);
+			}
 		}
 	}
 
