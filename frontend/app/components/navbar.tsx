@@ -57,13 +57,17 @@ export default function Navbar() {
 		<>
 			<AppBar position="sticky" component="nav">
 				<Toolbar className={styles.navbar}>
-					<IconButton
-						onClick={handleDrawerToggle}
-						aria-label="open drawer"
-						className={styles.drawerToggle}
-					>
-						<MenuIcon />
-					</IconButton>
+					{session ? (
+						<IconButton
+							onClick={handleDrawerToggle}
+							aria-label="open drawer"
+							className={styles.drawerToggle}
+						>
+							<MenuIcon />
+						</IconButton>
+					) : (
+						<></>
+					)}
 					<div className={styles.logo}>
 						<Link href="/">
 							<Image
@@ -76,27 +80,30 @@ export default function Navbar() {
 							/>
 						</Link>
 					</div>
-					<div className={styles.navLinks}>
-						{navItems.map((item) => (
-							<Link
-								key={item}
-								href={`/${item.toLowerCase()}`}
-								className={styles.navLink}
-							>
-								{item}
-							</Link>
-						))}
-					</div>
 					{session ? (
-						<div>
-							<Avatar
-								className={styles.userIcon}
-								alt="Profile picture"
-								src={session.user?.image as string}
-							>
-								{session.user?.name?.substring(0, 1)}
-							</Avatar>
-						</div>
+						<>
+							<div className={styles.navLinks}>
+								{navItems.map((item) => (
+									<Link
+										key={item}
+										href={`/${item.toLowerCase()}`}
+										className={styles.navLink}
+									>
+										{item}
+									</Link>
+								))}
+							</div>
+
+							<div>
+								<Avatar
+									className={styles.userIcon}
+									alt="Profile picture"
+									src={session.user?.image as string}
+								>
+									{session.user?.name?.substring(0, 1)}
+								</Avatar>
+							</div>
+						</>
 					) : (
 						<Button
 							variant="contained"
