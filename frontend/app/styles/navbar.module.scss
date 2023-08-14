@@ -27,8 +27,24 @@
 		}
 	}
 
+	.signIn {
+		background-color: $white;
+		border-radius: 10%;
+		padding: 0.4em;
+
+		&:hover {
+			background-color: darken($white, 10%);
+			cursor: pointer;
+		}
+	}
+
 	h1 {
 		font-size: 2rem;
 		color: $white;
+	}
+
+	h2 {
+		font-size: 1rem;
+		color: $primary;
 	}
 }
