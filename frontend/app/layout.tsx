@@ -7,7 +7,7 @@ import Navbar from "./components/navbar";
 const inter = Nunito_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Finance Dashboard",
+	title: "QazQuz - Finance Dashboard",
 	description: "Insight into your personal funds",
 };
 
