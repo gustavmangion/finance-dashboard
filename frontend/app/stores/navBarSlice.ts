@@ -2,10 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 type NavBarState = {
 	drawerOpen: boolean;
+	userMenuOpen: boolean;
 };
 
 const initialState = {
 	drawerOpen: false,
+	userMenuOpen: false,
 } as NavBarState;
 
 export const navBar = createSlice({
@@ -18,9 +20,16 @@ export const navBar = createSlice({
 		openDrawer: (state: any) => {
 			state.drawerOpen = true;
 		},
+		closeUserMenu: (state: any) => {
+			state.userMenuOpen = false;
+		},
+		openUserMenu: (state: any) => {
+			state.userMenuOpen = true;
+		},
 	},
 });
 
-export const { closeDrawer, openDrawer } = navBar.actions;
+export const { closeDrawer, openDrawer, closeUserMenu, openUserMenu } =
+	navBar.actions;
 
 export default navBar.reducer;

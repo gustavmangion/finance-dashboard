@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "../styles/navbar.module.scss";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import {
 	AppBar,
 	Avatar,
@@ -14,23 +14,46 @@ import {
 	ListItem,
 	ListItemButton,
 	ListItemText,
+	Menu,
+	MenuItem,
 	Toolbar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "../hooks/reduxHook";
-import { closeDrawer, openDrawer } from "../stores/navBarSlice";
+import {
+	closeDrawer,
+	openDrawer,
+	closeUserMenu,
+	openUserMenu,
+} from "../stores/navBarSlice";
 import Link from "next/link";
+import React from "react";
 
 export default function Navbar() {
 	const { data: session } = useSession();
+	const [userMenuAnchor, setUserMenuAnchor] =
+		React.useState<null | HTMLElement>(null);
 	const drawerOpen: boolean = useAppSelector(
 		(state) => state.navBarReducer.drawerOpen
+	);
+	const userMenuOpen: boolean = useAppSelector(
+		(state) => state.navBarReducer.userMenuOpen
 	);
 	const dispatch = useAppDispatch();
 
 	const handleDrawerToggle = () => {
 		drawerOpen ? dispatch(closeDrawer()) : dispatch(openDrawer());
+	};
+
+	const handleUserMenuToggle = (e: any) => {
+		if (userMenuOpen) {
+			setUserMenuAnchor(null);
+			dispatch(closeUserMenu());
+		} else {
+			setUserMenuAnchor(e.currentTarget);
+			dispatch(openUserMenu());
+		}
 	};
 
 	const navItems = ["Dashboard", "Upload"];
@@ -51,6 +74,17 @@ export default function Navbar() {
 				))}
 			</List>
 		</Box>
+	);
+
+	const userMenu = (
+		<Menu
+			id="user-menu"
+			open={userMenuOpen}
+			onClose={handleUserMenuToggle}
+			anchorEl={userMenuAnchor}
+		>
+			<MenuItem onClick={() => signOut()}>Sign Out</MenuItem>
+		</Menu>
 	);
 
 	return (
@@ -96,12 +130,15 @@ export default function Navbar() {
 
 							<div>
 								<Avatar
+									id="avatar"
 									className={styles.userIcon}
 									alt="Profile picture"
 									src={session.user?.image as string}
+									onClick={handleUserMenuToggle}
 								>
 									{session.user?.name?.substring(0, 1)}
 								</Avatar>
+								{userMenu}
 							</div>
 						</>
 					) : (
