@@ -1,9 +1,13 @@
 @import "./variables";
 
 .primaryButton {
-	background-color: $primary;
+	background-color: transparentize($primary, 0.4);
 	font-size: 1em;
 	color: $white;
+
+	&:hover {
+		background-color: transparentize($primary, 0.6);
+	}
 }
 
 .outlinedButton {

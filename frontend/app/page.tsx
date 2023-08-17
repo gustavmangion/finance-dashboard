@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { useSecurePage } from "./hooks/authHook";
 import { AuthStatus } from "./enums/authStatusEnum";
 import LoadingSkeleton from "./components/loadingSkeleton";
+import SignedInHome from "./components/signedInHome";
 
 export default function Home() {
 	const authStatus = useSecurePage();
@@ -31,4 +32,8 @@ export default function Home() {
 				</div>
 			</div>
 		);
+
+	if (authStatus == AuthStatus.Authorized) {
+		return <SignedInHome />;
+	}
 }
