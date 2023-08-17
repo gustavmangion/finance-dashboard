@@ -2,8 +2,11 @@ import { Button } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function SignedInHome() {
+	const router = useRouter();
+
 	return (
 		<div className="container">
 			<div className={styles.homeHeader}>
@@ -22,7 +25,10 @@ export default function SignedInHome() {
 			</div>
 			<div className={styles.buttonMenu}>
 				<Button className={materialStyles.primaryButton}>My Dashboard</Button>
-				<Button className={materialStyles.primaryButton}>
+				<Button
+					className={materialStyles.primaryButton}
+					onClick={() => router.push("/upload")}
+				>
 					Upload E-Statement
 				</Button>
 				<Button className={materialStyles.primaryButton}>
