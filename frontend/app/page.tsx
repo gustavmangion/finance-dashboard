@@ -1,13 +1,14 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import styles from "./styles/public.module.scss";
 import { Button } from "@mui/material";
+import { useSecurePage } from "./hooks/authHook";
+import { AuthStatus } from "./enums/authStatusEnum";
 
 export default function Home() {
-	const session = useSession();
-
-	if (session.status === "unauthenticated")
+	const authStatus = useSecurePage();
+	if (authStatus === AuthStatus.Loading) return <div>Loading</div>;
+	if (authStatus === AuthStatus.NotAuthorized)
 		return (
 			<div className={styles.homePage}>
 				<div className={styles.frosted}>
