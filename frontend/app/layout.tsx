@@ -5,6 +5,7 @@ import Providers from "./components/provider";
 import Navbar from "./components/navbar";
 import React from "react";
 import { Toolbar } from "@mui/material";
+import Footer from "./components/footer";
 
 const inter = Nunito_Sans({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
 				<Providers>
 					<Navbar />
 					<main>{children}</main>
+					<Footer />
 				</Providers>
 			</body>
 		</html>

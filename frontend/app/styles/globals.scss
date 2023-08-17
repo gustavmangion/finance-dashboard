@@ -53,3 +53,21 @@ h3 {
 	backdrop-filter: blur(7.5px);
 	-webkit-backdrop-filter: blur(7.5px);
 }
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: $navbar-background;
+	padding: 0.3em;
+
+	img {
+		margin-right: 0.2em;
+	}
+
+	> div > a {
+		display: flex;
+		text-decoration: none;
+		color: $black;
+	}
+}
