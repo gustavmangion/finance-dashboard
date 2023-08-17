@@ -1,0 +1,15 @@
+@import "./variables";
+
+.primaryButton {
+	background-color: $primary;
+	font-size: 1em;
+	color: $white;
+}
+
+.outlinedButton {
+	background-color: transparent;
+	font-size: 1em;
+	color: $white;
+	border: 2px solid;
+	border-color: $primary;
+}

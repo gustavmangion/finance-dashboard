@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import Providers from "./components/provider";
 import Navbar from "./components/navbar";
-import { useSession } from "next-auth/react";
 import React from "react";
+import { Toolbar } from "@mui/material";
 
 const inter = Nunito_Sans({ subsets: ["latin"] });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
 			<body className={inter.className}>
 				<Providers>
 					<Navbar />
-					{children}
+					<main>{children}</main>
 				</Providers>
 			</body>
 		</html>
