@@ -1,41 +1,44 @@
-import NextAuth, { Account } from "next-auth";
+"use client";
+
+import NextAuth, { Account, AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
+import { store } from "@/app/stores/store";
 
-export default NextAuth({
+const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 		}),
 	],
+	secret: process.env.NEXTAUTH_SECRET,
+	session: { strategy: "jwt" },
 	callbacks: {
 		async jwt({ token, user, account }) {
-			//Initial sign in
-			if (account && user) {
-				return {
-					accessToken: account.access_token,
-					accessTokenExpires: account.expires_at,
-					refreshToken: account.refresh_token,
-					user,
-				};
+			if (account) {
+				token.accessToken = account.access_token as string;
 			}
 
-			if (account && account.expires_at && Date.now() < account.expires_at)
-				return token;
+			if (account && account.expires_at && Date.now() > account.expires_at)
+				return refreshAccessToken(token, account);
 
-			if (account) return refreshAccessToken(token, account);
-
-			return token;
+			return { ...token, ...user };
 		},
-		async signIn({ user, account }) {
-			user.email = account!.id_token;
-			return true;
+		async session({ session, token, user }) {
+			session.user = token;
+			return session;
 		},
 	},
-});
+};
+
+const authHandler = NextAuth(authOptions);
+export default async function handler(...params: any[]) {
+	await authHandler(...params);
+}
 
 async function refreshAccessToken(token: JWT, account: Account) {
+	console.log("refreshing");
 	try {
 		const url =
 			"https://oauth2.googleapis.com/token?" +

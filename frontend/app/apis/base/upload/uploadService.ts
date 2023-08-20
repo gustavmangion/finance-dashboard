@@ -1,13 +1,21 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import Statement, { UploadStatement } from "./types";
+import { getSession, useSession } from "next-auth/react";
+
+const getHeaders = async (headers: any) => {
+	const session = await getSession();
+	const accessToken = session?.user?.accessToken;
+	headers.set("Authorization", `Bearer ${accessToken}`);
+	return headers;
+};
 
 export const uploadApi = createApi({
 	reducerPath: "uploadApi",
 	baseQuery: fetchBaseQuery({
 		baseUrl: `${process.env.BASE_API_URL}/upload`,
 		prepareHeaders: (headers) => {
-			// headers.set("Content-Type", "application/json");
+			return getHeaders(headers);
 		},
 	}),
 	endpoints: (builder) => ({
