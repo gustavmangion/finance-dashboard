@@ -4,7 +4,7 @@ import NextAuth from "next-auth/next";
 
 declare module "next-auth" {
 	interface User {
-		accessToken: string;
+		userToken: string;
 	}
 
 	interface Session extends DefaultSession {
@@ -14,10 +14,10 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
 	interface JWT extends DefaultJWT {
-		accessToken: string;
+		userToken: string;
 		id: string;
 		user: {
-			accessToken: string;
+			userToken: string;
 		};
 	}
 }

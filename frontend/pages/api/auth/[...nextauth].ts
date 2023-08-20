@@ -17,7 +17,7 @@ const authOptions: AuthOptions = {
 	callbacks: {
 		async jwt({ token, user, account }) {
 			if (account) {
-				token.accessToken = account.access_token as string;
+				token.userToken = account.id_token as string;
 			}
 
 			if (account && account.expires_at && Date.now() > account.expires_at)

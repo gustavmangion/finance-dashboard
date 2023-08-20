@@ -5,8 +5,8 @@ import { getSession, useSession } from "next-auth/react";
 
 const getHeaders = async (headers: any) => {
 	const session = await getSession();
-	const accessToken = session?.user?.accessToken;
-	headers.set("Authorization", `Bearer ${accessToken}`);
+	const userToken = session?.user?.userToken;
+	headers.set("Authorization", `Bearer ${userToken}`);
 	return headers;
 };
 
