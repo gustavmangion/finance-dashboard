@@ -1,4 +1,5 @@
 
+using api.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,7 +18,7 @@ builder.Services.AddAuthentication(options =>
     {
         options.SaveToken = true;
         options.Authority = "https://accounts.google.com";
-        options.Audience = "62563501465-aoop5m05b0en8cq753cu91mpu2p5c2tk.apps.googleusercontent.com";
+        options.Audience = AppSettingHelper.GoogleIAMAudiance;
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
