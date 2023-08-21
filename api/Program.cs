@@ -2,54 +2,73 @@
 using api.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
+using NLog.Web;
 
-var builder = WebApplication.CreateBuilder(args);
+var logger = LogManager.Setup().LoadConfigurationFromFile($"{Directory.GetCurrentDirectory()}/nlog.config").GetCurrentClassLogger();
 
-// Add services to the container.
-
-builder.Services.AddControllers().AddNewtonsoftJson();
-
-builder.Services.AddAuthentication(options =>
+try
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer(options =>
+    var builder = WebApplication.CreateBuilder(args);
+
+
+    // Add services to the container.
+    builder.Services.AddControllers().AddNewtonsoftJson();
+
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
+
+    builder.Services.AddAuthentication(options =>
     {
-        options.SaveToken = true;
-        options.Authority = "https://accounts.google.com";
-        options.Audience = AppSettingHelper.GoogleIAMAudiance;
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+        .AddJwtBearer(options =>
         {
-            ValidIssuer = "accounts.google.com"
-        };
-    });
+            options.SaveToken = true;
+            options.Authority = "https://accounts.google.com";
+            options.Audience = AppSettingHelper.GoogleIAMAudiance;
+            options.RequireHttpsMetadata = false;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = "accounts.google.com"
+            };
+        });
 
 
-builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+    var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+
+}catch(Exception e)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    logger.Error(e);
+    throw;
 }
-
-app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+finally
+{
+    NLog.LogManager.Shutdown();
+}
