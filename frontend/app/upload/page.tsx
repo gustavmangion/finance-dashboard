@@ -17,7 +17,6 @@ export default function UploadPage() {
 	const [addStatement, response] = useUploadStatementMutation();
 
 	const session = useSession();
-	console.log(session.data?.user?.accessToken);
 
 	useEffect(() => {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");
