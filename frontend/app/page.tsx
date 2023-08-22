@@ -6,6 +6,7 @@ import { useSecurePage } from "./hooks/authHook";
 import { AuthStatus } from "./enums/authStatusEnum";
 import LoadingSkeleton from "./components/loadingSkeleton";
 import SignedInHome from "./components/signedInHome";
+import { signIn } from "next-auth/react";
 
 export default function Home() {
 	const authStatus = useSecurePage();
@@ -24,7 +25,12 @@ export default function Home() {
 					<h3>...and some other financial planning goodies</h3>
 				</div>
 				<div className={styles.callOut}>
-					<Button className={styles.homeSignIn}>Let&apos;s Go!</Button>
+					<Button
+						className={styles.homeSignIn}
+						onClick={() => signIn("google")}
+					>
+						Let&apos;s Go!
+					</Button>
 					<h4 className={styles.frosted}>
 						If you do not have an account yet, we will set one up after you sign
 						in
