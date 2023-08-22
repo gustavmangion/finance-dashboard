@@ -133,7 +133,7 @@ export default function Navbar() {
 									id="avatar"
 									className={styles.userIcon}
 									alt="Profile picture"
-									src={session.user?.image as string}
+									src={session.user?.picture as string}
 									onClick={handleUserMenuToggle}
 								>
 									{session.user?.name?.substring(0, 1)}
