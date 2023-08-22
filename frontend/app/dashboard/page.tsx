@@ -5,6 +5,7 @@ import { useGetTestMessageQuery } from "../apis/base/test/testService";
 import { AuthStatus } from "../enums/authStatusEnum";
 import { useSecurePage } from "../hooks/authHook";
 import { useEffect } from "react";
+import LoadingSkeleton from "../components/loadingSkeleton";
 
 export default function DashboardPage(): React.ReactNode {
 	const { isLoading, isFetching, data, error } = useGetTestMessageQuery(null);
@@ -14,6 +15,9 @@ export default function DashboardPage(): React.ReactNode {
 	useEffect(() => {
 		if (authStatus === AuthStatus.NotAuthorized) router.push("/");
 	});
+
+	if (authStatus == AuthStatus.Loading) return <LoadingSkeleton />;
+
 	if (authStatus == AuthStatus.Authorized)
 		return (
 			<>

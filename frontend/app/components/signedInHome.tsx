@@ -24,7 +24,12 @@ export default function SignedInHome() {
 				<h2>Your smart piggy bank assistant</h2>
 			</div>
 			<div className={styles.buttonMenu}>
-				<Button className={materialStyles.primaryButton}>My Dashboard</Button>
+				<Button
+					className={materialStyles.primaryButton}
+					onClick={() => router.push("/dashboard")}
+				>
+					My Dashboard
+				</Button>
 				<Button
 					className={materialStyles.primaryButton}
 					onClick={() => router.push("/upload")}
