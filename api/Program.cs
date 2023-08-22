@@ -1,16 +1,19 @@
-
+using api.Contexts;
 using api.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using NLog.Web;
 
-var logger = LogManager.Setup().LoadConfigurationFromFile($"{Directory.GetCurrentDirectory()}/nlog.config").GetCurrentClassLogger();
+var logger = LogManager
+    .Setup()
+    .LoadConfigurationFromFile($"{Directory.GetCurrentDirectory()}/nlog.config")
+    .GetCurrentClassLogger();
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
 
     // Add services to the container.
     builder.Services.AddControllers().AddNewtonsoftJson();
@@ -18,11 +21,12 @@ try
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 
-    builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+    builder.Services
+        .AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
         .AddJwtBearer(options =>
         {
             options.SaveToken = true;
@@ -35,8 +39,15 @@ try
             };
         });
 
-
     builder.Services.AddAuthorization();
+
+    builder.Services.AddDbContext<APIDBContext>(
+        options =>
+            options.UseMySql(
+                AppSettingHelper.APIDBConnectionString,
+                ServerVersion.AutoDetect(AppSettingHelper.APIDBConnectionString)
+            )
+    );
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -62,8 +73,8 @@ try
     app.MapControllers();
 
     app.Run();
-
-}catch(Exception e)
+}
+catch (Exception e)
 {
     logger.Error(e);
     throw;
