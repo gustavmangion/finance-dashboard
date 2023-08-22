@@ -1,5 +1,4 @@
 ﻿using api.Contexts;
-using api.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -18,9 +17,7 @@ namespace api.Controllers
         [HttpGet("Test", Name = "GetTestMessage")]
         public ActionResult<string> GetTestMessage()
         {
-            Test test = _apiContext.Tests.FirstOrDefault();
-
-            object result = new { text = test.Message };
+            object result = new { text = "Hello world" };
             return Ok(result);
         }
     }
