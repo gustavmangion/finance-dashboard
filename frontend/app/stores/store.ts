@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { testApi } from "../apis/base/test/testService";
 import navBarReducer from "./navBarSlice";
+import userReducer from "./userSlice";
 import { uploadApi } from "../apis/base/upload/uploadService";
 import storage from "./storage";
 import persistReducer from "redux-persist/lib/persistReducer";
@@ -29,6 +30,7 @@ export const store = configureStore({
 		[uploadApi.reducerPath]: uploadApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
 		navBarReducer,
+		userReducer,
 	},
 	devTools: process.env.NODE_ENV !== "production",
 	middleware: (getDefaultMiddleware) =>

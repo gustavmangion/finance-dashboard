@@ -1,23 +1,29 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import User, { CreateUserForm } from "../apis/base/user/types";
 
 type UserState = {
-	accountSetup: boolean;
+	user: User | undefined;
+	createUserForm: CreateUserForm | undefined;
 };
 
 const initialState = {
-	accountSetup: false,
+	user: undefined,
+	createUserForm: undefined,
 } as UserState;
 
 export const user = createSlice({
 	name: "user",
 	initialState,
 	reducers: {
-		setUserIsSetup: (state: any) => {
-			state.accountSetup = true;
+		setUser: (state: any, action: PayloadAction<User | undefined>) => {
+			state.user = action.payload;
+		},
+		initCreateUserForm: (state: any) => {
+			state.createUserForm = new CreateUserForm();
 		},
 	},
 });
 
-export const { setUserIsSetup } = user.actions;
+export const { setUser, initCreateUserForm } = user.actions;
 
 export default user.reducer;

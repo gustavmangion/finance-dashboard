@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import { useSecurePage } from "./hooks/authHook";
 import { AuthStatus } from "./enums/authStatusEnum";
 import LoadingSkeleton from "./components/loadingSkeleton";
-import SignedInHome from "./components/signedInHome";
+import SignedInHome from "./components/signedInHome/signedInHome";
 import { signIn } from "next-auth/react";
 
 export default function Home() {
