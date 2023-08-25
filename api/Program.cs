@@ -1,6 +1,7 @@
 using api.Contexts;
 using api.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
@@ -60,11 +61,17 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.UseHttpsRedirection();
     }
 
     app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
 
-    app.UseHttpsRedirection();
+    app.UseForwardedHeaders(
+        new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        }
+    );
 
     app.UseAuthentication();
 
