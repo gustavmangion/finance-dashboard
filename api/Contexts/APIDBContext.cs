@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using api.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 
 namespace api.Contexts
@@ -7,5 +8,7 @@ namespace api.Contexts
     {
         public APIDBContext([NotNull] DbContextOptions options)
             : base(options) { }
+
+        public DbSet<User> Users { get; set; }
     }
 }
