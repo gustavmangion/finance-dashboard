@@ -14,6 +14,7 @@ import {
 	REHYDRATE,
 	persistStore,
 } from "redux-persist";
+import { userApi } from "../apis/base/user/userService";
 
 const persistConfig = {
 	key: "root",
@@ -26,6 +27,7 @@ export const store = configureStore({
 	reducer: {
 		[testApi.reducerPath]: testApi.reducer,
 		[uploadApi.reducerPath]: uploadApi.reducer,
+		[userApi.reducerPath]: userApi.reducer,
 		navBarReducer,
 	},
 	devTools: process.env.NODE_ENV !== "production",
@@ -35,7 +37,7 @@ export const store = configureStore({
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
-		}).concat(testApi.middleware, uploadApi.middleware),
+		}).concat(testApi.middleware, uploadApi.middleware, userApi.middleware),
 });
 
 setupListeners(store.dispatch);
