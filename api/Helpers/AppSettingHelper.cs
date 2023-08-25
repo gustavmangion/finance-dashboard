@@ -12,10 +12,10 @@
             APIDBConnectionString = Environment.GetEnvironmentVariable("APIDBConn") ?? "";
 
             if (APIEnvironment == null)
-                throw new Exception("Environmental variable is not set");
+                throw new Exception("Environmental variable is not set - ASPNETCORE_ENVIRONMENT");
 
             if (string.IsNullOrEmpty(APIDBConnectionString))
-                throw new Exception("Environmental variable is not set");
+                throw new Exception("Environmental variable is not set - APIDBConn");
 
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
