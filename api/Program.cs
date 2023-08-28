@@ -71,12 +71,16 @@ try
 
     app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
 
-    app.UseForwardedHeaders(
-        new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-        }
-    );
+
+    if (app.Environment.IsProduction())
+    {
+        app.UseForwardedHeaders(
+            new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            }
+        );
+    }
 
     app.UseAuthentication();
 
