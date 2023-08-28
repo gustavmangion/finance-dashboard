@@ -1,4 +1,5 @@
-﻿using api.Models;
+﻿using api.Entities;
+using api.Models;
 using AutoMapper;
 
 namespace api.Profiles
@@ -7,7 +8,7 @@ namespace api.Profiles
     {
         public UserProfile()
         {
-            CreateMap<UserProfile, UserModel>();
+            CreateMap<User, UserModel>();
         }
     }
 }

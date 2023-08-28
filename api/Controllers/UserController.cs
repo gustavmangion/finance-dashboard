@@ -41,5 +41,32 @@ namespace api.Controllers
 
             return Ok(_mapper.Map<UserModel>(user));
         }
+
+        [HttpPost]
+        public ActionResult SaveUser(UserModelForCreation model)
+        {
+            if (string.IsNullOrEmpty(model.BucketName))
+                ModelState.AddModelError("message", "Bucket Name is required");
+
+            string userId = GetUserIdFromToken();
+
+            if (_userRepository.UserExists(userId))
+                ModelState.AddModelError("message", "User already exists");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            User newUser = new User();
+            newUser.Id = GetUserIdFromToken();
+            newUser.UserBuckets = new List<UserBucket>
+            {
+                new UserBucket { Bucket = new Bucket { Name = model.BucketName }, }
+            };
+
+            _userRepository.AddUser(newUser);
+            _userRepository.SaveChanges();
+
+            return NoContent();
+        }
     }
 }

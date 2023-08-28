@@ -10,5 +10,12 @@ namespace api.Contexts
             : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Bucket> Buckets { get; set; }
+        public DbSet<UserBucket> UserBuckets { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserBucket>().HasKey(x => new { x.UserId, x.BucketId });
+        }
     }
 }

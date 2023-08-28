@@ -16,5 +16,20 @@ namespace api.Repositories
         {
             return _context.Users.Where(x => x.Id == id).FirstOrDefault();
         }
+
+        public bool UserExists(string id)
+        {
+            return _context.Users.Where(x => x.Id == id).Any();
+        }
+
+        public void AddUser(User user)
+        {
+            _context.Users.Add(user);
+        }
+
+        public bool SaveChanges()
+        {
+            return _context.SaveChanges() >= 0;
+        }
     }
 }
