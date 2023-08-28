@@ -1,14 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-import Statement, { UploadStatement } from "./types";
-import { getSession, useSession } from "next-auth/react";
-
-const getHeaders = async (headers: any) => {
-	const session = await getSession();
-	const userToken = session?.user?.userToken;
-	headers.set("Authorization", `Bearer ${userToken}`);
-	return headers;
-};
+import { UploadStatement } from "./types";
+import getHeaders from "../headers";
 
 export const uploadApi = createApi({
 	reducerPath: "uploadApi",
