@@ -11,22 +11,30 @@ namespace api.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserRepository userRepository, IMapper mapper)
+        public UserController(
+            IUserRepository userRepository,
+            IMapper mapper,
+            ILogger<UserController> logger
+        )
         {
             _userRepository =
                 userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet]
-        public ActionResult GetUser(string id)
+        public ActionResult GetUser()
         {
-            User? user = _userRepository.GetUser(id);
+            string userId = GetUserIdFromToken();
+
+            User? user = _userRepository.GetUser(userId);
 
             if (user == null)
                 user = new User { Id = "Not Found", };
