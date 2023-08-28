@@ -7,10 +7,10 @@ export default interface User {
 
 export type GetUser = { id: string };
 
-export class CreateUser {
-	householdName: string = "";
+export class CreateUserModel {
+	bucketName: string = "";
 }
 
 export class CreateUserForm {
-	householdName: string = "";
+	bucketName: string = "";
 }

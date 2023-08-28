@@ -4,6 +4,7 @@
 	background-color: transparentize($primary, 0.4);
 	font-size: 1em;
 	color: $white;
+	margin-top: 1em;
 
 	&:hover {
 		background-color: transparentize($primary, 0.6);

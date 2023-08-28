@@ -3,12 +3,12 @@ import User, { CreateUserForm } from "../apis/base/user/types";
 
 type UserState = {
 	user: User | undefined;
-	createUserForm: CreateUserForm | undefined;
+	bucketInput: string;
 };
 
 const initialState = {
 	user: undefined,
-	createUserForm: undefined,
+	bucketInput: "",
 } as UserState;
 
 export const user = createSlice({
@@ -18,12 +18,12 @@ export const user = createSlice({
 		setUser: (state: any, action: PayloadAction<User | undefined>) => {
 			state.user = action.payload;
 		},
-		initCreateUserForm: (state: any) => {
-			state.createUserForm = new CreateUserForm();
+		setBucketInput: (state: any, action: PayloadAction<string>) => {
+			state.bucketInput = action.payload;
 		},
 	},
 });
 
-export const { setUser, initCreateUserForm } = user.actions;
+export const { setUser, setBucketInput } = user.actions;
 
 export default user.reducer;

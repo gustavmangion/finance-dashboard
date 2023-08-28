@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import User, { GetUser } from "./types";
+import User, { CreateUserModel, GetUser } from "./types";
 import { getSession } from "next-auth/react";
 import getHeaders from "../headers";
 
@@ -15,7 +15,14 @@ export const userApi = createApi({
 		getUser: builder.query<User, null>({
 			query: () => `/`,
 		}),
+		addUser: builder.mutation({
+			query: (payload: CreateUserModel) => ({
+				url: "/",
+				method: "POST",
+				body: { ...payload },
+			}),
+		}),
 	}),
 });
 
-export const { useGetUserQuery } = userApi;
+export const { useGetUserQuery, useAddUserMutation } = userApi;
