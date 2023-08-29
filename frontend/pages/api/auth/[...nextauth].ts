@@ -24,12 +24,9 @@ const authOptions: AuthOptions = {
 				token.accessToken = account.access_token as string;
 				token.accessTokenExpires = account.expires_at as number;
 				token.refreshToken = account.refresh_token as string;
-				token.user = user;
-				return token;
 			}
 
-			if (Math.round(Date.now() / 1000) < token.accessTokenExpires)
-				return token;
+			if (Date.now() < token.accessTokenExpires) return token;
 
 			return refreshAccessToken(token);
 		},
@@ -67,12 +64,12 @@ async function refreshAccessToken(token: JWT) {
 
 		if (!response.ok) throw refreshedTokens;
 
-		return {
-			...token,
-			accessToken: refreshedTokens.access_token,
-			accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
-			refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
-		};
+		token.accessToken = refreshedTokens.access_token;
+		token.accessTokenExpires = Date.now() + refreshedTokens.expires_in * 1000;
+		token.refreshToken = refreshedTokens.refresh_token ?? token.refreshToken; // Fall back to old refresh token
+		token.userToken = refreshedTokens.id_token;
+
+		return token;
 	} catch (error) {
 		console.log(error);
 
