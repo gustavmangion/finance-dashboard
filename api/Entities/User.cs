@@ -5,6 +5,6 @@
         public string Id { get; set; }
         public DateOnly Joined { get; set; } = new DateOnly();
 
-        public virtual List<UserBucket> UserBuckets { get; set; }
+        public virtual List<UserBucket> UserBuckets { get; set; } = new List<UserBucket> { };
     }
 }

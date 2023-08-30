@@ -39,7 +39,10 @@ namespace api.Controllers
             if (user == null)
                 user = new User { Id = "Not Found", };
 
-            return Ok(_mapper.Map<UserModel>(user));
+            UserModel model = _mapper.Map<UserModel>(user);
+            model.SetupNeeded = false;
+
+            return Ok(model);
         }
 
         [HttpPost]
@@ -58,15 +61,14 @@ namespace api.Controllers
 
             User newUser = new User();
             newUser.Id = GetUserIdFromToken();
-            newUser.UserBuckets = new List<UserBucket>
-            {
+            newUser.UserBuckets.Add(
                 new UserBucket { Bucket = new Bucket { Name = model.BucketName }, }
-            };
+            );
 
             _userRepository.AddUser(newUser);
             _userRepository.SaveChanges();
 
-            return NoContent();
+            return Ok(_mapper.Map<UserModel>(newUser));
         }
     }
 }
