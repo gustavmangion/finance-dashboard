@@ -55,7 +55,10 @@ export default function SetupUser() {
 		if (user === undefined) {
 			const newUser = new CreateUserModel();
 			newUser.bucketName = bucketInput as string;
-			await addUser(newUser);
+			await addUser(newUser).then((response) => {
+				console.log("test");
+				console.log(response);
+			});
 		}
 	}
 }

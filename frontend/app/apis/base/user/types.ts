@@ -1,6 +1,6 @@
 export default interface User {
 	id: string;
-	// joinDate: Date;
+	joinDate: Date;
 	setupNeeded: boolean;
 	householdName: string;
 }
