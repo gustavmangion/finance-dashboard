@@ -68,7 +68,10 @@ namespace api.Controllers
             _userRepository.AddUser(newUser);
             _userRepository.SaveChanges();
 
-            return Ok(_mapper.Map<UserModel>(newUser));
+            UserModel newUserModel = _mapper.Map<UserModel>(newUser);
+            newUserModel.SetupNeeded = false;
+
+            return Ok(newUserModel);
         }
     }
 }

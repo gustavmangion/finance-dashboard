@@ -3,7 +3,7 @@
     public class User
     {
         public string Id { get; set; }
-        public DateOnly Joined { get; set; } = new DateOnly();
+        public DateOnly Joined { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
         public virtual List<UserBucket> UserBuckets { get; set; } = new List<UserBucket> { };
     }
