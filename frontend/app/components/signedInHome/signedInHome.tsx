@@ -36,7 +36,7 @@ export default function SignedInHome() {
 			</div>
 			{isLoading || isFetching ? (
 				<LoadingSkeleton />
-			) : user === undefined || user.setupNeeded ? (
+			) : user?.setupNeeded ? (
 				<SetupUser />
 			) : (
 				<HomeMenu />

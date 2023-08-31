@@ -1,11 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import User, { CreateUserModel, GetUser } from "./types";
-import { getSession } from "next-auth/react";
+import User, { CreateUserModel } from "./types";
 import getHeaders from "../headers";
-import {
-	displayError,
-	displayNotification,
-} from "@/app/stores/notificationSlice";
+import { displayError } from "@/app/stores/notificationSlice";
 import { setUser } from "@/app/stores/userSlice";
 
 export const userApi = createApi({
@@ -24,7 +20,11 @@ export const userApi = createApi({
 					const { data } = await queryFulfilled;
 					dispatch(setUser(data));
 				} catch (error) {
-					dispatch(displayError(null));
+					dispatch(
+						displayError(
+							"Unable to load your profile, please contact us to resolve this issue"
+						)
+					);
 				}
 			},
 		}),
