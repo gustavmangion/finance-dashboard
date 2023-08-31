@@ -88,7 +88,7 @@ export default function SetupUser() {
 					setLoading(false);
 					if ("data" in result) {
 						dispatch(setNeedUploadStatement(true));
-						// dispatch(setUser(result.data));
+						dispatch(setUser(result.data));
 						dispatch(displaySuccess("Account created!"));
 						setModalOpen(true);
 					} else dispatch(displayError(null));
