@@ -7,13 +7,16 @@ import User, {
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
 import { setBucketInput, setUser } from "@/app/stores/userSlice";
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import styles from "../../styles/home.module.scss";
 import materialStyles from "../../styles/material.module.scss";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 
 export default function SetupUser() {
+	const [loading, setLoading] = useState(false);
+
 	const dispatch = useDispatch();
 	const user: User | undefined = useAppSelector(
 		(state) => state.userReducer.user
@@ -37,13 +40,14 @@ export default function SetupUser() {
 					helperText="You can use buckets to group multiple accounts"
 				/>
 			</div>
-			<Button
+			<LoadingButton
 				className={materialStyles.primaryButton}
 				onClick={handleSubmit}
 				disabled={bucketInput === ""}
+				loading={loading}
 			>
 				Save
-			</Button>
+			</LoadingButton>
 		</div>
 	);
 
@@ -55,10 +59,13 @@ export default function SetupUser() {
 		if (user === undefined) {
 			const newUser = new CreateUserModel();
 			newUser.bucketName = bucketInput as string;
-			await addUser(newUser).then((response) => {
-				console.log("test");
-				console.log(response);
-			});
+			setLoading(true);
+			await addUser(newUser)
+				.then(() => {
+					setLoading(false);
+					console.log(response);
+				})
+				.catch((error) => console.log(error));
 		}
 	}
 }
