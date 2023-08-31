@@ -2,6 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import User, { CreateUserModel, GetUser } from "./types";
 import { getSession } from "next-auth/react";
 import getHeaders from "../headers";
+import {
+	displayError,
+	displayNotification,
+} from "@/app/stores/notificationSlice";
+import { setUser } from "@/app/stores/userSlice";
 
 export const userApi = createApi({
 	reducerPath: "userApi",
@@ -14,6 +19,14 @@ export const userApi = createApi({
 	endpoints: (builder) => ({
 		getUser: builder.query<User, null>({
 			query: () => `/`,
+			async onQueryStarted(id, { dispatch, queryFulfilled }) {
+				try {
+					const { data } = await queryFulfilled;
+					dispatch(setUser(data));
+				} catch (error) {
+					dispatch(displayError(null));
+				}
+			},
 		}),
 		addUser: builder.mutation({
 			query: (payload: CreateUserModel) => ({
