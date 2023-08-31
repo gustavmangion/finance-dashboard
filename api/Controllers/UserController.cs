@@ -40,7 +40,6 @@ namespace api.Controllers
                 user = new User { Id = "Not Found", };
 
             UserModel model = _mapper.Map<UserModel>(user);
-            model.SetupNeeded = false;
 
             return Ok(model);
         }

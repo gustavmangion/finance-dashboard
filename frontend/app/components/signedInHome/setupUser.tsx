@@ -54,7 +54,7 @@ export default function SetupUser() {
 	}
 
 	async function handleSubmit() {
-		if (user === undefined) {
+		if (user?.id === "Not Found") {
 			const newUser = new CreateUserModel();
 			newUser.bucketName = bucketInput as string;
 			setLoading(true);
