@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import styles from "../../styles/dashboard.module.scss";
+import styles from "../../styles/home.module.scss";
 import { useGetUserQuery } from "../../apis/base/user/userService";
 import LoadingSkeleton from "../loadingSkeleton";
 import { useAppSelector } from "@/app/hooks/reduxHook";

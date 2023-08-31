@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import materialStyles from "../../styles/material.module.scss";
-import styles from "../../styles/dashboard.module.scss";
+import styles from "../../styles/home.module.scss";
 import { useRouter } from "next/navigation";
 
 export default function HomeMenu() {
