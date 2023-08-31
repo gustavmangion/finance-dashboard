@@ -28,7 +28,7 @@ export default function SetupUser() {
 	return (
 		<div className={styles.accountSetup}>
 			<h2>Let&apos;s get you started</h2>
-			<form onSubmit={() => handleSubmit}>
+			<form onSubmit={handleSubmit}>
 				<TextField
 					id="bucket-name"
 					label="Bucket name"
@@ -53,12 +53,12 @@ export default function SetupUser() {
 		dispatch(setBucketInput(e.target.value));
 	}
 
-	async function handleSubmit(e: FormEvent<HTMLInputElement>) {
+	async function handleSubmit(e: any) {
 		e.preventDefault();
+		setLoading(true);
 		if (user?.id === "Not Found") {
 			const newUser = new CreateUserModel();
 			newUser.bucketName = bucketInput as string;
-			setLoading(true);
 			await addUser(newUser)
 				.then((result) => {
 					setLoading(false);
