@@ -1,6 +1,8 @@
 using api.Contexts;
 using api.Helpers;
+using api.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
@@ -16,10 +18,13 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
-    builder.Services.AddControllers().AddNewtonsoftJson();
+    builder.Services.AddControllers().AddNewtonsoftJson( options => 
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
+
+    builder.Services.AddAutoMapper(typeof(Program));
 
     builder.Services
         .AddAuthentication(options =>
@@ -49,6 +54,8 @@ try
             )
     );
 
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -60,11 +67,21 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.UseHttpsRedirection();
     }
 
     app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
 
-    app.UseHttpsRedirection();
+
+    if (app.Environment.IsProduction())
+    {
+        app.UseForwardedHeaders(
+            new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            }
+        );
+    }
 
     app.UseAuthentication();
 

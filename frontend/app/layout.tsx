@@ -4,8 +4,8 @@ import { Nunito_Sans } from "next/font/google";
 import Providers from "./components/provider";
 import Navbar from "./components/navbar";
 import React from "react";
-import { Toolbar } from "@mui/material";
 import Footer from "./components/footer";
+import Notification from "./components/notification";
 
 const inter = Nunito_Sans({ subsets: ["latin"] });
 
@@ -26,6 +26,7 @@ export default function RootLayout({
 			</head>
 			<body className={inter.className}>
 				<Providers>
+					<Notification />
 					<Navbar />
 					<main>{children}</main>
 					<Footer />

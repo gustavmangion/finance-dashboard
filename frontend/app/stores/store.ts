@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { testApi } from "../apis/base/test/testService";
 import navBarReducer from "./navBarSlice";
+import userReducer from "./userSlice";
+import notificationReducer from "./notificationSlice";
 import { uploadApi } from "../apis/base/upload/uploadService";
 import storage from "./storage";
 import persistReducer from "redux-persist/lib/persistReducer";
@@ -14,6 +16,7 @@ import {
 	REHYDRATE,
 	persistStore,
 } from "redux-persist";
+import { userApi } from "../apis/base/user/userService";
 
 const persistConfig = {
 	key: "root",
@@ -26,7 +29,10 @@ export const store = configureStore({
 	reducer: {
 		[testApi.reducerPath]: testApi.reducer,
 		[uploadApi.reducerPath]: uploadApi.reducer,
+		[userApi.reducerPath]: userApi.reducer,
 		navBarReducer,
+		userReducer,
+		notificationReducer,
 	},
 	devTools: process.env.NODE_ENV !== "production",
 	middleware: (getDefaultMiddleware) =>
@@ -35,7 +41,7 @@ export const store = configureStore({
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
-		}).concat(testApi.middleware, uploadApi.middleware),
+		}).concat(testApi.middleware, uploadApi.middleware, userApi.middleware),
 });
 
 setupListeners(store.dispatch);

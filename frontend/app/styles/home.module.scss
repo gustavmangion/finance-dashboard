@@ -38,3 +38,44 @@
 		}
 	}
 }
+
+.accountSetup {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: 1em;
+
+	h2 {
+		margin-top: 1em;
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+.homeHeader {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+
+	img {
+		height: 1.3em !important;
+		margin-left: 0.2em;
+		vertical-align: middle;
+	}
+}
+
+.buttonMenu {
+	display: flex;
+	flex-direction: column;
+	margin: 2em;
+
+	button {
+		margin: 0.5em;
+	}
+}

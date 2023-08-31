@@ -75,3 +75,25 @@ h3 {
 		color: $black;
 	}
 }
+
+// /--------------Material----------------------/
+
+input {
+	color: $black;
+}
+
+.MuiInputLabel-root {
+	color: $black;
+
+	&.Mui-focused {
+		color: $black;
+	}
+}
+
+.MuiFormHelperText-root {
+	color: $black;
+}
+
+.MuiInput-underline:after {
+	border-bottom-color: $secondary;
+}
