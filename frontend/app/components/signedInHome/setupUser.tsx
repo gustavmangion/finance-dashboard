@@ -1,9 +1,6 @@
 "use client";
 
-import User, {
-	CreateUserForm,
-	CreateUserModel,
-} from "@/app/apis/base/user/types";
+import User, { CreateUserModel } from "@/app/apis/base/user/types";
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
 import { setBucketInput, setUser } from "@/app/stores/userSlice";
@@ -13,6 +10,7 @@ import { useDispatch } from "react-redux";
 import styles from "../../styles/home.module.scss";
 import materialStyles from "../../styles/material.module.scss";
 import { ChangeEvent, useState } from "react";
+import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 
 export default function SetupUser() {
 	const [loading, setLoading] = useState(false);
@@ -65,7 +63,8 @@ export default function SetupUser() {
 					setLoading(false);
 					if ("data" in result) {
 						dispatch(setUser(result.data));
-					} else console.log("error");
+						dispatch(displaySuccess("Account created!"));
+					} else dispatch(displayError(null));
 				})
 				.catch((error) => console.log(error));
 		}
