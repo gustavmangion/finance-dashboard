@@ -60,17 +60,20 @@ h3 {
 
 .footer {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	background-color: $navbar-background;
 	padding: 0.3em;
+	vertical-align: middle;
 
 	img {
-		margin-right: 0.2em;
+		margin-right: 0.4em;
 	}
 
-	> div > a {
+	a {
 		display: flex;
+		align-items: center;
 		text-decoration: none;
 		color: $black;
 	}
