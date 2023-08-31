@@ -9,7 +9,7 @@ import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import styles from "../../styles/home.module.scss";
 import materialStyles from "../../styles/material.module.scss";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 
 export default function SetupUser() {
@@ -23,29 +23,29 @@ export default function SetupUser() {
 		(state) => state.userReducer.bucketInput
 	);
 
-	const [addUser, response] = useAddUserMutation();
+	const [addUser] = useAddUserMutation();
 
 	return (
 		<div className={styles.accountSetup}>
-			<div>
-				<h2>Let&apos;s get you started</h2>
+			<h2>Let&apos;s get you started</h2>
+			<form onSubmit={() => handleSubmit}>
 				<TextField
 					id="bucket-name"
 					label="Bucket name"
 					variant="standard"
 					value={bucketInput}
+					required
 					onChange={updateBucketInput}
 					helperText="You can use buckets to group multiple accounts"
 				/>
-			</div>
-			<LoadingButton
-				className={materialStyles.primaryButton}
-				onClick={handleSubmit}
-				disabled={bucketInput === ""}
-				loading={loading}
-			>
-				Save
-			</LoadingButton>
+				<LoadingButton
+					className={materialStyles.primaryButton}
+					type="submit"
+					loading={loading}
+				>
+					Save
+				</LoadingButton>
+			</form>
 		</div>
 	);
 
@@ -53,7 +53,8 @@ export default function SetupUser() {
 		dispatch(setBucketInput(e.target.value));
 	}
 
-	async function handleSubmit() {
+	async function handleSubmit(e: FormEvent<HTMLInputElement>) {
+		e.preventDefault();
 		if (user?.id === "Not Found") {
 			const newUser = new CreateUserModel();
 			newUser.bucketName = bucketInput as string;
