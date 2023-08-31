@@ -37,7 +37,7 @@ namespace api.Controllers
             User? user = _userRepository.GetUser(userId);
 
             if (user == null)
-                user = new User { Id = "Not Found", };
+                user = new User { Id = "Not Found", SetupNeeded = true };
 
             UserModel model = _mapper.Map<UserModel>(user);
 
