@@ -10,9 +10,7 @@ import SetupUser from "./setupUser";
 import HomeMenu from "./homeMenu";
 
 export default function SignedInHome() {
-	const user: User | undefined = useAppSelector(
-		(state) => state.userReducer.user
-	);
+	const state = useAppSelector((state) => state.userReducer);
 
 	const { isLoading, isFetching, data, error } = useGetUserQuery(null);
 
@@ -36,7 +34,7 @@ export default function SignedInHome() {
 			</div>
 			{isLoading || isFetching ? (
 				<LoadingSkeleton />
-			) : user?.setupNeeded ? (
+			) : state.user?.setupNeeded || state.needUploadStatement ? (
 				<SetupUser />
 			) : (
 				<HomeMenu />
