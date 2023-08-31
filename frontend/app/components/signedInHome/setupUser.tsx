@@ -61,9 +61,11 @@ export default function SetupUser() {
 			newUser.bucketName = bucketInput as string;
 			setLoading(true);
 			await addUser(newUser)
-				.then(() => {
+				.then((result) => {
 					setLoading(false);
-					console.log(response);
+					if ("data" in result) {
+						dispatch(setUser(result.data));
+					} else console.log("error");
 				})
 				.catch((error) => console.log(error));
 		}
