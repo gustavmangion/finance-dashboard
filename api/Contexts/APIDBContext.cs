@@ -13,6 +13,7 @@ namespace api.Contexts
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<UserPortfolio> UserPortfolios { get; set; }
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Statement> Statements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
