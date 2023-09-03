@@ -1,5 +1,6 @@
 import { FormLabel, Input } from "@mui/material";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
+import styles from "../styles/upload.module.scss";
 
 export default function CreateAccount() {
 	const [formState, setFormState] = useState({
@@ -9,7 +10,7 @@ export default function CreateAccount() {
 	});
 
 	return (
-		<div>
+		<div className={styles.newAccount}>
 			<h3>Add a new bank account</h3>
 			<form onSubmit={handleSubmit}>
 				<FormLabel>Account Name</FormLabel>

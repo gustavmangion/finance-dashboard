@@ -8,6 +8,24 @@
 	margin-top: 1em;
 }
 
+.newAccount {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	margin-top: 1em;
+
+	form {
+		display: flex;
+		flex-direction: column;
+		margin-top: 1em;
+
+		label {
+			margin-top: 1em;
+		}
+	}
+}
+
 .errorMessage {
 	margin-top: 0.5em;
 	color: $error-red;
