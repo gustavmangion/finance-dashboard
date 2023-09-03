@@ -1,6 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-import { UploadStatement } from "./types";
 import getHeaders from "../headers";
 
 export const uploadApi = createApi({
