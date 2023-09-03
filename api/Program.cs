@@ -18,8 +18,15 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
-    builder.Services.AddControllers().AddNewtonsoftJson( options => 
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+    builder.Services
+        .AddControllers()
+        .AddNewtonsoftJson(
+            options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft
+                    .Json
+                    .ReferenceLoopHandling
+                    .Ignore
+        );
 
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
@@ -48,13 +55,16 @@ try
 
     builder.Services.AddDbContext<APIDBContext>(
         options =>
-            options.UseMySql(
-                AppSettingHelper.APIDBConnectionString,
-                ServerVersion.AutoDetect(AppSettingHelper.APIDBConnectionString)
-            )
+            options
+                .UseLazyLoadingProxies()
+                .UseMySql(
+                    AppSettingHelper.APIDBConnectionString,
+                    ServerVersion.AutoDetect(AppSettingHelper.APIDBConnectionString)
+                )
     );
 
     builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -71,7 +81,6 @@ try
     }
 
     app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
-
 
     if (app.Environment.IsProduction())
     {
