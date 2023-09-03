@@ -1,5 +1,6 @@
 using api.Contexts;
 using api.Helpers;
+using api.HostedServices;
 using api.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -65,6 +66,8 @@ try
 
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+    builder.Services.AddHostedService<UploadDirectoryCleanerHostedService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
