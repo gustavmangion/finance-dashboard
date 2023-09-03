@@ -13,11 +13,17 @@ export const uploadApi = createApi({
 	}),
 	endpoints: (builder) => ({
 		uploadStatement: builder.mutation({
-			query: (payload: UploadStatement) => ({
-				url: "uploadStatement",
-				method: "POST",
-				body: { ...payload },
-			}),
+			query: (payload: File) => {
+				const body = new FormData();
+				body.append("Content-Type", "application/pdf");
+				body.append("file", payload);
+				return {
+					url: "uploadStatement",
+					method: "POST",
+					body,
+					formData: true,
+				};
+			},
 		}),
 	}),
 });

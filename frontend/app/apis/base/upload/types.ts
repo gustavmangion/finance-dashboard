@@ -5,5 +5,5 @@ export default interface Statement {
 }
 
 export class UploadStatement {
-	account: string = "";
+	file: File = new File([], "");
 }

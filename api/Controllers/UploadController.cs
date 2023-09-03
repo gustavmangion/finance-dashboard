@@ -10,18 +10,20 @@ namespace api.Controllers
     {
         private readonly ILogger<UploadController> _logger;
 
-        public UploadController(ILogger<UploadController> logger) {
+        public UploadController(ILogger<UploadController> logger)
+        {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-
         [HttpPost("UploadStatement")]
-        public ActionResult UploadStatement(testDTO model)
+        public ActionResult UploadStatement([FromForm] IFormFile file)
         {
             return NoContent();
         }
     }
 }
-public class testDTO {
+
+public class testDTO
+{
     public string account = "";
 }

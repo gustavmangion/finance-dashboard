@@ -1,7 +1,15 @@
+@import "./variables";
+
 .upload {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 
 	margin-top: 1em;
+}
+
+.errorMessage {
+	margin-top: 0.5em;
+	color: $error-red;
+	font-size: 1.2rem;
 }
