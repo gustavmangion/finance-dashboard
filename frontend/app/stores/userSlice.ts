@@ -1,13 +1,16 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import User from "../apis/base/user/types";
+import Portfolio from "../apis/base/portfolio/types";
 
 type UserState = {
 	user: User | undefined;
+	portfolios: Portfolio[];
 	needUploadStatement: boolean;
 };
 
 const initialState = {
 	user: undefined,
+	portfolios: [],
 	needUploadStatement: false,
 } as UserState;
 
@@ -21,9 +24,12 @@ export const user = createSlice({
 		setNeedUploadStatement: (state: any, action: PayloadAction<boolean>) => {
 			state.needUploadStatement = action.payload;
 		},
+		setPortfolios: (state: any, action: PayloadAction<Portfolio[]>) => {
+			state.portfolios = action.payload;
+		},
 	},
 });
 
-export const { setUser, setNeedUploadStatement } = user.actions;
+export const { setUser, setNeedUploadStatement, setPortfolios } = user.actions;
 
 export default user.reducer;

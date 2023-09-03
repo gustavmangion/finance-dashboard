@@ -8,11 +8,14 @@ import { useAppSelector } from "@/app/hooks/reduxHook";
 import User from "@/app/apis/base/user/types";
 import SetupUser from "./setupUser";
 import HomeMenu from "./homeMenu";
+import { useGetPortfoliosQuery } from "@/app/apis/base/portfolio/portfolioService";
 
 export default function SignedInHome() {
 	const state = useAppSelector((state) => state.userReducer);
 
 	const { isLoading, isFetching, data, error } = useGetUserQuery(null);
+
+	useGetPortfoliosQuery(null);
 
 	if (isLoading || isFetching) return <LoadingSkeleton />;
 

@@ -16,6 +16,7 @@ import {
 	persistStore,
 } from "redux-persist";
 import { userApi } from "../apis/base/user/userService";
+import { portfolioApi } from "../apis/base/portfolio/portfolioService";
 
 const persistConfig = {
 	key: "root",
@@ -28,6 +29,7 @@ export const store = configureStore({
 	reducer: {
 		[uploadApi.reducerPath]: uploadApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
+		[portfolioApi.reducerPath]: portfolioApi.reducer,
 		navBarReducer,
 		userReducer,
 		notificationReducer,
@@ -39,7 +41,11 @@ export const store = configureStore({
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
-		}).concat(uploadApi.middleware, userApi.middleware),
+		}).concat(
+			uploadApi.middleware,
+			userApi.middleware,
+			portfolioApi.middleware
+		),
 });
 
 setupListeners(store.dispatch);
