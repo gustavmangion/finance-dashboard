@@ -4,6 +4,7 @@ import {
 	MenuItem,
 	Select,
 	SelectChangeEvent,
+	TextField,
 } from "@mui/material";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import styles from "../styles/upload.module.scss";
@@ -26,23 +27,26 @@ export default function CreateAccount() {
 		<div className={styles.newAccount}>
 			<h3>Add a new bank account</h3>
 			<form onSubmit={handleSubmit}>
-				<FormLabel>Account Name</FormLabel>
-				<Input
+				<TextField
 					name="name"
+					label="Account Name"
+					variant="standard"
 					value={formState.name}
 					onChange={handleChange}
 					required
 				/>
-				<FormLabel>Statement Password</FormLabel>
-				<Input
+				<TextField
 					name="password"
+					label="Statement Password"
 					type="password"
+					variant="standard"
 					value={formState.password}
 					onChange={handleChange}
 				/>
 				<Select
 					name="portfolio"
 					label="Portfolio"
+					variant="standard"
 					onChange={handleSelectChange}
 					required
 					defaultValue={defaultPortfolio}
