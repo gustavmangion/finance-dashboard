@@ -7,6 +7,7 @@ import { useSecurePage } from "../hooks/authHook";
 import { useRouter } from "next/navigation";
 import React from "react";
 import SelectFile from "./selectFile";
+import CreateAccount from "./createAccount";
 
 export default function UploadPage() {
 	const authStatus = useSecurePage();
@@ -28,7 +29,7 @@ export default function UploadPage() {
 				{formStep === 0 ? (
 					<SelectFile setFormStep={setFormStep} setFileId={setFileId} />
 				) : (
-					formStep
+					<CreateAccount />
 				)}
 			</div>
 		);
