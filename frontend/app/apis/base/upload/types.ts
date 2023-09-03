@@ -4,6 +4,7 @@ export default interface Statement {
 	account: string;
 }
 
-export class UploadStatement {
-	file: File = new File([], "");
+export class UploadStatementResponse {
+	fileId: string = "";
+	newAccount: Boolean = false;
 }

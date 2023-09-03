@@ -5,8 +5,15 @@ import { ChangeEvent, useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import { useUploadStatementMutation } from "../apis/base/upload/uploadService";
+import { displayError } from "../stores/notificationSlice";
+import { UploadStatementResponse } from "../apis/base/upload/types";
 
-export default function SelectFile() {
+type Props = {
+	setFormStep: (val: number) => void;
+	setFileId: (val: string) => void;
+};
+
+export default function SelectFile({ setFormStep, setFileId }: Props) {
 	const VisuallyHiddenInput = styled("input")`
 		clip: rect(0 0 0 0);
 		clip-path: inset(50%);
@@ -53,10 +60,20 @@ export default function SelectFile() {
 
 	function handleUploadFile(e: ChangeEvent<HTMLInputElement>) {
 		setLoading(true);
+		setUploadError("");
 		if (e.target.files) {
 			const file = e.target.files[0];
 			if (file.type !== "application/pdf") setUploadError("File isn't a pdf");
-			else uploadStatement(file).then((response) => console.log(response));
+			else
+				uploadStatement(file).then((result) => {
+					if ("data" in result) {
+						const response: UploadStatementResponse = result.data;
+						setFileId(response.fileId);
+
+						if (response.newAccount) setFormStep(1);
+						else setFormStep(2);
+					} else dispatch(displayError("File wasn't upload, please try again"));
+				});
 		} else setUploadError("File wasn't upload, please try again");
 
 		setLoading(false);
