@@ -66,6 +66,7 @@ try
 
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+    builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 
     builder.Services.AddHostedService<UploadDirectoryCleanerHostedService>();
 
