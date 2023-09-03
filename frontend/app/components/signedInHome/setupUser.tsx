@@ -4,7 +4,7 @@ import User, { CreateUserModel } from "@/app/apis/base/user/types";
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
 import {
-	setBucketInput,
+	setPortfolioInput,
 	setNeedUploadStatement,
 	setUser,
 } from "@/app/stores/userSlice";
@@ -25,8 +25,8 @@ export default function SetupUser() {
 	const user: User | undefined = useAppSelector(
 		(state) => state.userReducer.user
 	);
-	const bucketInput: string = useAppSelector(
-		(state) => state.userReducer.bucketInput
+	const portfolioInput: string = useAppSelector(
+		(state) => state.userReducer.portfolioInput
 	);
 	const needUploadStatement: boolean = useAppSelector(
 		(state) => state.userReducer.needUploadStatement
@@ -40,13 +40,13 @@ export default function SetupUser() {
 			<h2>Let&apos;s get you started</h2>
 			<form onSubmit={handleSubmit}>
 				<TextField
-					id="bucket-name"
-					label="Bucket name"
+					id="portfolio-name"
+					label="Portfilio name"
 					variant="standard"
-					value={bucketInput}
+					value={portfolioInput}
 					required
-					onChange={updateBucketInput}
-					helperText="You can use buckets to group multiple accounts"
+					onChange={updatePortfolioInput}
+					helperText="You can use portfolios to group multiple accounts"
 				/>
 				<LoadingButton
 					className={materialStyles.primaryButton}
@@ -73,8 +73,8 @@ export default function SetupUser() {
 		</div>
 	);
 
-	function updateBucketInput(e: ChangeEvent<HTMLInputElement>) {
-		dispatch(setBucketInput(e.target.value));
+	function updatePortfolioInput(e: ChangeEvent<HTMLInputElement>) {
+		dispatch(setPortfolioInput(e.target.value));
 	}
 
 	async function handleSubmit(e: any) {
@@ -82,7 +82,7 @@ export default function SetupUser() {
 		setLoading(true);
 		if (user?.id === "Not Found") {
 			const newUser = new CreateUserModel();
-			newUser.bucketName = bucketInput as string;
+			newUser.portfolioName = portfolioInput as string;
 			await addUser(newUser)
 				.then((result) => {
 					setLoading(false);

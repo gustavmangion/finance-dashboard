@@ -10,12 +10,12 @@ namespace api.Contexts
             : base(options) { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Bucket> Buckets { get; set; }
-        public DbSet<UserBucket> UserBuckets { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<UserPortfolio> UserPortfolios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserBucket>().HasKey(x => new { x.UserId, x.BucketId });
+            modelBuilder.Entity<UserPortfolio>().HasKey(x => new { x.UserId, x.PortfolioId });
         }
     }
 }

@@ -47,8 +47,8 @@ namespace api.Controllers
         [HttpPost]
         public ActionResult SaveUser(UserModelForCreation model)
         {
-            if (string.IsNullOrEmpty(model.BucketName))
-                ModelState.AddModelError("message", "Bucket Name is required");
+            if (string.IsNullOrEmpty(model.PortfolioName))
+                ModelState.AddModelError("message", "Portfolio Name is required");
 
             string userId = GetUserIdFromToken();
 
@@ -60,8 +60,8 @@ namespace api.Controllers
 
             User newUser = new User();
             newUser.Id = GetUserIdFromToken();
-            newUser.UserBuckets.Add(
-                new UserBucket { Bucket = new Bucket { Name = model.BucketName }, }
+            newUser.UserPortfolios.Add(
+                new UserPortfolio { Portfolio = new Portfolio { Name = model.PortfolioName }, }
             );
 
             _userRepository.AddUser(newUser);
