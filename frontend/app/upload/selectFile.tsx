@@ -68,9 +68,9 @@ export default function SelectFile({ setFormStep, setFileId }: Props) {
 				uploadStatement(file).then((result) => {
 					if ("data" in result) {
 						const response: UploadStatementResponse = result.data;
-						setFileId(response.fileId);
+						setFileId(response.uploadId);
 
-						if (response.newAccount) setFormStep(1);
+						if (response.isNewAccount) setFormStep(1);
 						else setFormStep(2);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});

@@ -13,6 +13,7 @@ export default function UploadPage() {
 	const router = useRouter();
 
 	const [formStep, setFormStep] = useState(0);
+	const [fileId, setFileId] = useState("");
 
 	useEffect(() => {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");
@@ -24,7 +25,11 @@ export default function UploadPage() {
 		return (
 			<div className="container">
 				<h2>Upload your bank statement</h2>
-				{formStep === 0 ? <SelectFile setStep={setFormStep} /> : null}
+				{formStep === 0 ? (
+					<SelectFile setFormStep={setFormStep} setFileId={setFileId} />
+				) : (
+					formStep
+				)}
 			</div>
 		);
 }

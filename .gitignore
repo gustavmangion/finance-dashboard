@@ -364,4 +364,4 @@ FodyWeavers.xsd
 
 .env.test
 .env.production
-/api/WorkingDirectory/StatementUploads
+/api/WorkingDirectory

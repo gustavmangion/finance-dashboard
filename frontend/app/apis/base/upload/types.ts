@@ -5,6 +5,6 @@ export default interface Statement {
 }
 
 export class UploadStatementResponse {
-	fileId: string = "";
-	newAccount: Boolean = false;
+	uploadId: string = "";
+	isNewAccount: Boolean = false;
 }
