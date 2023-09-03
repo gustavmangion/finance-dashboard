@@ -9,7 +9,7 @@ import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import styles from "../../styles/home.module.scss";
 import materialStyles from "../../styles/material.module.scss";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 import { useRouter } from "next/navigation";
 
@@ -76,7 +76,7 @@ export default function SetupUser() {
 		});
 	}
 
-	async function handleSubmit(e: any) {
+	async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
 		if (user?.id === "Not Found") {
