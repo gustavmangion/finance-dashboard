@@ -62,7 +62,7 @@ namespace api.Controllers
                 $"{statement.Id}.pdf"
             );
             using (Stream fileStream = new FileStream(path, FileMode.Create))
-                file.CopyToAsync(fileStream);
+                file.CopyTo(fileStream);
 
             return new StatementUploadResultModel()
             {
