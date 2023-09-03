@@ -8,6 +8,8 @@ import {
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import styles from "../styles/upload.module.scss";
 import { useAppSelector } from "../hooks/reduxHook";
+import { LoadingButton } from "@mui/lab";
+import materialStyles from "../styles/material.module.scss";
 
 export default function CreateAccount() {
 	const [formState, setFormState] = useState({
@@ -15,6 +17,8 @@ export default function CreateAccount() {
 		name: "",
 		password: "",
 	});
+
+	const [loading, setLoading] = useState(false);
 
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 	const defaultPortfolio = portfolios.length === 1 ? portfolios[0].id : "";
@@ -40,6 +44,7 @@ export default function CreateAccount() {
 					name="portfolio"
 					label="Portfolio"
 					onChange={handleSelectChange}
+					required
 					defaultValue={defaultPortfolio}
 				>
 					{portfolios.map((x) => {
@@ -50,6 +55,13 @@ export default function CreateAccount() {
 						);
 					})}
 				</Select>
+				<LoadingButton
+					className={materialStyles.primaryButton}
+					type="submit"
+					loading={loading}
+				>
+					Save
+				</LoadingButton>
 			</form>
 		</div>
 	);
