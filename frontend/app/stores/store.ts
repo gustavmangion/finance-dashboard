@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
-import { testApi } from "../apis/base/test/testService";
 import navBarReducer from "./navBarSlice";
 import userReducer from "./userSlice";
 import notificationReducer from "./notificationSlice";
@@ -27,7 +26,6 @@ const persistConfig = {
 
 export const store = configureStore({
 	reducer: {
-		[testApi.reducerPath]: testApi.reducer,
 		[uploadApi.reducerPath]: uploadApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
 		navBarReducer,
@@ -41,7 +39,7 @@ export const store = configureStore({
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
-		}).concat(testApi.middleware, uploadApi.middleware, userApi.middleware),
+		}).concat(uploadApi.middleware, userApi.middleware),
 });
 
 setupListeners(store.dispatch);

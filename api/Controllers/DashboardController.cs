@@ -13,12 +13,5 @@ namespace api.Controllers
         {
             _apiContext = apiContext ?? throw new ArgumentNullException(nameof(apiContext));
         }
-
-        [HttpGet("Test", Name = "GetTestMessage")]
-        public ActionResult<string> GetTestMessage()
-        {
-            object result = new { text = "Hello world" };
-            return Ok(result);
-        }
     }
 }
