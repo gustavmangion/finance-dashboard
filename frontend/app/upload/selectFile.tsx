@@ -55,8 +55,6 @@ export default function SelectFile() {
 		setLoading(true);
 		if (e.target.files) {
 			const file = e.target.files[0];
-			console.log(file.type);
-			console.log(file);
 			if (file.type !== "application/pdf") setUploadError("File isn't a pdf");
 			else uploadStatement(file).then((response) => console.log(response));
 		} else setUploadError("File wasn't upload, please try again");
