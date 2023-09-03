@@ -3,11 +3,7 @@
 import User, { CreateUserModel } from "@/app/apis/base/user/types";
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
-import {
-	setPortfolioInput,
-	setNeedUploadStatement,
-	setUser,
-} from "@/app/stores/userSlice";
+import { setNeedUploadStatement, setUser } from "@/app/stores/userSlice";
 import { Button, Modal, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -19,14 +15,14 @@ import { useRouter } from "next/navigation";
 
 export default function SetupUser() {
 	const [loading, setLoading] = useState(false);
+	const [formState, setFormState] = useState({
+		portfolioName: "",
+	});
 	const router = useRouter();
 
 	const dispatch = useDispatch();
 	const user: User | undefined = useAppSelector(
 		(state) => state.userReducer.user
-	);
-	const portfolioInput: string = useAppSelector(
-		(state) => state.userReducer.portfolioInput
 	);
 	const needUploadStatement: boolean = useAppSelector(
 		(state) => state.userReducer.needUploadStatement
@@ -40,12 +36,12 @@ export default function SetupUser() {
 			<h2>Let&apos;s get you started</h2>
 			<form onSubmit={handleSubmit}>
 				<TextField
-					id="portfolio-name"
-					label="Portfilio name"
+					name="portfolioName"
+					label="Portfolio name"
 					variant="standard"
-					value={portfolioInput}
+					value={formState.portfolioName}
 					required
-					onChange={updatePortfolioInput}
+					onChange={handleChange}
 					helperText="You can use portfolios to group multiple accounts"
 				/>
 				<LoadingButton
@@ -73,8 +69,11 @@ export default function SetupUser() {
 		</div>
 	);
 
-	function updatePortfolioInput(e: ChangeEvent<HTMLInputElement>) {
-		dispatch(setPortfolioInput(e.target.value));
+	function handleChange(e: ChangeEvent<HTMLInputElement>) {
+		setFormState({
+			...formState,
+			[e.target.name]: e.target.value,
+		});
 	}
 
 	async function handleSubmit(e: any) {
@@ -82,7 +81,7 @@ export default function SetupUser() {
 		setLoading(true);
 		if (user?.id === "Not Found") {
 			const newUser = new CreateUserModel();
-			newUser.portfolioName = portfolioInput as string;
+			newUser.portfolioName = formState.portfolioName;
 			await addUser(newUser)
 				.then((result) => {
 					setLoading(false);

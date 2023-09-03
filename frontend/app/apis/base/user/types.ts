@@ -9,7 +9,3 @@ export type GetUser = { id: string };
 export class CreateUserModel {
 	portfolioName: string = "";
 }
-
-export class CreateUserForm {
-	portfolioName: string = "";
-}
