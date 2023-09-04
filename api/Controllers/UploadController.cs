@@ -49,9 +49,12 @@ namespace api.Controllers
             if (string.IsNullOrEmpty(content))
                 return Ok(HandleNeedStatementPassword(file));
 
-            List<string> accountsToBeSetup = GetNotSetupAccounts(content);
+            List<string> accountsToBeSetup = GetNotSetupAccounts(
+                content,
+                accounts.Select(x => x.AccountNumber).ToList()
+            );
             if (accountsToBeSetup.Count > 0)
-                return Ok(HandleNewAccount(file, userId));
+                return Ok(HandleNewAccount(file, userId, accountsToBeSetup));
 
             List<Account> accountTransactions = StatementHelper.GetAccountsAndTransactions(content);
             foreach (Account account in accountTransactions)
@@ -84,30 +87,52 @@ namespace api.Controllers
             throw new NotImplementedException();
         }
 
-        private List<string> GetNotSetupAccounts(string content)
+        private List<string> GetNotSetupAccounts(string content, List<string> accountNumbers)
         {
-            throw new NotImplementedException();
+            List<string> notSetup = new List<string>();
+
+            string[] contentSplit = content.Split("Account Details: ");
+            foreach (string s in contentSplit)
+            {
+                string accNo = s.Substring(0, 14);
+                if (!accountNumbers.Contains(accNo))
+                    notSetup.Add(accNo);
+            }
+
+            return notSetup;
         }
 
-        private StatementUploadResultModel HandleNewAccount(IFormFile file, string userId)
+        private StatementUploadResultModel HandleNewAccount(
+            IFormFile file,
+            string userId,
+            List<string> accountsToSetup
+        )
+        {
+            Guid statementId = SaveStatementAndFile(file, userId);
+
+            return new StatementUploadResultModel()
+            {
+                uploadId = statementId,
+                needPassword = false,
+                accountsToSetup = accountsToSetup
+            };
+        }
+
+        private Guid SaveStatementAndFile(IFormFile file, string userId)
         {
             Statement statement = new Statement() { UserId = userId, };
             _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
-            string path = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "WorkingDirectory",
-                "StatementUploads",
-                $"{statement.Id}.pdf"
-            );
-            using (Stream fileStream = new FileStream(path, FileMode.Create))
+
+            using (
+                Stream fileStream = new FileStream(
+                    AppSettingHelper.getStatementFileDirectory(statement.Id),
+                    FileMode.Create
+                )
+            )
                 file.CopyTo(fileStream);
 
-            return new StatementUploadResultModel()
-            {
-                uploadId = statement.Id,
-                needPassword = true
-            };
+            return statement.Id;
         }
     }
 }
