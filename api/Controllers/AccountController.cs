@@ -1,4 +1,5 @@
 ﻿using api.Entities;
+using api.Helpers;
 using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +22,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateAccount([FromBody] AccountModelForCreation model)
+        public ActionResult CreateAccount(AccountModelForCreation model)
         {
             string userId = GetUserIdFromToken();
 
@@ -37,10 +38,12 @@ namespace api.Controllers
                 ModelState.AddModelError("message", "Upload does not exists");
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
+            string encryptedStatementCode = StatementCodeCryptoHelper.EncryptPasscode(model.StatementCode);
+
             Account newAccount = new Account();
             newAccount.Name = model.Name;
             newAccount.PortfolioId = model.PortfolioId;
-            newAccount.StatementCode = model.StatementCode;
+            newAccount.StatementCode = encryptedStatementCode;
             _accountRepository.AddAccount(newAccount);
 
             Statement pendingStatement = _accountRepository.GetStatement(model.UploadId);
