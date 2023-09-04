@@ -16,6 +16,7 @@ export default function UploadPage() {
 
 	const [formStep, setFormStep] = useState(0);
 	const [fileId, setFileId] = useState("");
+	const [accountsToBeSetup, setAccountsToBeSetup] = useState<string[]>([]);
 
 	useEffect(() => {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");
@@ -33,7 +34,7 @@ export default function UploadPage() {
 					<FilePassword
 						formStep={formStep}
 						setFormStep={setFormStep}
-						fileId={fileId}
+						setAccountsToBeSetup={setAccountsToBeSetup}
 					/>
 				) : (
 					<CreateAccount

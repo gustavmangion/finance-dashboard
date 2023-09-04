@@ -20,22 +20,24 @@ import { useCreateAccountMutation } from "../apis/base/account/accountService";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 import { useRouter } from "next/navigation";
+import UploadSuccessModal from "./uploadSuccessModal";
 
 type Props = {
 	uploadId: string;
+	formStep: number;
 	setFormStep: (val: number) => void;
 	setFileId: (val: string) => void;
 };
 
 export default function CreateAccount({
 	uploadId,
+	formStep,
 	setFormStep,
 	setFileId,
 }: Props) {
 	const [loading, setLoading] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const dispatch = useDispatch();
-	const router = useRouter();
 
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
@@ -44,7 +46,6 @@ export default function CreateAccount({
 	const [formState, setFormState] = useState({
 		portfolio: portfolios.length === 1 ? portfolios[0].id : "",
 		name: "",
-		password: "",
 	});
 	return (
 		<div className={styles.newAccount}>
@@ -58,14 +59,6 @@ export default function CreateAccount({
 					onChange={handleChange}
 					inputProps={{ maxLength: 45 }}
 					required
-				/>
-				<TextField
-					name="password"
-					label="Statement Password"
-					type="password"
-					variant="standard"
-					value={formState.password}
-					onChange={handleChange}
 				/>
 				<FormControl fullWidth>
 					<InputLabel>Portfolio</InputLabel>
@@ -95,23 +88,11 @@ export default function CreateAccount({
 					Save
 				</LoadingButton>
 			</form>
-			<Modal open={modalOpen} onClose={handleModalClose}>
-				<div className={materialStyles.modal}>
-					<p>Your statement is being processed and will be available shortly</p>
-					<Button
-						className={materialStyles.primaryButton}
-						onClick={handleModalClose}
-					>
-						Continue
-					</Button>
-					<Button
-						className={materialStyles.primaryButton}
-						onClick={handleUploadAnotherStatement}
-					>
-						Upload another
-					</Button>
-				</div>
-			</Modal>
+			<UploadSuccessModal
+				modalOpen={modalOpen}
+				formStep={formStep}
+				setFormStep={setFormStep}
+			/>
 		</div>
 	);
 
@@ -134,7 +115,6 @@ export default function CreateAccount({
 		setLoading(true);
 		const accountForCreation: AccountCreationModel = new AccountCreationModel();
 		accountForCreation.name = formState.name;
-		accountForCreation.statementCode = formState.password;
 		accountForCreation.portfolioId = formState.portfolio;
 		accountForCreation.uploadId = uploadId;
 
@@ -145,14 +125,5 @@ export default function CreateAccount({
 		});
 
 		setLoading(false);
-	}
-
-	function handleModalClose() {
-		router.push("/");
-	}
-
-	function handleUploadAnotherStatement() {
-		setFileId("");
-		setFormStep(0);
 	}
 }
