@@ -19,6 +19,7 @@ import { useCreateAccountsMutation } from "../apis/base/account/accountService";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 import UploadSuccessModal from "./uploadSuccessModal";
+import LoadingSkeleton from "../components/loadingSkeleton";
 
 type Props = {
 	uploadId: string;
@@ -48,7 +49,6 @@ export default function CreateAccount({
 	});
 
 	useEffect(() => {
-		console.log("fired");
 		if (accounts.length === accountsToBeSetup.length) {
 			setLoading(true);
 			const model: AccountsCreationModel = new AccountsCreationModel();
@@ -65,51 +65,57 @@ export default function CreateAccount({
 
 	return (
 		<div className={styles.newAccount}>
-			<h3>
-				Add a new bank account{" "}
-				{accountsToBeSetup.length > 1
-					? `${accounts.length + 1} of ${accountsToBeSetup.length}`
-					: null}
-			</h3>
 			<h4>Account number: {accountsToBeSetup[accounts.length]}</h4>
-			<form onSubmit={handleSubmit}>
-				<TextField
-					name="name"
-					label="Account Name"
-					variant="standard"
-					value={formState.name}
-					onChange={handleChange}
-					inputProps={{ maxLength: 45 }}
-					required
-				/>
-				<FormControl fullWidth>
-					<InputLabel>Portfolio</InputLabel>
-					<Select
-						name="portfolio"
-						label="Portfolio"
-						variant="standard"
-						onChange={handleSelectChange}
-						value={formState.portfolio}
-						required
-						placeholder="Portfolio"
-					>
-						{portfolios.map((x) => {
-							return (
-								<MenuItem key={x.id} value={x.id}>
-									{x.name}
-								</MenuItem>
-							);
-						})}
-					</Select>
-				</FormControl>
-				<LoadingButton
-					className={materialStyles.primaryButton}
-					type="submit"
-					loading={loading}
-				>
-					Next
-				</LoadingButton>
-			</form>
+			{accounts.length === accountsToBeSetup.length ? (
+				<h3>Processing your statement, Hang on...</h3>
+			) : (
+				<>
+					<h3>
+						Add a new bank account{" "}
+						{accountsToBeSetup.length > 1
+							? `${accounts.length + 1} of ${accountsToBeSetup.length}`
+							: null}
+					</h3>
+					<form onSubmit={handleSubmit}>
+						<TextField
+							name="name"
+							label="Account Name"
+							variant="standard"
+							value={formState.name}
+							onChange={handleChange}
+							inputProps={{ maxLength: 45 }}
+							required
+						/>
+						<FormControl fullWidth>
+							<InputLabel>Portfolio</InputLabel>
+							<Select
+								name="portfolio"
+								label="Portfolio"
+								variant="standard"
+								onChange={handleSelectChange}
+								value={formState.portfolio}
+								required
+								placeholder="Portfolio"
+							>
+								{portfolios.map((x) => {
+									return (
+										<MenuItem key={x.id} value={x.id}>
+											{x.name}
+										</MenuItem>
+									);
+								})}
+							</Select>
+						</FormControl>
+						<LoadingButton
+							className={materialStyles.primaryButton}
+							type="submit"
+							loading={loading}
+						>
+							Next
+						</LoadingButton>
+					</form>
+				</>
+			)}
 			<UploadSuccessModal
 				modalOpen={modalOpen}
 				setFormStep={setFormStep}
