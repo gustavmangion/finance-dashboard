@@ -58,8 +58,8 @@ export default function CreateAccount({
 				if ("data" in result) {
 					setModalOpen(true);
 				} else dispatch(displayError("Unable to create your account"));
+				setLoading(false);
 			});
-			setLoading(false);
 		}
 	}, [accounts, dispatch, accountsToBeSetup.length, uploadId, createAccounts]);
 

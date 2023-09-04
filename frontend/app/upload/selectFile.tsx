@@ -1,7 +1,7 @@
 import { Button, styled } from "@mui/material";
 import MaterialStyles from "../styles/material.module.scss";
 import styles from "../styles/upload.module.scss";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import { useUploadStatementMutation } from "../apis/base/upload/uploadService";
@@ -80,17 +80,19 @@ export default function SelectFile({
 				uploadStatement(file).then((result) => {
 					if ("data" in result) {
 						const response: UploadStatementResponse = result.data;
-						setFileId(response.uploadId);
 
-						if (response.needPassword) setFormStep(1);
-						else if (response.accountsToSetup.length > 0) {
+						if (response.needPassword) {
+							setFormStep(1);
+							setFileId(response.uploadId);
+						} else if (response.accountsToSetup.length > 0) {
 							setFormStep(2);
+							setFileId(response.uploadId);
 							setAccountToBeSetup(response.accountsToSetup);
 						} else setModalOpen(true);
+
+						setLoading(false);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});
 		} else setUploadError("File wasn't upload, please try again");
-
-		setLoading(false);
 	}
 }

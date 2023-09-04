@@ -91,8 +91,7 @@ export default function FilePassword({
 					setFormStep(2);
 				}
 			} else dispatch(displayError(null));
+			setLoading(false);
 		});
-
-		setLoading(false);
 	}
 }
