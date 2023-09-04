@@ -54,6 +54,7 @@ export default function CreateAccount({
 					? `${accounts.length + 1} of ${accountsToBeSetup.length}`
 					: null}
 			</h3>
+			<h4>Account number: {accountsToBeSetup[accounts.length]}</h4>
 			<form onSubmit={handleSubmit}>
 				<TextField
 					name="name"
