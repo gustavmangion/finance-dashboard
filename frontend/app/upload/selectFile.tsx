@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useUploadStatementMutation } from "../apis/base/upload/uploadService";
 import { displayError } from "../stores/notificationSlice";
 import { UploadStatementResponse } from "../apis/base/upload/types";
+import UploadSuccessModal from "./uploadSuccessModal";
 
 type Props = {
 	setFormStep: (val: number) => void;
@@ -28,6 +29,7 @@ export default function SelectFile({ setFormStep, setFileId }: Props) {
 
 	const [loading, setLoading] = useState(false);
 	const [uploadError, setUploadError] = useState("");
+	const [modalOpen, setModalOpen] = useState(false);
 
 	const dispatch = useDispatch();
 	const [uploadStatement] = useUploadStatementMutation();
@@ -55,6 +57,11 @@ export default function SelectFile({ setFormStep, setFileId }: Props) {
 			{uploadError !== "" ? (
 				<h4 className={styles.errorMessage}>{uploadError}</h4>
 			) : null}
+			<UploadSuccessModal
+				modalOpen={modalOpen}
+				setFormStep={setFormStep}
+				setFileId={setFileId}
+			/>
 		</div>
 	);
 
@@ -71,7 +78,7 @@ export default function SelectFile({ setFormStep, setFileId }: Props) {
 						setFileId(response.uploadId);
 
 						if (response.needPassword) setFormStep(1);
-						else setFormStep(2);
+						else setModalOpen(true);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});
 		} else setUploadError("File wasn't upload, please try again");
