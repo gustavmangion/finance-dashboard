@@ -44,6 +44,7 @@ export default function FilePassword({
 					type="password"
 					variant="standard"
 					value={passwordInput}
+					required
 					onChange={(e) => setPasswordInput(e.target.value)}
 				/>
 				{displayPasswordIncorrect ? (
