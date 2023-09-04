@@ -47,7 +47,7 @@ namespace api.Controllers
             );
 
             if (string.IsNullOrEmpty(content))
-                return Ok(HandleNeedStatementPassword(file));
+                return Ok(HandleNeedStatementPassword(file, userId));
 
             List<string> accountsToBeSetup = GetNotSetupAccounts(
                 content,
