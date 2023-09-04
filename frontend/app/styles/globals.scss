@@ -93,6 +93,14 @@ input {
 	}
 }
 
+.MuiFormControl-root {
+	margin-top: 0.5em;
+}
+
+.MuiInputLabel-shrink {
+	transform: translate(1px, 0px) scale(0.75);
+}
+
 .MuiFormHelperText-root {
 	color: $black;
 }
