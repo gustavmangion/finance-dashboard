@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 import UploadSuccessModal from "./uploadSuccessModal";
 import LoadingSkeleton from "../components/loadingSkeleton";
+import UploadingSpinner from "./uploadingSpinner";
 
 type Props = {
 	uploadId: string;
@@ -67,7 +68,7 @@ export default function CreateAccount({
 		<div className={styles.newAccount}>
 			<h4>Account number: {accountsToBeSetup[accounts.length]}</h4>
 			{accounts.length === accountsToBeSetup.length ? (
-				<h3>Processing your statement, Hang on...</h3>
+				<UploadingSpinner />
 			) : (
 				<>
 					<h3>

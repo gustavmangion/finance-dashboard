@@ -8,6 +8,7 @@ import { useUploadStatementMutation } from "../apis/base/upload/uploadService";
 import { displayError } from "../stores/notificationSlice";
 import { UploadStatementResponse } from "../apis/base/upload/types";
 import UploadSuccessModal from "./uploadSuccessModal";
+import UploadingSpinner from "./uploadingSpinner";
 
 type Props = {
 	setFormStep: (val: number) => void;
@@ -42,26 +43,28 @@ export default function SelectFile({
 	return (
 		<div className={styles.upload}>
 			{loading ? (
-				<h3>Processing your statement, Hang on...</h3>
+				<UploadingSpinner />
 			) : (
-				<h3>Select the file you want to upload</h3>
-			)}
+				<>
+					<h3>Select the file you want to upload</h3>
 
-			<LoadingButton
-				className={MaterialStyles.primaryButton}
-				component="label"
-				loading={loading}
-			>
-				Upload
-				<VisuallyHiddenInput
-					type="file"
-					accept="application/pdf"
-					onChange={handleUploadFile}
-				/>
-			</LoadingButton>
-			{uploadError !== "" ? (
-				<h4 className={styles.errorMessage}>{uploadError}</h4>
-			) : null}
+					<LoadingButton
+						className={MaterialStyles.primaryButton}
+						component="label"
+						loading={loading}
+					>
+						Upload
+						<VisuallyHiddenInput
+							type="file"
+							accept="application/pdf"
+							onChange={handleUploadFile}
+						/>
+					</LoadingButton>
+					{uploadError !== "" ? (
+						<h4 className={styles.errorMessage}>{uploadError}</h4>
+					) : null}
+				</>
+			)}
 			<UploadSuccessModal
 				modalOpen={modalOpen}
 				setFormStep={setFormStep}

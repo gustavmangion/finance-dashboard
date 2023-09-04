@@ -32,3 +32,12 @@
 	color: $error-red;
 	font-size: 1.2rem;
 }
+
+.spinner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	span {
+		margin: 1em;
+	}
+}
