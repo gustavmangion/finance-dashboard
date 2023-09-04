@@ -4,7 +4,6 @@
     {
         public Guid uploadId { get; set; }
         public bool needPassword { get; set; }
-        public bool passwordIncorrect { get; set; }
         public List<string> accountsToSetup { get; set; } = new List<string>();
     }
 }

@@ -82,7 +82,7 @@ export default function FilePassword({
 		setNewPassword(newStatementPassword).then((result) => {
 			if ("data" in result) {
 				const response: UploadStatementResponse = result.data;
-				if (response.passwordIncorrect) setDisplayPasswordIncorrect(true);
+				if (response.needPassword) setDisplayPasswordIncorrect(true);
 				else if (response.accountsToSetup.length === 0) setModalOpen(true);
 				else {
 					setAccountsToBeSetup(response.accountsToSetup);
