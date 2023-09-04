@@ -36,16 +36,19 @@ namespace api.Controllers
 
             string userId = GetUserIdFromToken();
 
-            List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
-
+            List<string> statementCodes = _accountRepository
+                .GetStatementCodes(userId)
+                .Select(x => x.Code)
+                .ToList();
             string content = StatementHelper.OpenStatementFile(
                 file.OpenReadStream(),
-                accounts.Select(x => x.StatementCode).ToList()
+                statementCodes
             );
 
             if (string.IsNullOrEmpty(content))
                 return Ok(HandleNeedStatementPassword(file, userId));
 
+            List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
             List<string> accountsToBeSetup = GetNotSetupAccounts(
                 content,
                 accounts.Select(x => x.AccountNumber).ToList()
@@ -82,13 +85,11 @@ namespace api.Controllers
             }
 
             string content = string.Empty;
+            string code = StatementHelper.EncryptPasscode(model.Password);
 
             using (Stream stream = new FileStream(path, FileMode.Open))
             {
-                content = StatementHelper.OpenStatementFile(
-                    stream,
-                    new List<string>() { model.Password }
-                );
+                content = StatementHelper.OpenStatementFile(stream, new List<string>() { code });
             }
 
             if (string.IsNullOrEmpty(content))
@@ -96,6 +97,11 @@ namespace api.Controllers
                 ModelState.AddModelError("message", "Incorrect Password");
                 return BadRequest(ModelState);
             }
+
+            _accountRepository.AddStatementCode(
+                new StatementCode() { UserId = userId, Code = code, }
+            );
+            _accountRepository.SaveChanges();
 
             List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
             List<string> accountsToBeSetup = GetNotSetupAccounts(

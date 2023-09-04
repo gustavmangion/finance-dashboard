@@ -41,6 +41,16 @@ namespace api.Repositories
             _context.Transactions.AddRange(transactions);
         }
 
+        public void AddStatementCode(StatementCode statementCode)
+        {
+            _context.StatementCodes.Add(statementCode);
+        }
+
+        public List<StatementCode> GetStatementCodes(string userId)
+        {
+            return _context.StatementCodes.Where(x => x.UserId == userId).ToList();
+        }
+
         public bool PendingStatementExists(string userId, Guid id)
         {
             return _context.Statements.Where(x => x.UserId == userId && x.Id == id).Any();

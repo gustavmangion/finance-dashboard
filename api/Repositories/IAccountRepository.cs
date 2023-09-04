@@ -9,6 +9,8 @@ namespace api.Repositories
         Statement GetStatement(Guid id);
         void AddStatement(Statement statement);
         void AddTransactions(List<Transaction> transactions);
+        void AddStatementCode(StatementCode statementCode);
+        List<StatementCode> GetStatementCodes(string userId);
         bool PendingStatementExists(string userId, Guid id);
         bool SaveChanges();
     }
