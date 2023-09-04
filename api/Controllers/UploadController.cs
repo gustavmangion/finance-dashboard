@@ -107,6 +107,7 @@ namespace api.Controllers
                 content,
                 accounts.Select(x => x.AccountNumber).ToList()
             );
+            accountsToBeSetup.RemoveAt(0); //Remove page part
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
 
