@@ -38,7 +38,7 @@ namespace api.Controllers
                 ModelState.AddModelError("message", "Upload does not exists");
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
-            string encryptedStatementCode = StatementCodeCryptoHelper.EncryptPasscode(model.StatementCode);
+            string encryptedStatementCode = StatementHelper.EncryptPasscode(model.StatementCode);
 
             Account newAccount = new Account();
             newAccount.Name = model.Name;

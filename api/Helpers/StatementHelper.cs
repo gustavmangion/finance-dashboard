@@ -4,7 +4,7 @@ using System.Text;
 
 namespace api.Helpers
 {
-    public class StatementCodeCryptoHelper
+    public class StatementHelper
     {
         private static byte[] salt = Encoding.Unicode.GetBytes("WT7yGYvbg6");
 
