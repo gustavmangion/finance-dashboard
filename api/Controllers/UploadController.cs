@@ -42,7 +42,7 @@ namespace api.Controllers
             List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
 
             string content = StatementHelper.OpenStatementFile(
-                file,
+                file.OpenReadStream(),
                 accounts.Select(x => x.StatementCode).ToList()
             );
 
