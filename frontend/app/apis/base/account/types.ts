@@ -1,6 +1,9 @@
-export class AccountCreationModel {
-	uploadId: string = "";
+export class NewAccountModel {
 	portfolioId: string = "";
 	name: string = "";
-	statementCode: string = "";
+}
+
+export class AccountsCreationModel {
+	accounts: NewAccountModel[] = [];
+	uploadId: string = "";
 }

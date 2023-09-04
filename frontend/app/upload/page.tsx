@@ -43,6 +43,7 @@ export default function UploadPage() {
 						formStep={formStep}
 						setFormStep={setFormStep}
 						setFileId={setFileId}
+						accountsToBeSetup={accountsToBeSetup}
 					/>
 				)}
 			</div>

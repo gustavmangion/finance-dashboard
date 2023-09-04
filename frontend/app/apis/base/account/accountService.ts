@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getHeaders from "../headers";
-import { AccountCreationModel } from "./types";
+import { AccountsCreationModel } from "./types";
 
 export const accountApi = createApi({
 	reducerPath: "accountApi",
@@ -11,8 +11,8 @@ export const accountApi = createApi({
 		},
 	}),
 	endpoints: (builder) => ({
-		createAccount: builder.mutation({
-			query: (payload: AccountCreationModel) => ({
+		createAccounts: builder.mutation({
+			query: (payload: AccountsCreationModel) => ({
 				url: "/",
 				method: "POST",
 				body: { ...payload },
@@ -21,4 +21,4 @@ export const accountApi = createApi({
 	}),
 });
 
-export const { useCreateAccountMutation } = accountApi;
+export const { useCreateAccountsMutation } = accountApi;

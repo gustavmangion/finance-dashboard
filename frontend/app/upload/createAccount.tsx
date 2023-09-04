@@ -1,11 +1,7 @@
 import {
-	Button,
 	FormControl,
-	FormLabel,
-	Input,
 	InputLabel,
 	MenuItem,
-	Modal,
 	Select,
 	SelectChangeEvent,
 	TextField,
@@ -15,11 +11,13 @@ import styles from "../styles/upload.module.scss";
 import { useAppSelector } from "../hooks/reduxHook";
 import { LoadingButton } from "@mui/lab";
 import materialStyles from "../styles/material.module.scss";
-import { AccountCreationModel } from "../apis/base/account/types";
-import { useCreateAccountMutation } from "../apis/base/account/accountService";
+import {
+	AccountsCreationModel,
+	NewAccountModel,
+} from "../apis/base/account/types";
+import { useCreateAccountsMutation } from "../apis/base/account/accountService";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
-import { useRouter } from "next/navigation";
 import UploadSuccessModal from "./uploadSuccessModal";
 
 type Props = {
@@ -27,6 +25,7 @@ type Props = {
 	formStep: number;
 	setFormStep: (val: number) => void;
 	setFileId: (val: string) => void;
+	accountsToBeSetup: string[];
 };
 
 export default function CreateAccount({
@@ -34,14 +33,16 @@ export default function CreateAccount({
 	formStep,
 	setFormStep,
 	setFileId,
+	accountsToBeSetup,
 }: Props) {
 	const [loading, setLoading] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
+	const [accounts, setAccounts] = useState<NewAccountModel[]>([]);
 	const dispatch = useDispatch();
 
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
-	const [createAccount] = useCreateAccountMutation();
+	const [createAccounts] = useCreateAccountsMutation();
 
 	const [formState, setFormState] = useState({
 		portfolio: portfolios.length === 1 ? portfolios[0].id : "",
@@ -49,7 +50,12 @@ export default function CreateAccount({
 	});
 	return (
 		<div className={styles.newAccount}>
-			<h3>Add a new bank account</h3>
+			<h3>
+				Add a new bank account{" "}
+				{accountsToBeSetup.length > 1
+					? `${accounts.length + 1} of ${accountsToBeSetup.length}`
+					: null}
+			</h3>
 			<form onSubmit={handleSubmit}>
 				<TextField
 					name="name"
@@ -85,7 +91,7 @@ export default function CreateAccount({
 					type="submit"
 					loading={loading}
 				>
-					Save
+					Next
 				</LoadingButton>
 			</form>
 			<UploadSuccessModal
@@ -113,18 +119,31 @@ export default function CreateAccount({
 
 	function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
-		setLoading(true);
-		const accountForCreation: AccountCreationModel = new AccountCreationModel();
-		accountForCreation.name = formState.name;
-		accountForCreation.portfolioId = formState.portfolio;
-		accountForCreation.uploadId = uploadId;
+		const newAccount: NewAccountModel = new NewAccountModel();
+		newAccount.name = formState.name;
+		newAccount.portfolioId = formState.portfolio;
 
-		createAccount(accountForCreation).then((result) => {
-			if ("data" in result) {
-				setModalOpen(true);
-			} else dispatch(displayError("Unable to create your account"));
-		});
+		setAccounts((current) => [...current, newAccount]);
 
-		setLoading(false);
+		if (accounts.length < accountsToBeSetup.length)
+			setFormState({
+				...formState,
+				name: "",
+			});
+		else {
+			setLoading(true);
+
+			const model: AccountsCreationModel = new AccountsCreationModel();
+			model.accounts = accounts;
+			model.uploadId = uploadId;
+
+			createAccounts(model).then((result) => {
+				if ("data" in result) {
+					setModalOpen(true);
+				} else dispatch(displayError("Unable to create your account"));
+			});
+
+			setLoading(false);
+		}
 	}
 }
