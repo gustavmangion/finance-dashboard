@@ -1,6 +1,8 @@
 import {
+	FormControl,
 	FormLabel,
 	Input,
+	InputLabel,
 	MenuItem,
 	Select,
 	SelectChangeEvent,
@@ -13,16 +15,15 @@ import { LoadingButton } from "@mui/lab";
 import materialStyles from "../styles/material.module.scss";
 
 export default function CreateAccount() {
-	const [formState, setFormState] = useState({
-		portfolio: "",
-		name: "",
-		password: "",
-	});
-
 	const [loading, setLoading] = useState(false);
 
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
-	const defaultPortfolio = portfolios.length === 1 ? portfolios[0].id : "";
+
+	const [formState, setFormState] = useState({
+		portfolio: portfolios.length === 1 ? portfolios[0].id : "",
+		name: "",
+		password: "",
+	});
 	return (
 		<div className={styles.newAccount}>
 			<h3>Add a new bank account</h3>
@@ -33,6 +34,7 @@ export default function CreateAccount() {
 					variant="standard"
 					value={formState.name}
 					onChange={handleChange}
+					inputProps={{ maxLength: 45 }}
 					required
 				/>
 				<TextField
@@ -43,22 +45,26 @@ export default function CreateAccount() {
 					value={formState.password}
 					onChange={handleChange}
 				/>
-				<Select
-					name="portfolio"
-					label="Portfolio"
-					variant="standard"
-					onChange={handleSelectChange}
-					required
-					defaultValue={defaultPortfolio}
-				>
-					{portfolios.map((x) => {
-						return (
-							<MenuItem key={x.id} value={x.id}>
-								{x.name}
-							</MenuItem>
-						);
-					})}
-				</Select>
+				<FormControl fullWidth>
+					<InputLabel>Portfolio</InputLabel>
+					<Select
+						name="portfolio"
+						label="Portfolio"
+						variant="standard"
+						onChange={handleSelectChange}
+						value={formState.portfolio}
+						required
+						placeholder="Portfolio"
+					>
+						{portfolios.map((x) => {
+							return (
+								<MenuItem key={x.id} value={x.id}>
+									{x.name}
+								</MenuItem>
+							);
+						})}
+					</Select>
+				</FormControl>
 				<LoadingButton
 					className={materialStyles.primaryButton}
 					type="submit"

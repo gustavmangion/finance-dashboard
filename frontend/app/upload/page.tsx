@@ -13,7 +13,7 @@ export default function UploadPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
-	const [formStep, setFormStep] = useState(0);
+	const [formStep, setFormStep] = useState(1);
 	const [fileId, setFileId] = useState("");
 
 	useEffect(() => {
