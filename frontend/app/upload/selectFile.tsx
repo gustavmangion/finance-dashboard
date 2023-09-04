@@ -12,9 +12,14 @@ import UploadSuccessModal from "./uploadSuccessModal";
 type Props = {
 	setFormStep: (val: number) => void;
 	setFileId: (val: string) => void;
+	setAccountToBeSetup: (val: string[]) => void;
 };
 
-export default function SelectFile({ setFormStep, setFileId }: Props) {
+export default function SelectFile({
+	setFormStep,
+	setFileId,
+	setAccountToBeSetup,
+}: Props) {
 	const VisuallyHiddenInput = styled("input")`
 		clip: rect(0 0 0 0);
 		clip-path: inset(50%);
@@ -78,8 +83,10 @@ export default function SelectFile({ setFormStep, setFileId }: Props) {
 						setFileId(response.uploadId);
 
 						if (response.needPassword) setFormStep(1);
-						else if (response.accountsToSetup.length > 0) setFormStep(2);
-						else setModalOpen(true);
+						else if (response.accountsToSetup.length > 0) {
+							setFormStep(2);
+							setAccountToBeSetup(response.accountsToSetup);
+						} else setModalOpen(true);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});
 		} else setUploadError("File wasn't upload, please try again");

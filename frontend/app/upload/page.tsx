@@ -29,7 +29,11 @@ export default function UploadPage() {
 			<div className="container">
 				<h2>Upload your bank statement</h2>
 				{formStep === 0 ? (
-					<SelectFile setFormStep={setFormStep} setFileId={setFileId} />
+					<SelectFile
+						setFormStep={setFormStep}
+						setFileId={setFileId}
+						setAccountToBeSetup={setAccountsToBeSetup}
+					/>
 				) : formStep === 1 ? (
 					<FilePassword
 						fileId={fileId}
