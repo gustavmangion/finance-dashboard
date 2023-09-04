@@ -13,12 +13,14 @@ import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 
 type Props = {
+	fileId: string;
 	setFormStep: (val: number) => void;
 	setAccountsToBeSetup: (val: string[]) => void;
 	setFileId: (val: string) => void;
 };
 
 export default function FilePassword({
+	fileId,
 	setFormStep,
 	setAccountsToBeSetup,
 	setFileId,
@@ -68,6 +70,7 @@ export default function FilePassword({
 		setLoading(true);
 		const newStatementPassword: SetNewStatementPassword =
 			new SetNewStatementPassword();
+		newStatementPassword.uploadId = fileId;
 		newStatementPassword.password = passwordInput;
 
 		setNewPassword(newStatementPassword).then((result) => {

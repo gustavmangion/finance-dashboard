@@ -10,6 +10,7 @@ export class UploadStatementResponse {
 }
 
 export class SetNewStatementPassword {
+	uploadId: string = "";
 	password: string = "";
 }
 
