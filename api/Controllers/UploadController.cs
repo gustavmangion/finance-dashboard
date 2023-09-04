@@ -82,11 +82,6 @@ namespace api.Controllers
             _accountRepository.AddTransactions(transactions);
         }
 
-        private object? HandleNeedStatementPassword(IFormFile file)
-        {
-            throw new NotImplementedException();
-        }
-
         private List<string> GetNotSetupAccounts(string content, List<string> accountNumbers)
         {
             List<string> notSetup = new List<string>();
@@ -100,6 +95,17 @@ namespace api.Controllers
             }
 
             return notSetup;
+        }
+
+        private object? HandleNeedStatementPassword(IFormFile file, string userId)
+        {
+            Guid statementId = SaveStatementAndFile(file, userId);
+
+            return new StatementUploadResultModel()
+            {
+                uploadId = statementId,
+                needPassword = true,
+            };
         }
 
         private StatementUploadResultModel HandleNewAccount(
