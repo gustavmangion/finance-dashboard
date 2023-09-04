@@ -4,14 +4,12 @@ import { useRouter } from "next/navigation";
 
 type Props = {
 	modalOpen: boolean;
-	formStep: number;
 	setFormStep: (val: number) => void;
 	setFileId: (val: string) => void;
 };
 
 export default function UploadSuccessModal({
 	modalOpen,
-	formStep,
 	setFormStep,
 	setFileId,
 }: Props) {
@@ -43,6 +41,6 @@ export default function UploadSuccessModal({
 
 	function handleUploadAnotherStatement() {
 		setFileId("");
-		setFormStep(formStep + 1);
+		setFormStep(0);
 	}
 }
