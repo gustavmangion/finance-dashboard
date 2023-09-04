@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import SelectFile from "./selectFile";
 import CreateAccount from "./createAccount";
+import FilePassword from "./filePassword";
 
 export default function UploadPage() {
 	const authStatus = useSecurePage();
@@ -28,9 +29,16 @@ export default function UploadPage() {
 				<h2>Upload your bank statement</h2>
 				{formStep === 0 ? (
 					<SelectFile setFormStep={setFormStep} setFileId={setFileId} />
+				) : formStep === 1 ? (
+					<FilePassword
+						formStep={formStep}
+						setFormStep={setFormStep}
+						fileId={fileId}
+					/>
 				) : (
 					<CreateAccount
 						uploadId={fileId}
+						formStep={formStep}
 						setFormStep={setFormStep}
 						setFileId={setFileId}
 					/>

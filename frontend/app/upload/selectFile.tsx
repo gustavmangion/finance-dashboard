@@ -70,7 +70,7 @@ export default function SelectFile({ setFormStep, setFileId }: Props) {
 						const response: UploadStatementResponse = result.data;
 						setFileId(response.uploadId);
 
-						if (response.isNewAccount) setFormStep(1);
+						if (response.needPassword) setFormStep(1);
 						else setFormStep(2);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});
