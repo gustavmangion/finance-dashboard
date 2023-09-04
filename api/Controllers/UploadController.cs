@@ -4,9 +4,6 @@ using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security;
-using UglyToad.PdfPig;
-using UglyToad.PdfPig.Content;
 
 namespace api.Controllers
 {
@@ -56,6 +53,65 @@ namespace api.Controllers
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(file, userId, accountsToBeSetup));
 
+            SaveAccountTransactions(content, accounts);
+
+            return NoContent();
+        }
+
+        [HttpPost("StatementPassword")]
+        public ActionResult SetStatementPassword(StatementNewPasswordModel model)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (model.UploadId == new Guid())
+                ModelState.AddModelError("message", "Upload id is required");
+            else if (!_accountRepository.PendingStatementExists(userId, model.UploadId))
+                ModelState.AddModelError("message", "Upload id does not exist");
+            if (string.IsNullOrEmpty(model.Password))
+                ModelState.AddModelError("message", "Password is required");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string path = AppSettingHelper.getStatementFileDirectory(model.UploadId);
+
+            if (!System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError("message", "File no longer exists");
+                return BadRequest(ModelState);
+            }
+
+            string content = string.Empty;
+
+            using (Stream stream = new FileStream(path, FileMode.Open))
+            {
+                content = StatementHelper.OpenStatementFile(
+                    stream,
+                    new List<string>() { model.Password }
+                );
+            }
+
+            if (string.IsNullOrEmpty(content))
+            {
+                ModelState.AddModelError("message", "Incorrect Password");
+                return BadRequest(ModelState);
+            }
+
+            List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
+            List<string> accountsToBeSetup = GetNotSetupAccounts(
+                content,
+                accounts.Select(x => x.AccountNumber).ToList()
+            );
+            if (accountsToBeSetup.Count > 0)
+                return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
+
+            SaveAccountTransactions(content, accounts);
+
+            return NoContent();
+        }
+
+        private void SaveAccountTransactions(string content, List<Account> accounts)
+        {
             List<Account> accountTransactions = StatementHelper.GetAccountsAndTransactions(content);
             foreach (Account account in accountTransactions)
             {
@@ -67,13 +123,6 @@ namespace api.Controllers
             }
 
             _accountRepository.SaveChanges();
-
-            return NoContent();
-        }
-
-        private Account HandleSaveAccount(List<Account> accounts)
-        {
-            throw new NotImplementedException();
         }
 
         private void HandleAddTransactions(List<Transaction> transactions, Guid accountId)
@@ -116,10 +165,18 @@ namespace api.Controllers
         {
             Guid statementId = SaveStatementAndFile(file, userId);
 
+            return HandleNewAccount(statementId, userId, accountsToSetup);
+        }
+
+        private StatementUploadResultModel HandleNewAccount(
+            Guid fileId,
+            string userId,
+            List<string> accountsToSetup
+        )
+        {
             return new StatementUploadResultModel()
             {
-                uploadId = statementId,
-                needPassword = false,
+                uploadId = fileId,
                 accountsToSetup = accountsToSetup
             };
         }
