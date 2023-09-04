@@ -19,5 +19,6 @@ namespace api.Entities
         public string StatementCode { get; set; }
 
         public virtual List<Statement> Statements { get; set; }
+        public virtual List<Transaction> Transactions { get; set; }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Security;
+﻿using api.Entities;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using UglyToad.PdfPig;
+using UglyToad.PdfPig.Content;
 
 namespace api.Helpers
 {
@@ -10,19 +13,31 @@ namespace api.Helpers
 
         public static string EncryptPasscode(string passcode)
         {
-            if(string.IsNullOrEmpty(passcode))  return passcode; 
+            if (string.IsNullOrEmpty(passcode))
+                return passcode;
 
             string encryptedCode = string.Empty;
             byte[] codeBytes = Encoding.Unicode.GetBytes(passcode);
             using (Aes encryptor = Aes.Create())
             {
-                Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(AppSettingHelper.StatementCodeKey, salt, 1000, HashAlgorithmName.SHA256);
+                Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(
+                    AppSettingHelper.StatementCodeKey,
+                    salt,
+                    1000,
+                    HashAlgorithmName.SHA256
+                );
                 encryptor.Key = rfc.GetBytes(32);
                 encryptor.IV = rfc.GetBytes(16);
 
-                using(MemoryStream stream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
-                    using (CryptoStream cryptoStream = new CryptoStream(stream, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    using (
+                        CryptoStream cryptoStream = new CryptoStream(
+                            stream,
+                            encryptor.CreateEncryptor(),
+                            CryptoStreamMode.Write
+                        )
+                    )
                     {
                         cryptoStream.Write(codeBytes, 0, codeBytes.Length);
                         cryptoStream.Close();
@@ -34,32 +49,88 @@ namespace api.Helpers
             return encryptedCode;
         }
 
-        public static SecureString? DecryptPasscode(string encryptedCode)
+        private static string DecryptPasscode(string encryptedCode)
         {
-            if (string.IsNullOrEmpty(encryptedCode)) return null;
+            if (string.IsNullOrEmpty(encryptedCode))
+                return string.Empty;
 
             SecureString decryptedCode = new SecureString();
             byte[] codeBytes = Convert.FromBase64String(encryptedCode);
-            using(Aes encryptor = Aes.Create())
+            using (Aes encryptor = Aes.Create())
             {
-                Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(AppSettingHelper.StatementCodeKey, salt, 1000, HashAlgorithmName.SHA256);
+                Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(
+                    AppSettingHelper.StatementCodeKey,
+                    salt,
+                    1000,
+                    HashAlgorithmName.SHA256
+                );
                 encryptor.Key = rfc.GetBytes(32);
                 encryptor.IV = rfc.GetBytes(16);
 
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    using (CryptoStream cryptoStream = new CryptoStream(stream, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    using (
+                        CryptoStream cryptoStream = new CryptoStream(
+                            stream,
+                            encryptor.CreateEncryptor(),
+                            CryptoStreamMode.Write
+                        )
+                    )
                     {
                         cryptoStream.Write(codeBytes, 0, codeBytes.Length);
                         cryptoStream.Close();
                     }
 
-                    foreach(char c in Encoding.Unicode.GetChars(stream.ToArray()))
-                        decryptedCode.AppendChar(c);
+                    return Encoding.Unicode.GetString(stream.ToArray());
                 }
-
-                return decryptedCode;
             }
+        }
+
+        public static string OpenStatementFile(IFormFile file, List<string> passwords)
+        {
+            List<string> decryptedPasswords = new List<string>();
+
+            foreach (string passsword in passwords)
+                decryptedPasswords.Add(DecryptPasscode(passsword));
+
+            try
+            {
+                using (
+                    PdfDocument document = PdfDocument.Open(
+                        file.OpenReadStream(),
+                        new ParsingOptions { Passwords = decryptedPasswords }
+                    )
+                )
+                {
+                    string content = string.Empty;
+                    int pageCount = document.NumberOfPages;
+
+                    for (int i = 1; i < pageCount; i++)
+                    {
+                        //Page numbering is 1 indexed
+                        Page page = document.GetPage(i + 1);
+                        content += page.Text;
+                    }
+                    return content;
+                }
+            }
+            catch (Exception e)
+            {
+                if (
+                    e.Message.Equals(
+                        "The document was encrypted and none of the provided passwords were the user or owner password."
+                    )
+                )
+                {
+                    return string.Empty;
+                }
+                throw;
+            }
+        }
+
+        public static List<Account> GetAccountsAndTransactions(string content)
+        {
+            return new List<Account>();
         }
     }
 }

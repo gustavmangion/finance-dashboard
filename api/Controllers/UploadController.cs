@@ -1,10 +1,12 @@
 ﻿using api.Entities;
+using api.Helpers;
 using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security;
 using UglyToad.PdfPig;
+using UglyToad.PdfPig.Content;
 
 namespace api.Controllers
 {
@@ -37,17 +39,54 @@ namespace api.Controllers
 
             string userId = GetUserIdFromToken();
 
-            List<string> passwords = _accountRepository
-                .GetAccounts(userId)
-                .Select(x => x.StatementCode)
-                .ToList();
+            List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
 
-            string content = OpenStatementFile(file, passwords);
+            string content = StatementHelper.OpenStatementFile(
+                file,
+                accounts.Select(x => x.StatementCode).ToList()
+            );
 
             if (string.IsNullOrEmpty(content))
+                return Ok(HandleNeedStatementPassword(file));
+
+            List<string> accountsToBeSetup = GetNotSetupAccounts(content);
+            if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(file, userId));
 
+            List<Account> accountTransactions = StatementHelper.GetAccountsAndTransactions(content);
+            foreach (Account account in accountTransactions)
+            {
+                Guid accountId = accounts
+                    .Where(x => x.AccountNumber == account.AccountNumber)
+                    .First()
+                    .Id;
+                HandleAddTransactions(account.Transactions, accountId);
+            }
+
+            _accountRepository.SaveChanges();
+
             return NoContent();
+        }
+
+        private Account HandleSaveAccount(List<Account> accounts)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleAddTransactions(List<Transaction> transactions, Guid accountId)
+        {
+            transactions.ForEach(x => x.AccountId = accountId);
+            _accountRepository.AddTransactions(transactions);
+        }
+
+        private object? HandleNeedStatementPassword(IFormFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        private List<string> GetNotSetupAccounts(string content)
+        {
+            throw new NotImplementedException();
         }
 
         private StatementUploadResultModel HandleNewAccount(IFormFile file, string userId)
@@ -69,34 +108,6 @@ namespace api.Controllers
                 uploadId = statement.Id,
                 isNewAccount = true
             };
-        }
-
-        private string OpenStatementFile(IFormFile file, List<string> passwords)
-        {
-            try
-            {
-                using (
-                    PdfDocument document = PdfDocument.Open(
-                        file.OpenReadStream(),
-                        new ParsingOptions { Passwords = passwords }
-                    )
-                )
-                {
-                    return "content";
-                }
-            }
-            catch (Exception e)
-            {
-                if (
-                    e.Message.Equals(
-                        "The document was encrypted and none of the provided passwords were the user or owner password."
-                    )
-                )
-                {
-                    return string.Empty;
-                }
-                throw;
-            }
         }
     }
 }

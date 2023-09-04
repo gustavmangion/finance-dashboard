@@ -8,6 +8,7 @@ namespace api.Repositories
         void AddAccount(Account account);
         Statement GetStatement(Guid id);
         void AddStatement(Statement statement);
+        void AddTransactions(List<Transaction> transactions);
         bool PendingStatementExists(string userId, Guid id);
         bool SaveChanges();
     }

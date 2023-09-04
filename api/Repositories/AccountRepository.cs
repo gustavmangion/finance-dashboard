@@ -36,6 +36,11 @@ namespace api.Repositories
             _context.Statements.Add(statement);
         }
 
+        public void AddTransactions(List<Transaction> transactions)
+        {
+            _context.Transactions.AddRange(transactions);
+        }
+
         public bool PendingStatementExists(string userId, Guid id)
         {
             return _context.Statements.Where(x => x.UserId == userId && x.Id == id).Any();
@@ -45,7 +50,5 @@ namespace api.Repositories
         {
             return _context.SaveChanges() >= 0;
         }
-
-        
     }
 }

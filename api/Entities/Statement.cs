@@ -7,5 +7,7 @@
         public virtual Account Account { get; set; }
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
         public string UserId { get; set; }
+
+        public virtual List<Transaction> Transactions { get; set; }
     }
 }
