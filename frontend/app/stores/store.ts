@@ -17,6 +17,7 @@ import {
 } from "redux-persist";
 import { userApi } from "../apis/base/user/userService";
 import { portfolioApi } from "../apis/base/portfolio/portfolioService";
+import { accountApi } from "../apis/base/account/accountService";
 
 const persistConfig = {
 	key: "root",
@@ -30,6 +31,7 @@ export const store = configureStore({
 		[uploadApi.reducerPath]: uploadApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
 		[portfolioApi.reducerPath]: portfolioApi.reducer,
+		[accountApi.reducerPath]: accountApi.reducer,
 		navBarReducer,
 		userReducer,
 		notificationReducer,
@@ -44,7 +46,8 @@ export const store = configureStore({
 		}).concat(
 			uploadApi.middleware,
 			userApi.middleware,
-			portfolioApi.middleware
+			portfolioApi.middleware,
+			accountApi.middleware
 		),
 });
 

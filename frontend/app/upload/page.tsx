@@ -29,7 +29,7 @@ export default function UploadPage() {
 				{formStep === 0 ? (
 					<SelectFile setFormStep={setFormStep} setFileId={setFileId} />
 				) : (
-					<CreateAccount />
+					<CreateAccount uploadId={fileId} />
 				)}
 			</div>
 		);
