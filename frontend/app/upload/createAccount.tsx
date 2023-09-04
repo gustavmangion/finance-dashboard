@@ -23,9 +23,15 @@ import { useRouter } from "next/navigation";
 
 type Props = {
 	uploadId: string;
+	setFormStep: (val: number) => void;
+	setFileId: (val: string) => void;
 };
 
-export default function CreateAccount({ uploadId }: Props) {
+export default function CreateAccount({
+	uploadId,
+	setFormStep,
+	setFileId,
+}: Props) {
 	const [loading, setLoading] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const dispatch = useDispatch();
@@ -98,6 +104,12 @@ export default function CreateAccount({ uploadId }: Props) {
 					>
 						Continue
 					</Button>
+					<Button
+						className={materialStyles.primaryButton}
+						onClick={handleUploadAnotherStatement}
+					>
+						Upload another
+					</Button>
 				</div>
 			</Modal>
 		</div>
@@ -124,7 +136,7 @@ export default function CreateAccount({ uploadId }: Props) {
 		accountForCreation.name = formState.name;
 		accountForCreation.statementCode = formState.password;
 		accountForCreation.portfolioId = formState.portfolio;
-		accountForCreation.uploadId = "08dbac4b-66c8-4e21-860d-5290d90c9b00";
+		accountForCreation.uploadId = uploadId;
 
 		createAccount(accountForCreation).then((result) => {
 			if ("data" in result) {
@@ -137,5 +149,10 @@ export default function CreateAccount({ uploadId }: Props) {
 
 	function handleModalClose() {
 		router.push("/");
+	}
+
+	function handleUploadAnotherStatement() {
+		setFileId("");
+		setFormStep(0);
 	}
 }

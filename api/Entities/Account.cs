@@ -9,13 +9,13 @@ namespace api.Entities
         public virtual Portfolio Portfolio { get; set; }
 
         [MaxLength(17)]
-        public string AccountNumber { get; set; }
+        public string? AccountNumber { get; set; }
 
         [MaxLength(45)]
         public string Name { get; set; }
 
         [MaxLength(45)]
-        public string BankName { get; set; }
+        public string? BankName { get; set; }
         public string StatementCode { get; set; }
 
         public virtual List<Statement> Statements { get; set; }

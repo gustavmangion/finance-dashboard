@@ -13,7 +13,7 @@ export default function UploadPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
-	const [formStep, setFormStep] = useState(1);
+	const [formStep, setFormStep] = useState(0);
 	const [fileId, setFileId] = useState("");
 
 	useEffect(() => {
@@ -29,7 +29,11 @@ export default function UploadPage() {
 				{formStep === 0 ? (
 					<SelectFile setFormStep={setFormStep} setFileId={setFileId} />
 				) : (
-					<CreateAccount uploadId={fileId} />
+					<CreateAccount
+						uploadId={fileId}
+						setFormStep={setFormStep}
+						setFileId={setFileId}
+					/>
 				)}
 			</div>
 		);
