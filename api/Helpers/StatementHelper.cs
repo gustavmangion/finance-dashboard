@@ -72,7 +72,7 @@ namespace api.Helpers
                     using (
                         CryptoStream cryptoStream = new CryptoStream(
                             stream,
-                            encryptor.CreateEncryptor(),
+                            encryptor.CreateDecryptor(),
                             CryptoStreamMode.Write
                         )
                     )
