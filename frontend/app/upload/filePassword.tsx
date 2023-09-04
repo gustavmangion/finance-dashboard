@@ -48,7 +48,9 @@ export default function FilePassword({
 					onChange={handleChange}
 				/>
 				{displayPasswordIncorrect ? (
-					<p>Password is incorrect, please try again</p>
+					<p className={styles.errorMessage}>
+						Password is incorrect, please try again
+					</p>
 				) : null}
 				<LoadingButton
 					className={materialStyles.primaryButton}
