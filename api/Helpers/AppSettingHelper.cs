@@ -1,4 +1,6 @@
-﻿namespace api.Helpers
+﻿using api.Entities;
+
+namespace api.Helpers
 {
     public class AppSettingHelper
     {
@@ -35,6 +37,16 @@
             var config = configurationBuilder.Build();
 
             GoogleIAMAudiance = config.GetSection("GoogleIAMAudience").Value;
+        }
+
+        public static string getStatementFileDirectory(Guid id)
+        {
+            return Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "WorkingDirectory",
+                "StatementUploads",
+                $"{id}.pdf"
+            );
         }
     }
 }

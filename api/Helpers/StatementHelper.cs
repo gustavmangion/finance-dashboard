@@ -86,7 +86,7 @@ namespace api.Helpers
             }
         }
 
-        public static string OpenStatementFile(IFormFile file, List<string> passwords)
+        public static string OpenStatementFile(Stream fileStream, List<string> passwords)
         {
             List<string> decryptedPasswords = new List<string>();
 
@@ -97,7 +97,7 @@ namespace api.Helpers
             {
                 using (
                     PdfDocument document = PdfDocument.Open(
-                        file.OpenReadStream(),
+                        fileStream,
                         new ParsingOptions { Passwords = decryptedPasswords }
                     )
                 )
