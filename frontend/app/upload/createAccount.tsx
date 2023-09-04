@@ -6,7 +6,7 @@ import {
 	SelectChangeEvent,
 	TextField,
 } from "@mui/material";
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import styles from "../styles/upload.module.scss";
 import { useAppSelector } from "../hooks/reduxHook";
 import { LoadingButton } from "@mui/lab";
@@ -46,6 +46,23 @@ export default function CreateAccount({
 		portfolio: portfolios.length === 1 ? portfolios[0].id : "",
 		name: "",
 	});
+
+	useEffect(() => {
+		console.log("fired");
+		if (accounts.length === accountsToBeSetup.length) {
+			setLoading(true);
+			const model: AccountsCreationModel = new AccountsCreationModel();
+			model.accounts = accounts;
+			model.uploadId = uploadId;
+			createAccounts(model).then((result) => {
+				if ("data" in result) {
+					setModalOpen(true);
+				} else dispatch(displayError("Unable to create your account"));
+			});
+			setLoading(false);
+		}
+	}, [accounts, dispatch, accountsToBeSetup.length, uploadId, createAccounts]);
+
 	return (
 		<div className={styles.newAccount}>
 			<h3>
@@ -123,25 +140,9 @@ export default function CreateAccount({
 
 		setAccounts((current) => [...current, newAccount]);
 
-		if (accounts.length < accountsToBeSetup.length)
-			setFormState({
-				...formState,
-				name: "",
-			});
-		else {
-			setLoading(true);
-
-			const model: AccountsCreationModel = new AccountsCreationModel();
-			model.accounts = accounts;
-			model.uploadId = uploadId;
-
-			createAccounts(model).then((result) => {
-				if ("data" in result) {
-					setModalOpen(true);
-				} else dispatch(displayError("Unable to create your account"));
-			});
-
-			setLoading(false);
-		}
+		setFormState({
+			...formState,
+			name: "",
+		});
 	}
 }
