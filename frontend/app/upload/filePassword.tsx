@@ -2,7 +2,7 @@ import { TextField } from "@mui/material";
 import styles from "../styles/upload.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import { LoadingButton } from "@mui/lab";
-import { SyntheticEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 import {
 	SetNewStatementPassword,
 	UploadStatementResponse,
@@ -45,7 +45,7 @@ export default function FilePassword({
 					variant="standard"
 					value={passwordInput}
 					required
-					onChange={(e) => setPasswordInput(e.target.value)}
+					onChange={handleChange}
 				/>
 				{displayPasswordIncorrect ? (
 					<p>Password is incorrect, please try again</p>
@@ -66,6 +66,11 @@ export default function FilePassword({
 		</div>
 	);
 
+	function handleChange(e: ChangeEvent<HTMLInputElement>) {
+		setPasswordInput(e.target.value);
+		if (displayPasswordIncorrect) setDisplayPasswordIncorrect(false);
+	}
+
 	function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
@@ -77,13 +82,12 @@ export default function FilePassword({
 		setNewPassword(newStatementPassword).then((result) => {
 			if ("data" in result) {
 				const response: UploadStatementResponse = result.data;
-				if (response.accountsToSetup.length === 0) setModalOpen(true);
+				if (response.passwordIncorrect) setDisplayPasswordIncorrect(true);
+				else if (response.accountsToSetup.length === 0) setModalOpen(true);
 				else {
 					setAccountsToBeSetup(response.accountsToSetup);
 					setFormStep(2);
 				}
-			} else if ("error" in result) {
-				console.log(result);
 			} else dispatch(displayError(null));
 		});
 

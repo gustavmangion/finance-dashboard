@@ -94,8 +94,7 @@ namespace api.Controllers
 
             if (string.IsNullOrEmpty(content))
             {
-                ModelState.AddModelError("message", "Incorrect Password");
-                return BadRequest(ModelState);
+                return Ok(new StatementUploadResultModel() { needPassword = true, });
             }
 
             _accountRepository.AddStatementCode(
