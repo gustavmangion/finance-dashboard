@@ -22,7 +22,6 @@ import UploadSuccessModal from "./uploadSuccessModal";
 
 type Props = {
 	uploadId: string;
-	formStep: number;
 	setFormStep: (val: number) => void;
 	setFileId: (val: string) => void;
 	accountsToBeSetup: string[];
@@ -30,7 +29,6 @@ type Props = {
 
 export default function CreateAccount({
 	uploadId,
-	formStep,
 	setFormStep,
 	setFileId,
 	accountsToBeSetup,
@@ -96,7 +94,6 @@ export default function CreateAccount({
 			</form>
 			<UploadSuccessModal
 				modalOpen={modalOpen}
-				formStep={formStep}
 				setFormStep={setFormStep}
 				setFileId={setFileId}
 			/>

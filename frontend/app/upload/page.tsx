@@ -32,7 +32,6 @@ export default function UploadPage() {
 					<SelectFile setFormStep={setFormStep} setFileId={setFileId} />
 				) : formStep === 1 ? (
 					<FilePassword
-						formStep={formStep}
 						setFormStep={setFormStep}
 						setAccountsToBeSetup={setAccountsToBeSetup}
 						setFileId={setFileId}
@@ -40,7 +39,6 @@ export default function UploadPage() {
 				) : (
 					<CreateAccount
 						uploadId={fileId}
-						formStep={formStep}
 						setFormStep={setFormStep}
 						setFileId={setFileId}
 						accountsToBeSetup={accountsToBeSetup}

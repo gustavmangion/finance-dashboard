@@ -13,14 +13,12 @@ import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 
 type Props = {
-	formStep: number;
 	setFormStep: (val: number) => void;
 	setAccountsToBeSetup: (val: string[]) => void;
 	setFileId: (val: string) => void;
 };
 
 export default function FilePassword({
-	formStep,
 	setFormStep,
 	setAccountsToBeSetup,
 	setFileId,
@@ -59,7 +57,6 @@ export default function FilePassword({
 			</form>
 			<UploadSuccessModal
 				modalOpen={modalOpen}
-				formStep={formStep}
 				setFormStep={setFormStep}
 				setFileId={setFileId}
 			/>
