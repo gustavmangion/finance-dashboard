@@ -106,7 +106,7 @@ namespace api.Controllers
             return new StatementUploadResultModel()
             {
                 uploadId = statement.Id,
-                isNewAccount = true
+                needPassword = true
             };
         }
     }

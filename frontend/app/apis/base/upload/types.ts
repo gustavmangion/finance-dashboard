@@ -6,5 +6,14 @@ export default interface Statement {
 
 export class UploadStatementResponse {
 	uploadId: string = "";
-	isNewAccount: Boolean = false;
+	needPassword: Boolean = false;
+}
+
+export class SetNewStatementPassword {
+	password: string = "";
+}
+
+export class SetNewStatementPasswordResponse {
+	passwordCorrect: Boolean = false;
+	accountsToSetup: string[] = [];
 }

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getHeaders from "../headers";
+import { SetNewStatementPassword } from "./types";
 
 export const uploadApi = createApi({
 	reducerPath: "uploadApi",
@@ -23,7 +24,15 @@ export const uploadApi = createApi({
 				};
 			},
 		}),
+		setNewPassword: builder.mutation({
+			query: (payload: SetNewStatementPassword) => ({
+				url: "/statementPassword",
+				method: "POST",
+				body: { ...payload },
+			}),
+		}),
 	}),
 });
 
-export const { useUploadStatementMutation } = uploadApi;
+export const { useUploadStatementMutation, useSetNewPasswordMutation } =
+	uploadApi;
