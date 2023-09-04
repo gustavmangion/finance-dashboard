@@ -19,5 +19,10 @@ namespace api.Repositories
                 .Select(x => x.Portfolio)
                 .ToList();
         }
+
+        public bool PortfolioExists(string userId, Guid id)
+        {
+            return _context.UserPortfolios.Where(x => x.UserId == userId && x.PortfolioId == id).Any();
+        }
     }
 }

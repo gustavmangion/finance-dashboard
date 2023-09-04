@@ -12,11 +12,6 @@ namespace api.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public void AddStatement(Statement statement)
-        {
-            _context.Statements.Add(statement);
-        }
-
         public List<Account> GetAccounts(string userId)
         {
             return _context.UserPortfolios
@@ -26,9 +21,31 @@ namespace api.Repositories
                 .ToList();
         }
 
+        public void AddAccount(Account account)
+        {
+            _context.Accounts.Add(account);
+        }
+
+        public Statement? GetStatement(Guid id)
+        {
+            return _context.Statements.Where(x => x.Id == id).FirstOrDefault();
+        }
+
+        public void AddStatement(Statement statement)
+        {
+            _context.Statements.Add(statement);
+        }
+
+        public bool PendingStatementExists(string userId, Guid id)
+        {
+            return _context.Statements.Where(x => x.UserId == userId && x.Id == id).Any();
+        }
+
         public bool SaveChanges()
         {
             return _context.SaveChanges() >= 0;
         }
+
+        
     }
 }
