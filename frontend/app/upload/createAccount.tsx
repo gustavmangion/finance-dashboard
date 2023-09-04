@@ -66,7 +66,6 @@ export default function CreateAccount({
 
 	return (
 		<div className={styles.newAccount}>
-			<h4>Account number: {accountsToBeSetup[accounts.length]}</h4>
 			{accounts.length === accountsToBeSetup.length ? (
 				<UploadingSpinner />
 			) : (
@@ -77,6 +76,8 @@ export default function CreateAccount({
 							? `${accounts.length + 1} of ${accountsToBeSetup.length}`
 							: null}
 					</h3>
+					<h4>Account number: {accountsToBeSetup[accounts.length]}</h4>
+
 					<form onSubmit={handleSubmit}>
 						<TextField
 							name="name"
@@ -144,6 +145,7 @@ export default function CreateAccount({
 		const newAccount: NewAccountModel = new NewAccountModel();
 		newAccount.name = formState.name;
 		newAccount.portfolioId = formState.portfolio;
+		newAccount.accountNumber = accountsToBeSetup[accounts.length];
 
 		setAccounts((current) => [...current, newAccount]);
 

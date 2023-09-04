@@ -55,6 +55,7 @@ namespace api.Controllers
 
                 Account newAccount = new Account();
                 newAccount.Name = account.Name;
+                newAccount.AccountNumber = account.AccountNumber;
                 newAccount.PortfolioId = account.PortfolioId;
                 _accountRepository.AddAccount(newAccount);
             }

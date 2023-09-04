@@ -1,6 +1,7 @@
 export class NewAccountModel {
 	portfolioId: string = "";
 	name: string = "";
+	accountNumber: string = "";
 }
 
 export class AccountsCreationModel {
