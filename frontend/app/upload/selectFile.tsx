@@ -78,6 +78,7 @@ export default function SelectFile({ setFormStep, setFileId }: Props) {
 						setFileId(response.uploadId);
 
 						if (response.needPassword) setFormStep(1);
+						else if (response.accountsToSetup.length > 0) setFormStep(2);
 						else setModalOpen(true);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});

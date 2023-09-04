@@ -5,7 +5,7 @@ import { LoadingButton } from "@mui/lab";
 import { SyntheticEvent, useState } from "react";
 import {
 	SetNewStatementPassword,
-	SetNewStatementPasswordResponse,
+	UploadStatementResponse,
 } from "../apis/base/upload/types";
 import { useSetNewPasswordMutation } from "../apis/base/upload/uploadService";
 import UploadSuccessModal from "./uploadSuccessModal";
@@ -76,15 +76,14 @@ export default function FilePassword({
 
 		setNewPassword(newStatementPassword).then((result) => {
 			if ("data" in result) {
-				const response: SetNewStatementPasswordResponse = result.data;
-				if (response.passwordCorrect && response.accountsToSetup.length === 0)
-					setModalOpen(true);
-				else if (!response.passwordCorrect) {
-					setDisplayPasswordIncorrect(true);
-				} else {
+				const response: UploadStatementResponse = result.data;
+				if (response.accountsToSetup.length === 0) setModalOpen(true);
+				else {
 					setAccountsToBeSetup(response.accountsToSetup);
 					setFormStep(2);
 				}
+			} else if ("error" in result) {
+				console.log(result);
 			} else dispatch(displayError(null));
 		});
 
