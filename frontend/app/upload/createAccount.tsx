@@ -92,6 +92,7 @@ export default function CreateAccount({
 				modalOpen={modalOpen}
 				formStep={formStep}
 				setFormStep={setFormStep}
+				setFileId={setFileId}
 			/>
 		</div>
 	);

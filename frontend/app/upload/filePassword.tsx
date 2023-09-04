@@ -16,12 +16,14 @@ type Props = {
 	formStep: number;
 	setFormStep: (val: number) => void;
 	setAccountsToBeSetup: (val: string[]) => void;
+	setFileId: (val: string) => void;
 };
 
 export default function FilePassword({
 	formStep,
 	setFormStep,
 	setAccountsToBeSetup,
+	setFileId,
 }: Props) {
 	const [passwordInput, setPasswordInput] = useState("");
 	const [displayPasswordIncorrect, setDisplayPasswordIncorrect] =
@@ -59,6 +61,7 @@ export default function FilePassword({
 				modalOpen={modalOpen}
 				formStep={formStep}
 				setFormStep={setFormStep}
+				setFileId={setFileId}
 			/>
 		</div>
 	);

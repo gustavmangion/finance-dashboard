@@ -6,12 +6,14 @@ type Props = {
 	modalOpen: boolean;
 	formStep: number;
 	setFormStep: (val: number) => void;
+	setFileId: (val: string) => void;
 };
 
 export default function UploadSuccessModal({
 	modalOpen,
 	formStep,
 	setFormStep,
+	setFileId,
 }: Props) {
 	const router = useRouter();
 
@@ -40,6 +42,7 @@ export default function UploadSuccessModal({
 	}
 
 	function handleUploadAnotherStatement() {
-		setFormStep(0);
+		setFileId("");
+		setFormStep(formStep + 1);
 	}
 }
