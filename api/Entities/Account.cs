@@ -19,7 +19,6 @@ namespace api.Entities
         public string? IBAN { get; set; }
         public string? Currency { get; set; }
 
-        public virtual List<Statement> Statements { get; set; }
         public virtual List<Transaction> Transactions { get; set; }
         public virtual List<StatementAccount> AccountStatements { get; set; }
     }

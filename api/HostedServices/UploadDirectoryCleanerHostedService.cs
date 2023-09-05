@@ -1,6 +1,5 @@
 ﻿using api.Contexts;
 using api.Entities;
-using Microsoft.OpenApi.Writers;
 
 namespace api.HostedServices
 {
