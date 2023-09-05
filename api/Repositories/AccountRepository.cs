@@ -26,6 +26,11 @@ namespace api.Repositories
             _context.Accounts.Add(account);
         }
 
+        public bool AccountNameExists(string name, Guid portfolioId)
+        {
+            return _context.Accounts.Where(x => x.Name == name && x.PortfolioId == portfolioId ).Any();
+        }
+
         public Statement? GetStatement(Guid id)
         {
             return _context.Statements.Where(x => x.Id == id).FirstOrDefault();

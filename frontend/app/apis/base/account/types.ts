@@ -1,10 +1,5 @@
-export class NewAccountModel {
+export class AccountCreationModel {
 	portfolioId: string = "";
 	name: string = "";
 	accountNumber: string = "";
-}
-
-export class AccountsCreationModel {
-	accounts: NewAccountModel[] = [];
-	uploadId: string = "";
 }

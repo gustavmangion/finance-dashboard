@@ -27,38 +27,26 @@ namespace api.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateAccounts(AccountsModelForCreation model)
+        public ActionResult CreateAccount(AccountModelForCreation model)
         {
             string userId = GetUserIdFromToken();
-
-            if (model.UploadId == new Guid())
-                ModelState.AddModelError("message", "Upload Id is required");
-            else if (!_accountRepository.PendingStatementExists(userId, model.UploadId))
-                ModelState.AddModelError("message", "Upload does not exists");
-            if (model.Accounts.Count == 0)
-                ModelState.AddModelError("messsage", "No accounts to setup");
+            if (model.PortfolioId == new Guid())
+                ModelState.AddModelError("message", "Portfolio Id is required");
+            else if (!_portfolioRespository.PortfolioExists(userId, model.PortfolioId))
+                ModelState.AddModelError("message", "Portfolio does not exists");
+            else if (string.IsNullOrEmpty(model.Name))
+                ModelState.AddModelError("message", "Account name is required");
+            else if (_accountRepository.AccountNameExists(model.Name, model.PortfolioId))
+                return BadRequest("Account name already exists in this portfolio");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            foreach (AccountModelForCreation account in model.Accounts)
-            {
-                if (account.PortfolioId == new Guid())
-                    ModelState.AddModelError("message", "Portfolio Id is required");
-                else if (!_portfolioRespository.PortfolioExists(userId, account.PortfolioId))
-                    ModelState.AddModelError("message", "Portfolio does not exists");
-                if (string.IsNullOrEmpty(account.Name))
-                    ModelState.AddModelError("message", "Account name is required");
-
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                Account newAccount = new Account();
-                newAccount.Name = account.Name;
-                newAccount.AccountNumber = account.AccountNumber;
-                newAccount.PortfolioId = account.PortfolioId;
-                _accountRepository.AddAccount(newAccount);
-            }
+            Account newAccount = new Account();
+            newAccount.Name = model.Name;
+            newAccount.AccountNumber = model.AccountNumber;
+            newAccount.PortfolioId = model.PortfolioId;
+            _accountRepository.AddAccount(newAccount);
 
             _accountRepository.SaveChanges();
 

@@ -11,16 +11,17 @@ import styles from "../styles/upload.module.scss";
 import { useAppSelector } from "../hooks/reduxHook";
 import { LoadingButton } from "@mui/lab";
 import materialStyles from "../styles/material.module.scss";
-import {
-	AccountsCreationModel,
-	NewAccountModel,
-} from "../apis/base/account/types";
-import { useCreateAccountsMutation } from "../apis/base/account/accountService";
+import { AccountCreationModel } from "../apis/base/account/types";
+import { useCreateAccountMutation } from "../apis/base/account/accountService";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 import UploadingSpinner from "./uploadingSpinner";
 import { useResubmitUploadMutation } from "../apis/base/upload/uploadService";
 import { ResubmitUpload } from "../apis/base/upload/types";
+import { SerializedError } from "@reduxjs/toolkit";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import ApiErrorResult from "../types/apiErrorResult";
+import { useApiError } from "../hooks/apiErrorHook";
 
 type Props = {
 	uploadId: string;
@@ -34,12 +35,13 @@ export default function CreateAccount({
 	handleNextFile,
 }: Props) {
 	const [loading, setLoading] = useState(false);
-	const [accounts, setAccounts] = useState<NewAccountModel[]>([]);
+	const [accounts, setAccounts] = useState([]);
+	const [errorMessage, setErrorMessage] = useState("");
 	const dispatch = useDispatch();
 
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
-	const [createAccounts] = useCreateAccountsMutation();
+	const [createAccount, { error }] = useCreateAccountMutation();
 	const [resubmitUpload] = useResubmitUploadMutation();
 
 	const [formState, setFormState] = useState({
@@ -47,38 +49,38 @@ export default function CreateAccount({
 		name: "",
 	});
 
-	useEffect(() => {
-		if (accounts.length === accountsToBeSetup.length) {
-			setLoading(true);
-			const model: AccountsCreationModel = new AccountsCreationModel();
-			model.accounts = accounts;
-			model.uploadId = uploadId;
-			createAccounts(model).then((result) => {
-				if ("data" in result) {
-					const resubmitModel: ResubmitUpload = new ResubmitUpload();
-					resubmitModel.uploadId = uploadId;
-					resubmitUpload(resubmitModel).then((uploadResult) => {
-						if ("data" in uploadResult) {
-							handleNextFile();
-						}
-					});
-				} else dispatch(displayError("Unable to create your account"));
-				setLoading(false);
-			});
-		}
-	}, [
-		accounts,
-		dispatch,
-		accountsToBeSetup.length,
-		uploadId,
-		createAccounts,
-		resubmitUpload,
-		handleNextFile,
-	]);
+	// useEffect(() => {
+	// 	if (accounts.length === accountsToBeSetup.length) {
+	// 		setLoading(true);
+	// 		const model: AccountsCreationModel = new AccountsCreationModel();
+	// 		model.accounts = accounts;
+	// 		model.uploadId = uploadId;
+	// 		createAccounts(model).then((result) => {
+	// 			if ("data" in result) {
+	// 				const resubmitModel: ResubmitUpload = new ResubmitUpload();
+	// 				resubmitModel.uploadId = uploadId;
+	// 				resubmitUpload(resubmitModel).then((uploadResult) => {
+	// 					if ("data" in uploadResult) {
+	// 						handleNextFile();
+	// 					}
+	// 				});
+	// 			} else dispatch(displayError("Unable to create your account"));
+	// 			setLoading(false);
+	// 		});
+	// 	}
+	// }, [
+	// 	accounts,
+	// 	dispatch,
+	// 	accountsToBeSetup.length,
+	// 	uploadId,
+	// 	createAccounts,
+	// 	resubmitUpload,
+	// 	handleNextFile,
+	// ]);
 
 	return (
 		<div className={styles.newAccount}>
-			{accounts.length === accountsToBeSetup.length ? (
+			{accounts.length === accountsToBeSetup.length && false ? (
 				<UploadingSpinner />
 			) : (
 				<>
@@ -100,7 +102,7 @@ export default function CreateAccount({
 							inputProps={{ maxLength: 45 }}
 							required
 						/>
-						<FormControl fullWidth>
+						<FormControl>
 							<InputLabel>Portfolio</InputLabel>
 							<Select
 								name="portfolio"
@@ -120,12 +122,15 @@ export default function CreateAccount({
 								})}
 							</Select>
 						</FormControl>
+						{errorMessage !== "" ? (
+							<p className="errorMessage">{errorMessage}</p>
+						) : null}
 						<LoadingButton
 							className={materialStyles.primaryButton}
 							type="submit"
 							loading={loading}
 						>
-							Next
+							Save
 						</LoadingButton>
 					</form>
 				</>
@@ -138,6 +143,7 @@ export default function CreateAccount({
 			...formState,
 			[e.target.name]: e.target.value,
 		});
+		setErrorMessage("");
 	}
 
 	function handleSelectChange(e: SelectChangeEvent) {
@@ -145,20 +151,31 @@ export default function CreateAccount({
 			...formState,
 			[e.target.name]: e.target.value,
 		});
+		setErrorMessage("");
 	}
 
-	function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
+	async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
-		const newAccount: NewAccountModel = new NewAccountModel();
+		setLoading(true);
+		const newAccount: AccountCreationModel = new AccountCreationModel();
 		newAccount.name = formState.name;
 		newAccount.portfolioId = formState.portfolio;
 		newAccount.accountNumber = accountsToBeSetup[accounts.length];
+		newAccount.accountNumber = "12";
 
-		setAccounts((current) => [...current, newAccount]);
-
-		setFormState({
-			...formState,
-			name: "",
+		createAccount(newAccount).then((result) => {
+			setLoading(false);
+			if ("error" in result) {
+				const error: FetchBaseQueryError = result.error as FetchBaseQueryError;
+				if (typeof error.data === "string") {
+					setErrorMessage(error.data);
+				}
+			} else {
+				setFormState({
+					...formState,
+					name: "",
+				});
+			}
 		});
 	}
 }

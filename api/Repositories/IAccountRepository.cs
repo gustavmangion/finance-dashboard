@@ -6,6 +6,7 @@ namespace api.Repositories
     {
         List<Account> GetAccounts(string userId);
         void AddAccount(Account account);
+        bool AccountNameExists(string name, Guid portfolioId);
         Statement GetStatement(Guid id);
         void AddStatement(Statement statement);
         void AddTransactions(List<Transaction> transactions);
