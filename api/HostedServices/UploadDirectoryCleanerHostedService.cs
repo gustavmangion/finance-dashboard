@@ -45,7 +45,7 @@ namespace api.HostedServices
                 {
                     DateTime deleteTo = DateTime.UtcNow.AddHours(-1);
                     List<Statement> pendingStatements = context.Statements
-                        .Where(x => x.Account == null && x.UploadedAt < deleteTo)
+                        .Where(x => x.From == null && x.UploadedAt < deleteTo)
                         .ToList();
 
                     foreach (Statement statement in pendingStatements)
