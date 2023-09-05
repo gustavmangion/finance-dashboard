@@ -1,6 +1,7 @@
 ﻿using api.Entities;
 using System.Security;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
@@ -131,29 +132,106 @@ namespace api.Helpers
 
         private static string CleanNextPageEntities(string text)
         {
-            string pattern = "(Page [0-9] of [0-9]Transactions Details for the period from " +
-                "[0-9]{2}/[0-9]{2}/[0-9]{4} to [0-9]{2}/[0-9]{2}/[0-9]{4}DateDescriptionChq" +
-                "/Ref No.Value DateDebitCreditBalance)";
+            string pattern =
+                "(Page [0-9] of [0-9]Transactions Details for the period from "
+                + "[0-9]{2}/[0-9]{2}/[0-9]{4} to [0-9]{2}/[0-9]{2}/[0-9]{4}DateDescriptionChq"
+                + "/Ref No.Value DateDebitCreditBalance)";
 
             return Regex.Replace(text, pattern, "");
         }
 
-        public static (DateOnly, DateOnly) GetStatementDates(string content) {
-            string pattern = "Transactions Details for the period from " +
-        "([0-9]{2}/[0-9]{2}/[0-9]{4}) to ([0-9]{2}/[0-9]{2}/[0-9]{4})";
+        public static (DateOnly, DateOnly) GetStatementDates(string content)
+        {
+            string pattern =
+                "Transactions Details for the period from "
+                + "([0-9]{2}/[0-9]{2}/[0-9]{4}) to ([0-9]{2}/[0-9]{2}/[0-9]{4})";
             Regex regex = new Regex(pattern);
             MatchCollection matches = regex.Matches(content);
 
             if (matches.Count == 0 || matches[0].Groups.Count != 3)
                 throw new Exception("Unable to find statement date range");
 
-            return (DateOnly.Parse(matches[0].Groups[1].Value),
-                DateOnly.Parse(matches[0].Groups[2].Value));
+            return (
+                DateOnly.Parse(matches[0].Groups[1].Value),
+                DateOnly.Parse(matches[0].Groups[2].Value)
+            );
         }
 
         public static List<Account> GetAccountsWithTransactions(string content)
         {
-            return new List<Account>();
+            List<Account> accounts = new List<Account>();
+
+            string[] accountsContent = content.Split("Account Details: ");
+            for (int i = 1; i < accountsContent.Length; i++)
+            {
+                Account account = GetAccount(accountsContent[i]);
+                account.Transactions = GetTransactions(accountsContent[i]);
+
+                accounts.Add(account);
+            }
+
+            return accounts;
+        }
+
+        private static Account GetAccount(string content)
+        {
+            Account account = new Account();
+            account.AccountNumber = content.Substring(0, 14);
+            account.IBAN = content.Substring(content.IndexOf("IBAN: ") + 6, 23);
+            account.Currency = content.Substring(content.IndexOf("Currency: ") + 10, 3);
+
+            return account;
+        }
+
+        private static List<Transaction> GetTransactions(string content)
+        {
+            List<Transaction> transactions = new List<Transaction>();
+
+            Regex regex = new Regex(
+                "([0-9]{2}\\/[0-9]{2}\\/[0-9]{4}.*?)"
+                    + "(?=[0-9]{2}\\/[0-9]{2}\\/[0-9]{4})|([0-9]{2}\\/[0-9]{2}\\/[0-9]{4}.*)Total"
+            );
+            List<string> transactionsContent = regex
+                .Split(content)
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToList();
+
+            for (int i = 2; i < transactionsContent.Count - 1; i += 2)
+            {
+                transactions.Add(
+                    GetTransaction(transactionsContent[i], transactionsContent[i + 1])
+                );
+            }
+
+            return transactions;
+        }
+
+        private static Transaction GetTransaction(string p1, string p2)
+        {
+            Transaction transaction = new Transaction();
+            if (p1.Substring(10, 3) == "PUR")
+                TransactionHelper.getPurchase(p1, transaction);
+            else if (p1.Contains("I/W CLEARING CHEQUE"))
+                TransactionHelper.getChequeDebit(p1, transaction);
+            else if (p1.Contains("ATM WDL"))
+                TransactionHelper.getATMWithdrawal(p1, transaction);
+            else if (p1.Contains("B/O"))
+                TransactionHelper.getBankTransferCredit(p1, transaction);
+            else if (p1.Substring(10, 3) == "REF")
+                TransactionHelper.getRefund(p1, transaction);
+            else if (p1.Substring(10, 6) == "SALARY")
+                TransactionHelper.getSalary(p1, transaction);
+            else
+                TransactionHelper.getMiscellaneousCharge(p1, transaction);
+
+            TransactionHelper.getSecondPart(p2, transaction);
+            return transaction;
+        }
+
+        private static decimal GetBalanceBroughtForward(string p1)
+        {
+            int index = p1.IndexOf("B/F...");
+            return decimal.Parse(p1.Substring(index + 18, p1.Length - 17));
         }
     }
 }
