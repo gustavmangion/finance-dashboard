@@ -19,9 +19,9 @@ export default function UploadSuccessModal({
 		<Modal open={modalOpen} onClose={handleModalClose}>
 			<div className={materialStyles.modal}>
 				{multipleStatements ? (
-					<p>Your statements have been uploaded</p>
+					<h3>Your statements have been uploaded</h3>
 				) : (
-					<p>Your statement has been uploaded</p>
+					<h3>Your statement has been uploaded</h3>
 				)}
 
 				<Button
