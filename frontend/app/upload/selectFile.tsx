@@ -26,7 +26,7 @@ export default function SelectFile({ setUploadFiles }: Props) {
 
 	return (
 		<div className={styles.upload}>
-			<h3>Select the file you want to upload</h3>
+			<h3>Select the file/s you want to upload</h3>
 
 			<LoadingButton
 				className={MaterialStyles.primaryButton}

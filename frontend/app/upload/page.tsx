@@ -66,7 +66,7 @@ export default function UploadPage() {
 		return (
 			<div className="container">
 				{uploadFiles.length === 0 ? (
-					<h2>Upload your bank statement</h2>
+					<h2>Upload your bank statements</h2>
 				) : (
 					<h3>
 						Uploading statement {uploadIndex + 1} of {uploadFiles.length}
@@ -90,7 +90,11 @@ export default function UploadPage() {
 						handleNextFile={HandleNextFile}
 					/>
 				)}
-				<UploadSuccessModal modalOpen={modalOpen} reset={Reset} />
+				<UploadSuccessModal
+					modalOpen={modalOpen}
+					multipleStatements={uploadFiles.length > 1}
+					reset={Reset}
+				/>
 			</div>
 		);
 
