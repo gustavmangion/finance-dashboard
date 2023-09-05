@@ -4,15 +4,10 @@ import { useRouter } from "next/navigation";
 
 type Props = {
 	modalOpen: boolean;
-	setFormStep: (val: number) => void;
-	setFileId: (val: string) => void;
+	reset: () => void;
 };
 
-export default function UploadSuccessModal({
-	modalOpen,
-	setFormStep,
-	setFileId,
-}: Props) {
+export default function UploadSuccessModal({ modalOpen, reset }: Props) {
 	const router = useRouter();
 
 	return (
@@ -29,18 +24,18 @@ export default function UploadSuccessModal({
 					className={materialStyles.primaryButton}
 					onClick={handleUploadAnotherStatement}
 				>
-					Upload another
+					Upload more
 				</Button>
 			</div>
 		</Modal>
 	);
 
 	function handleModalClose() {
+		reset();
 		router.push("/");
 	}
 
 	function handleUploadAnotherStatement() {
-		setFileId("");
-		setFormStep(0);
+		reset();
 	}
 }

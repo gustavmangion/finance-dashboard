@@ -39,7 +39,6 @@ export default function UploadPage() {
 		if (uploadFiles.length > 0 && uploadDone) {
 			if (uploadIndex < uploadFiles.length) {
 				setFormStep(1);
-				console.log("here");
 				uploadStatement(uploadFiles[uploadIndex]).then((result) => {
 					if ("data" in result) {
 						const response: UploadStatementResponse = result.data;
@@ -91,16 +90,21 @@ export default function UploadPage() {
 						handleNextFile={HandleNextFile}
 					/>
 				)}
-				<UploadSuccessModal
-					modalOpen={modalOpen}
-					setFileId={setFileId}
-					setFormStep={setFormStep}
-				/>
+				<UploadSuccessModal modalOpen={modalOpen} reset={Reset} />
 			</div>
 		);
 
 	function HandleNextFile() {
 		setUploadIndex(uploadIndex + 1);
 		setUploadDone(true);
+	}
+
+	function Reset() {
+		setFormStep(0);
+		setFileId("");
+		setAccountsToBeSetup([]);
+		setUploadFiles([]);
+		setUploadIndex(0);
+		setModalOpen(false);
 	}
 }
