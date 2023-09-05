@@ -87,8 +87,6 @@ export default function UploadPage() {
 				) : (
 					<CreateAccount
 						uploadId={fileId}
-						setFormStep={setFormStep}
-						setFileId={setFileId}
 						accountsToBeSetup={accountsToBeSetup}
 						handleNextFile={HandleNextFile}
 					/>

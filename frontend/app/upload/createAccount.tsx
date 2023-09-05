@@ -18,27 +18,22 @@ import {
 import { useCreateAccountsMutation } from "../apis/base/account/accountService";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
-import UploadSuccessModal from "./uploadSuccessModal";
-import LoadingSkeleton from "../components/loadingSkeleton";
 import UploadingSpinner from "./uploadingSpinner";
 import { useResubmitUploadMutation } from "../apis/base/upload/uploadService";
 import { ResubmitUpload } from "../apis/base/upload/types";
 
 type Props = {
 	uploadId: string;
-	setFormStep: (val: number) => void;
-	setFileId: (val: string) => void;
 	accountsToBeSetup: string[];
+	handleNextFile: () => void;
 };
 
 export default function CreateAccount({
 	uploadId,
-	setFormStep,
-	setFileId,
 	accountsToBeSetup,
+	handleNextFile,
 }: Props) {
 	const [loading, setLoading] = useState(false);
-	const [modalOpen, setModalOpen] = useState(false);
 	const [accounts, setAccounts] = useState<NewAccountModel[]>([]);
 	const dispatch = useDispatch();
 
@@ -64,7 +59,7 @@ export default function CreateAccount({
 					resubmitModel.uploadId = uploadId;
 					resubmitUpload(resubmitModel).then((uploadResult) => {
 						if ("data" in uploadResult) {
-							setModalOpen(true);
+							handleNextFile();
 						}
 					});
 				} else dispatch(displayError("Unable to create your account"));
@@ -78,6 +73,7 @@ export default function CreateAccount({
 		uploadId,
 		createAccounts,
 		resubmitUpload,
+		handleNextFile,
 	]);
 
 	return (
@@ -134,11 +130,6 @@ export default function CreateAccount({
 					</form>
 				</>
 			)}
-			<UploadSuccessModal
-				modalOpen={modalOpen}
-				setFormStep={setFormStep}
-				setFileId={setFileId}
-			/>
 		</div>
 	);
 

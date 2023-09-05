@@ -8,7 +8,6 @@ import {
 	UploadStatementResponse,
 } from "../apis/base/upload/types";
 import { useSetNewPasswordMutation } from "../apis/base/upload/uploadService";
-import UploadSuccessModal from "./uploadSuccessModal";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 
@@ -16,20 +15,19 @@ type Props = {
 	fileId: string;
 	setFormStep: (val: number) => void;
 	setAccountsToBeSetup: (val: string[]) => void;
-	setFileId: (val: string) => void;
+	handleNextFile: () => void;
 };
 
 export default function FilePassword({
 	fileId,
 	setFormStep,
 	setAccountsToBeSetup,
-	setFileId,
+	handleNextFile,
 }: Props) {
 	const [passwordInput, setPasswordInput] = useState("");
 	const [displayPasswordIncorrect, setDisplayPasswordIncorrect] =
 		useState(false);
 	const [loading, setLoading] = useState(false);
-	const [modalOpen, setModalOpen] = useState(false);
 
 	const dispatch = useDispatch();
 	const [setNewPassword] = useSetNewPasswordMutation();
@@ -60,11 +58,6 @@ export default function FilePassword({
 					Next
 				</LoadingButton>
 			</form>
-			<UploadSuccessModal
-				modalOpen={modalOpen}
-				setFormStep={setFormStep}
-				setFileId={setFileId}
-			/>
 		</div>
 	);
 
@@ -85,10 +78,10 @@ export default function FilePassword({
 			if ("data" in result) {
 				const response: UploadStatementResponse = result.data;
 				if (response.needPassword) setDisplayPasswordIncorrect(true);
-				else if (response.accountsToSetup.length === 0) setModalOpen(true);
+				else if (response.accountsToSetup.length === 0) handleNextFile();
 				else {
 					setAccountsToBeSetup(response.accountsToSetup);
-					setFormStep(2);
+					setFormStep(3);
 				}
 			} else dispatch(displayError(null));
 			setLoading(false);
