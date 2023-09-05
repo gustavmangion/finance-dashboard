@@ -141,7 +141,6 @@ namespace api.Controllers
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
-            _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
 
@@ -203,7 +202,6 @@ namespace api.Controllers
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
-            _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
 
