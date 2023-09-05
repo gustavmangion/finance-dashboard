@@ -18,10 +18,7 @@ import { displayError } from "../stores/notificationSlice";
 import UploadingSpinner from "./uploadingSpinner";
 import { useResubmitUploadMutation } from "../apis/base/upload/uploadService";
 import { ResubmitUpload } from "../apis/base/upload/types";
-import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
-import ApiErrorResult from "../types/apiErrorResult";
-import { useApiError } from "../hooks/apiErrorHook";
 
 type Props = {
 	uploadId: string;
@@ -35,7 +32,7 @@ export default function CreateAccount({
 	handleNextFile,
 }: Props) {
 	const [loading, setLoading] = useState(false);
-	const [accounts, setAccounts] = useState([]);
+	const [index, setIndex] = useState(0);
 	const [errorMessage, setErrorMessage] = useState("");
 	const dispatch = useDispatch();
 
@@ -49,48 +46,40 @@ export default function CreateAccount({
 		name: "",
 	});
 
-	// useEffect(() => {
-	// 	if (accounts.length === accountsToBeSetup.length) {
-	// 		setLoading(true);
-	// 		const model: AccountsCreationModel = new AccountsCreationModel();
-	// 		model.accounts = accounts;
-	// 		model.uploadId = uploadId;
-	// 		createAccounts(model).then((result) => {
-	// 			if ("data" in result) {
-	// 				const resubmitModel: ResubmitUpload = new ResubmitUpload();
-	// 				resubmitModel.uploadId = uploadId;
-	// 				resubmitUpload(resubmitModel).then((uploadResult) => {
-	// 					if ("data" in uploadResult) {
-	// 						handleNextFile();
-	// 					}
-	// 				});
-	// 			} else dispatch(displayError("Unable to create your account"));
-	// 			setLoading(false);
-	// 		});
-	// 	}
-	// }, [
-	// 	accounts,
-	// 	dispatch,
-	// 	accountsToBeSetup.length,
-	// 	uploadId,
-	// 	createAccounts,
-	// 	resubmitUpload,
-	// 	handleNextFile,
-	// ]);
+	useEffect(() => {
+		if (index === accountsToBeSetup.length) {
+			const resubmitModel: ResubmitUpload = new ResubmitUpload();
+			resubmitModel.uploadId = uploadId;
+			resubmitUpload(resubmitModel).then((result) => {
+				if ("error" in result)
+					dispatch(
+						displayError("Unable to upload your statement, please try again")
+					);
+				handleNextFile();
+			});
+		}
+	}, [
+		index,
+		dispatch,
+		accountsToBeSetup.length,
+		uploadId,
+		resubmitUpload,
+		handleNextFile,
+	]);
 
 	return (
 		<div className={styles.newAccount}>
-			{accounts.length === accountsToBeSetup.length && false ? (
+			{index === accountsToBeSetup.length ? (
 				<UploadingSpinner />
 			) : (
 				<>
 					<h3>
 						Add a new bank account{" "}
 						{accountsToBeSetup.length > 1
-							? `${accounts.length + 1} of ${accountsToBeSetup.length}`
+							? `${index + 1} of ${accountsToBeSetup.length}`
 							: null}
 					</h3>
-					<h4>Account number: {accountsToBeSetup[accounts.length]}</h4>
+					<h4>Account number: {accountsToBeSetup[index]}</h4>
 
 					<form onSubmit={handleSubmit}>
 						<TextField
@@ -160,8 +149,7 @@ export default function CreateAccount({
 		const newAccount: AccountCreationModel = new AccountCreationModel();
 		newAccount.name = formState.name;
 		newAccount.portfolioId = formState.portfolio;
-		newAccount.accountNumber = accountsToBeSetup[accounts.length];
-		newAccount.accountNumber = "12";
+		newAccount.accountNumber = accountsToBeSetup[index];
 
 		createAccount(newAccount).then((result) => {
 			setLoading(false);
@@ -175,6 +163,7 @@ export default function CreateAccount({
 					...formState,
 					name: "",
 				});
+				setIndex(index + 1);
 			}
 		});
 	}

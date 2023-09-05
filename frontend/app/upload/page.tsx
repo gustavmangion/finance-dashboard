@@ -20,7 +20,7 @@ export default function UploadPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
-	const [formStep, setFormStep] = useState(3);
+	const [formStep, setFormStep] = useState(0);
 	const [fileId, setFileId] = useState("");
 	const [accountsToBeSetup, setAccountsToBeSetup] = useState<string[]>([]);
 	const [uploadFiles, setUploadFiles] = useState<File[]>([]);
@@ -35,30 +35,30 @@ export default function UploadPage() {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");
 	});
 
-	// useEffect(() => {
-	// 	if (uploadFiles.length > 0 && uploadDone) {
-	// 		if (uploadIndex < uploadFiles.length) {
-	// 			setFormStep(1);
-	// 			uploadStatement(uploadFiles[uploadIndex]).then((result) => {
-	// 				if ("data" in result) {
-	// 					const response: UploadStatementResponse = result.data;
-	// 					if (response.needPassword) {
-	// 						setFormStep(2);
-	// 						setFileId(response.uploadId);
-	// 						setUploadDone(false);
-	// 					} else if (response.accountsToSetup.length > 0) {
-	// 						setFormStep(3);
-	// 						setFileId(response.uploadId);
-	// 						setAccountsToBeSetup(response.accountsToSetup);
-	// 						setUploadDone(false);
-	// 					} else if (uploadIndex + 1 === uploadFiles.length)
-	// 						setModalOpen(true);
-	// 					else setUploadIndex(uploadIndex + 1);
-	// 				} else dispatch(displayError("File wasn't upload, please try again"));
-	// 			});
-	// 		} else setModalOpen(true);
-	// 	}
-	// }, [uploadIndex, dispatch, uploadFiles, uploadStatement, uploadDone]);
+	useEffect(() => {
+		if (uploadFiles.length > 0 && uploadDone) {
+			if (uploadIndex < uploadFiles.length) {
+				setFormStep(1);
+				uploadStatement(uploadFiles[uploadIndex]).then((result) => {
+					if ("data" in result) {
+						const response: UploadStatementResponse = result.data;
+						if (response.needPassword) {
+							setFormStep(2);
+							setFileId(response.uploadId);
+							setUploadDone(false);
+						} else if (response.accountsToSetup.length > 0) {
+							setFormStep(3);
+							setFileId(response.uploadId);
+							setAccountsToBeSetup(response.accountsToSetup);
+							setUploadDone(false);
+						} else if (uploadIndex + 1 === uploadFiles.length)
+							setModalOpen(true);
+						else setUploadIndex(uploadIndex + 1);
+					} else dispatch(displayError("File wasn't upload, please try again"));
+				});
+			} else setModalOpen(true);
+		}
+	}, [uploadIndex, dispatch, uploadFiles, uploadStatement, uploadDone]);
 
 	if (authStatus == AuthStatus.Loading) return <LoadingSkeleton />;
 
