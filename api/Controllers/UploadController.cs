@@ -60,7 +60,12 @@ namespace api.Controllers
 
             SaveAccountTransactions(content, accounts);
 
-            return NoContent();
+            return Ok(new StatementUploadResultModel()
+            {
+                accountsToSetup = new List<string>(),
+                needPassword = false,
+                uploadId = new Guid()
+            });
         }
 
         [HttpPost("StatementPassword")]
@@ -115,7 +120,12 @@ namespace api.Controllers
 
             SaveAccountTransactions(content, accounts);
 
-            return NoContent();
+            return Ok(new StatementUploadResultModel()
+            {
+                accountsToSetup = new List<string>(),
+                needPassword = false,
+                uploadId = new Guid()
+            });
         }
 
         [HttpPost("ResubmitUpload")]
@@ -159,23 +169,28 @@ namespace api.Controllers
 
             SaveAccountTransactions(content, accounts);
 
-            return NoContent();
+            return Ok(new StatementUploadResultModel()
+            {
+                accountsToSetup = new List<string>(),
+                needPassword = false,
+                uploadId = new Guid()
+            });
         }
 
 
         private void SaveAccountTransactions(string content, List<Account> accounts)
         {
-            List<Account> accountTransactions = StatementHelper.GetAccountsAndTransactions(content);
-            foreach (Account account in accountTransactions)
-            {
-                Guid accountId = accounts
-                    .Where(x => x.AccountNumber == account.AccountNumber)
-                    .First()
-                    .Id;
-                HandleAddTransactions(account.Transactions, accountId);
-            }
+            //List<Account> accountTransactions = StatementHelper.GetAccountsAndTransactions(content);
+            //foreach (Account account in accountTransactions)
+            //{
+            //    Guid accountId = accounts
+            //        .Where(x => x.AccountNumber == account.AccountNumber)
+            //        .First()
+            //        .Id;
+            //    HandleAddTransactions(account.Transactions, accountId);
+            //}
 
-            _accountRepository.SaveChanges();
+            //_accountRepository.SaveChanges();
         }
 
         private void HandleAddTransactions(List<Transaction> transactions, Guid accountId)
