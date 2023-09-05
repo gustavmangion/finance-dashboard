@@ -42,7 +42,7 @@ export default function SelectFile({ setUploadFiles }: Props) {
 				/>
 			</LoadingButton>
 			{uploadError !== "" ? (
-				<h4 className={styles.errorMessage}>{uploadError}</h4>
+				<h4 className="errorMessage">{uploadError}</h4>
 			) : null}
 		</div>
 	);

@@ -79,6 +79,12 @@ h3 {
 	}
 }
 
+.errorMessage {
+	margin-top: 0.5em;
+	color: $error-red;
+	font-size: 1.2rem;
+}
+
 // /--------------Material----------------------/
 
 input {

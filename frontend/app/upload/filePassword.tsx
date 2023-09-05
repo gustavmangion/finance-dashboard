@@ -50,7 +50,7 @@ export default function FilePassword({
 							onChange={handleChange}
 						/>
 						{displayPasswordIncorrect ? (
-							<p className={styles.errorMessage}>
+							<p className="errorMessage">
 								Password is incorrect, please try again
 							</p>
 						) : null}
