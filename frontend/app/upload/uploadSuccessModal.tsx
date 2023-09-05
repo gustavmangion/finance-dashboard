@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 type Props = {
 	modalOpen: boolean;
 	multipleStatements: boolean;
-	setModalOpen: (val: boolean) => void;
+	statementAlreadyUploaded: boolean;
+	reset: () => void;
 };
 
 export default function UploadSuccessModal({
 	modalOpen,
 	multipleStatements,
-	setModalOpen,
+	statementAlreadyUploaded,
+	reset,
 }: Props) {
 	const router = useRouter();
 
@@ -19,7 +21,17 @@ export default function UploadSuccessModal({
 		<Modal open={modalOpen} onClose={handleModalClose}>
 			<div className={materialStyles.modal}>
 				{multipleStatements ? (
-					<h3>Your statements have been uploaded</h3>
+					<>
+						<h3>Your statements have been uploaded</h3>
+						{statementAlreadyUploaded ? (
+							<p>
+								Some of your statements where already uploaded and have been
+								ignored
+							</p>
+						) : null}
+					</>
+				) : statementAlreadyUploaded ? (
+					<h3>Statement wasn&apos;t uploaded as it was already uploaded</h3>
 				) : (
 					<h3>Your statement has been uploaded</h3>
 				)}
@@ -45,6 +57,6 @@ export default function UploadSuccessModal({
 	}
 
 	function handleUploadAnotherStatement() {
-		setModalOpen(false);
+		reset();
 	}
 }

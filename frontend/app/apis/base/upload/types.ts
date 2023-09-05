@@ -8,6 +8,7 @@ export class UploadStatementResponse {
 	uploadId: string = "";
 	needPassword: Boolean = false;
 	accountsToSetup: string[] = [];
+	statementAlreadyUploaded: Boolean = false;
 }
 
 export class SetNewStatementPassword {
