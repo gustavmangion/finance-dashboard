@@ -41,6 +41,7 @@ namespace api.Controllers
                 .GetStatementCodes(userId)
                 .Select(x => x.Code)
                 .ToList();
+
             string content = StatementHelper.OpenStatementFile(
                 file.OpenReadStream(),
                 statementCodes
@@ -58,7 +59,7 @@ namespace api.Controllers
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(file, userId, accountsToBeSetup));
 
-            ImportStatement(content, accounts);
+            ImportStatement(content, accounts, userId);
 
             return Ok(new StatementUploadResultModel()
             {
@@ -118,7 +119,7 @@ namespace api.Controllers
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
 
-            ImportStatement(content, accounts);
+            ImportStatement(content, accounts, userId, model.UploadId);
 
             return Ok(new StatementUploadResultModel()
             {
@@ -167,7 +168,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
 
-            ImportStatement(content, accounts);
+            ImportStatement(content, accounts, userId, model.UploadId);
 
             return Ok(new StatementUploadResultModel()
             {
@@ -178,14 +179,33 @@ namespace api.Controllers
         }
 
 
-        private void ImportStatement(string content, List<Account> dbAccounts)
+        private void ImportStatement(string content, List<Account> dbAccounts, string userId, Guid? statementId = null)
         {
+            Statement statement;
+            if(statementId == null)
+            {
+                statement = new Statement();
+                (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
+                statement.UserId = userId;
+                _accountRepository.AddStatement(statement);
+            }
+            else
+            {
+                statement = _accountRepository.GetStatement(statementId.Value);
+                (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
+            }
+
             List<Account> stAccountTransactions = StatementHelper.GetAccountsWithTransactions(content);
             foreach (Account stAccount in stAccountTransactions)
             {
                 Account dbAccount = dbAccounts
                     .Where(x => x.AccountNumber == stAccount.AccountNumber)
                     .First();
+
+                StatementAccount statementAccount = new StatementAccount() { 
+                    Statement = statement,
+                    Account = dbAccount
+                };
 
                 if(string.IsNullOrEmpty(dbAccount.IBAN))
                     UpdateAccountDetails(stAccount, dbAccount);
