@@ -61,12 +61,14 @@ namespace api.Controllers
 
             ImportStatement(content, accounts, userId);
 
-            return Ok(new StatementUploadResultModel()
-            {
-                accountsToSetup = new List<string>(),
-                needPassword = false,
-                uploadId = new Guid()
-            });
+            return Ok(
+                new StatementUploadResultModel()
+                {
+                    accountsToSetup = new List<string>(),
+                    needPassword = false,
+                    uploadId = new Guid()
+                }
+            );
         }
 
         [HttpPost("StatementPassword")]
@@ -120,13 +122,16 @@ namespace api.Controllers
                 return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
 
             ImportStatement(content, accounts, userId, model.UploadId);
+            System.IO.File.Delete(path);
 
-            return Ok(new StatementUploadResultModel()
-            {
-                accountsToSetup = new List<string>(),
-                needPassword = false,
-                uploadId = new Guid()
-            });
+            return Ok(
+                new StatementUploadResultModel()
+                {
+                    accountsToSetup = new List<string>(),
+                    needPassword = false,
+                    uploadId = new Guid()
+                }
+            );
         }
 
         [HttpPost("ResubmitUpload")]
@@ -139,7 +144,7 @@ namespace api.Controllers
             else if (!_accountRepository.PendingStatementExists(userId, model.UploadId))
                 ModelState.AddModelError("message", "Upload id does not exist");
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             string path = AppSettingHelper.getStatementFileDirectory(model.UploadId);
@@ -153,9 +158,9 @@ namespace api.Controllers
             string content = string.Empty;
             List<Account> accounts = _accountRepository.GetAccounts(userId);
             List<string> statementCodes = _accountRepository
-               .GetStatementCodes(userId)
-               .Select(x => x.Code)
-               .ToList();
+                .GetStatementCodes(userId)
+                .Select(x => x.Code)
+                .ToList();
 
             using (Stream stream = new FileStream(path, FileMode.Open))
             {
@@ -169,20 +174,27 @@ namespace api.Controllers
             }
 
             ImportStatement(content, accounts, userId, model.UploadId);
+            System.IO.File.Delete(path);
 
-            return Ok(new StatementUploadResultModel()
-            {
-                accountsToSetup = new List<string>(),
-                needPassword = false,
-                uploadId = new Guid()
-            });
+            return Ok(
+                new StatementUploadResultModel()
+                {
+                    accountsToSetup = new List<string>(),
+                    needPassword = false,
+                    uploadId = new Guid()
+                }
+            );
         }
 
-
-        private void ImportStatement(string content, List<Account> dbAccounts, string userId, Guid? statementId = null)
+        private void ImportStatement(
+            string content,
+            List<Account> dbAccounts,
+            string userId,
+            Guid? statementId = null
+        )
         {
             Statement statement;
-            if(statementId == null)
+            if (statementId == null)
             {
                 statement = new Statement();
                 (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
@@ -195,19 +207,22 @@ namespace api.Controllers
                 (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
             }
 
-            List<Account> stAccountTransactions = StatementHelper.GetAccountsWithTransactions(content);
+            List<Account> stAccountTransactions = StatementHelper.GetAccountsWithTransactions(
+                content
+            );
             foreach (Account stAccount in stAccountTransactions)
             {
                 Account dbAccount = dbAccounts
                     .Where(x => x.AccountNumber == stAccount.AccountNumber)
                     .First();
 
-                StatementAccount statementAccount = new StatementAccount() { 
+                StatementAccount statementAccount = new StatementAccount()
+                {
                     Statement = statement,
                     Account = dbAccount
                 };
 
-                if(string.IsNullOrEmpty(dbAccount.IBAN))
+                if (string.IsNullOrEmpty(dbAccount.IBAN))
                     UpdateAccountDetails(stAccount, dbAccount);
 
                 stAccount.Transactions.ForEach(x => x.AccountId = dbAccount.Id);
