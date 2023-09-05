@@ -38,7 +38,7 @@ export default function CreateAccount({
 
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
-	const [createAccount, { error }] = useCreateAccountMutation();
+	const [createAccount] = useCreateAccountMutation();
 	const [resubmitUpload] = useResubmitUploadMutation();
 
 	const [formState, setFormState] = useState({
@@ -55,6 +55,7 @@ export default function CreateAccount({
 					dispatch(
 						displayError("Unable to upload your statement, please try again")
 					);
+				setIndex(index + 1); //prevent component from firing again
 				handleNextFile();
 			});
 		}

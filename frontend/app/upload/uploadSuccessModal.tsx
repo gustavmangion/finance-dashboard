@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 type Props = {
 	modalOpen: boolean;
 	multipleStatements: boolean;
-	reset: () => void;
+	setModalOpen: (val: boolean) => void;
 };
 
 export default function UploadSuccessModal({
 	modalOpen,
 	multipleStatements,
-	reset,
+	setModalOpen,
 }: Props) {
 	const router = useRouter();
 
@@ -41,11 +41,10 @@ export default function UploadSuccessModal({
 	);
 
 	function handleModalClose() {
-		reset();
 		router.push("/");
 	}
 
 	function handleUploadAnotherStatement() {
-		reset();
+		setModalOpen(false);
 	}
 }

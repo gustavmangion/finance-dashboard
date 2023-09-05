@@ -51,12 +51,16 @@ export default function UploadPage() {
 							setFileId(response.uploadId);
 							setAccountsToBeSetup(response.accountsToSetup);
 							setUploadDone(false);
-						} else if (uploadIndex + 1 === uploadFiles.length)
+						} else if (uploadIndex + 1 === uploadFiles.length) {
 							setModalOpen(true);
-						else setUploadIndex(uploadIndex + 1);
+							Reset();
+						} else setUploadIndex(uploadIndex + 1);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});
-			} else setModalOpen(true);
+			} else {
+				Reset();
+				setModalOpen(true);
+			}
 		}
 	}, [uploadIndex, dispatch, uploadFiles, uploadStatement, uploadDone]);
 
@@ -92,8 +96,8 @@ export default function UploadPage() {
 				)}
 				<UploadSuccessModal
 					modalOpen={modalOpen}
+					setModalOpen={setModalOpen}
 					multipleStatements={uploadFiles.length > 1}
-					reset={Reset}
 				/>
 			</div>
 		);
@@ -104,11 +108,10 @@ export default function UploadPage() {
 	}
 
 	function Reset() {
+		setUploadIndex(0);
+		setUploadFiles([]);
 		setFormStep(0);
 		setFileId("");
 		setAccountsToBeSetup([]);
-		setUploadFiles([]);
-		setUploadIndex(0);
-		setModalOpen(false);
 	}
 }
