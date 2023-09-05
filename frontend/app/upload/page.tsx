@@ -105,25 +105,4 @@ export default function UploadPage() {
 		setUploadIndex(uploadIndex + 1);
 		setUploadDone(true);
 	}
-
-	function DoUpload() {
-		if (uploadIndex < uploadFiles.length) {
-			setFormStep(1);
-			uploadStatement(uploadFiles[uploadIndex]).then((result) => {
-				if ("data" in result) {
-					const response: UploadStatementResponse = result.data;
-					if (response.needPassword) {
-						setFormStep(2);
-						setFileId(response.uploadId);
-					} else if (response.accountsToSetup.length > 0) {
-						setFormStep(3);
-						setFileId(response.uploadId);
-						setAccountsToBeSetup(response.accountsToSetup);
-					} else if (uploadIndex + 1 === uploadFiles.length) setModalOpen(true);
-
-					setUploadIndex(uploadIndex + 1);
-				} else dispatch(displayError("File wasn't upload, please try again"));
-			});
-		} else setModalOpen(true);
-	}
 }
