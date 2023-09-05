@@ -16,10 +16,12 @@ namespace api.Contexts
         public DbSet<Statement> Statements { get; set; }
         public DbSet<StatementCode> StatementCodes { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<StatementAccount> StatementAccounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserPortfolio>().HasKey(x => new { x.UserId, x.PortfolioId });
+            modelBuilder.Entity<StatementAccount>().HasKey(x => new { x.StatementId, x.AccountId });
         }
     }
 }
