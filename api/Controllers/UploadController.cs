@@ -122,7 +122,7 @@ namespace api.Controllers
                 return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
 
             ImportStatement(content, accounts, userId, model.UploadId);
-            System.IO.File.Delete(path);
+            DeleteStatementFile(model.UploadId, path);
 
             return Ok(
                 new StatementUploadResultModel()
@@ -174,7 +174,7 @@ namespace api.Controllers
             }
 
             ImportStatement(content, accounts, userId, model.UploadId);
-            System.IO.File.Delete(path);
+            DeleteStatementFile(model.UploadId, path);
 
             return Ok(
                 new StatementUploadResultModel()
@@ -304,6 +304,18 @@ namespace api.Controllers
                 file.CopyTo(fileStream);
 
             return statement.Id;
+        }
+
+        private void DeleteStatementFile(Guid id, string path)
+        {
+            try
+            {
+                System.IO.File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Unable to delete statement file - {id} - {e.Message}");
+            }
         }
     }
 }
