@@ -2,6 +2,7 @@
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 
@@ -111,7 +112,7 @@ namespace api.Helpers
                         Page page = document.GetPage(i + 1);
                         content += page.Text;
                     }
-                    return content;
+                    return CleanNextPageEntities(content);
                 }
             }
             catch (Exception e)
@@ -126,6 +127,28 @@ namespace api.Helpers
                 }
                 throw;
             }
+        }
+
+        private static string CleanNextPageEntities(string text)
+        {
+            string pattern = "(Page [0-9] of [0-9]Transactions Details for the period from " +
+                "[0-9]{2}/[0-9]{2}/[0-9]{4} to [0-9]{2}/[0-9]{2}/[0-9]{4}DateDescriptionChq" +
+                "/Ref No.Value DateDebitCreditBalance)";
+
+            return Regex.Replace(text, pattern, "");
+        }
+
+        public static (DateOnly, DateOnly) GetStatementDates(string content) {
+            string pattern = "Transactions Details for the period from " +
+        "([0-9]{2}/[0-9]{2}/[0-9]{4}) to ([0-9]{2}/[0-9]{2}/[0-9]{4})";
+            Regex regex = new Regex(pattern);
+            MatchCollection matches = regex.Matches(content);
+
+            if (matches.Count == 0 || matches[0].Groups.Count != 3)
+                throw new Exception("Unable to find statement date range");
+
+            return (DateOnly.Parse(matches[0].Groups[1].Value),
+                DateOnly.Parse(matches[0].Groups[2].Value));
         }
 
         public static List<Account> GetAccountsWithTransactions(string content)
