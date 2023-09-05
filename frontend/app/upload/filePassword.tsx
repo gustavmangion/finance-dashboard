@@ -1,7 +1,6 @@
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import styles from "../styles/upload.module.scss";
 import materialStyles from "../styles/material.module.scss";
-import { LoadingButton } from "@mui/lab";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import {
 	SetNewStatementPassword,
@@ -10,6 +9,7 @@ import {
 import { useSetNewPasswordMutation } from "../apis/base/upload/uploadService";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
+import UploadingSpinner from "./uploadingSpinner";
 
 type Props = {
 	fileId: string;
@@ -34,30 +34,32 @@ export default function FilePassword({
 
 	return (
 		<div className={styles.newAccount}>
-			<h3>Add a new bank account</h3>
-			<form onSubmit={handleSubmit}>
-				<TextField
-					name="password"
-					label="Statement Password"
-					type="password"
-					variant="standard"
-					value={passwordInput}
-					required
-					onChange={handleChange}
-				/>
-				{displayPasswordIncorrect ? (
-					<p className={styles.errorMessage}>
-						Password is incorrect, please try again
-					</p>
-				) : null}
-				<LoadingButton
-					className={materialStyles.primaryButton}
-					type="submit"
-					loading={loading}
-				>
-					Next
-				</LoadingButton>
-			</form>
+			{loading ? (
+				<UploadingSpinner />
+			) : (
+				<>
+					<h3>Add a new bank account</h3>
+					<form onSubmit={handleSubmit}>
+						<TextField
+							name="password"
+							label="Statement Password"
+							type="password"
+							variant="standard"
+							value={passwordInput}
+							required
+							onChange={handleChange}
+						/>
+						{displayPasswordIncorrect ? (
+							<p className={styles.errorMessage}>
+								Password is incorrect, please try again
+							</p>
+						) : null}
+						<Button className={materialStyles.primaryButton} type="submit">
+							Next
+						</Button>
+					</form>
+				</>
+			)}
 		</div>
 	);
 
