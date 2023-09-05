@@ -28,7 +28,9 @@ namespace api.Repositories
 
         public bool AccountNameExists(string name, Guid portfolioId)
         {
-            return _context.Accounts.Where(x => x.Name == name && x.PortfolioId == portfolioId ).Any();
+            return _context.Accounts
+                .Where(x => x.Name == name && x.PortfolioId == portfolioId)
+                .Any();
         }
 
         public Statement? GetStatement(Guid id)
@@ -39,6 +41,11 @@ namespace api.Repositories
         public void AddStatement(Statement statement)
         {
             _context.Statements.Add(statement);
+        }
+
+        public void AddStatementAccount(StatementAccount statementAccount)
+        {
+            _context.StatementAccounts.Add(statementAccount);
         }
 
         public void AddTransactions(List<Transaction> transactions)

@@ -9,6 +9,7 @@ namespace api.Repositories
         bool AccountNameExists(string name, Guid portfolioId);
         Statement GetStatement(Guid id);
         void AddStatement(Statement statement);
+        void AddStatementAccount(StatementAccount statementAccount);
         void AddTransactions(List<Transaction> transactions);
         void AddStatementCode(StatementCode statementCode);
         List<StatementCode> GetStatementCodes(string userId);

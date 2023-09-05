@@ -200,6 +200,7 @@ namespace api.Controllers
                 (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
                 statement.UserId = userId;
                 _accountRepository.AddStatement(statement);
+                _accountRepository.SaveChanges();
             }
             else
             {
@@ -222,14 +223,19 @@ namespace api.Controllers
                     Account = dbAccount
                 };
 
+                _accountRepository.AddStatementAccount(statementAccount);
+
                 if (string.IsNullOrEmpty(dbAccount.IBAN))
                     UpdateAccountDetails(stAccount, dbAccount);
 
-                stAccount.Transactions.ForEach(x => x.AccountId = dbAccount.Id);
+                stAccount.Transactions.ForEach(x =>
+                {
+                    x.AccountId = dbAccount.Id;
+                    x.StatementId = statement.Id;
+                });
                 _accountRepository.AddTransactions(stAccount.Transactions);
+                _accountRepository.SaveChanges();
             }
-
-            _accountRepository.SaveChanges();
         }
 
         private void UpdateAccountDetails(Account newDetails, Account currentDetails)
