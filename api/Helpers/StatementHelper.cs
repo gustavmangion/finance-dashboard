@@ -128,7 +128,7 @@ namespace api.Helpers
             }
         }
 
-        public static List<Account> GetAccountsAndTransactions(string content)
+        public static List<Account> GetAccountsWithTransactions(string content)
         {
             return new List<Account>();
         }

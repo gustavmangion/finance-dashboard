@@ -58,7 +58,7 @@ namespace api.Controllers
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(file, userId, accountsToBeSetup));
 
-            SaveAccountTransactions(content, accounts);
+            ImportStatement(content, accounts);
 
             return Ok(new StatementUploadResultModel()
             {
@@ -118,7 +118,7 @@ namespace api.Controllers
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
 
-            SaveAccountTransactions(content, accounts);
+            ImportStatement(content, accounts);
 
             return Ok(new StatementUploadResultModel()
             {
@@ -167,7 +167,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
 
-            SaveAccountTransactions(content, accounts);
+            ImportStatement(content, accounts);
 
             return Ok(new StatementUploadResultModel()
             {
@@ -178,25 +178,30 @@ namespace api.Controllers
         }
 
 
-        private void SaveAccountTransactions(string content, List<Account> accounts)
+        private void ImportStatement(string content, List<Account> dbAccounts)
         {
-            //List<Account> accountTransactions = StatementHelper.GetAccountsAndTransactions(content);
-            //foreach (Account account in accountTransactions)
-            //{
-            //    Guid accountId = accounts
-            //        .Where(x => x.AccountNumber == account.AccountNumber)
-            //        .First()
-            //        .Id;
-            //    HandleAddTransactions(account.Transactions, accountId);
-            //}
+            List<Account> stAccountTransactions = StatementHelper.GetAccountsWithTransactions(content);
+            foreach (Account stAccount in stAccountTransactions)
+            {
+                Account dbAccount = dbAccounts
+                    .Where(x => x.AccountNumber == stAccount.AccountNumber)
+                    .First();
 
-            //_accountRepository.SaveChanges();
+                if(string.IsNullOrEmpty(dbAccount.IBAN))
+                    UpdateAccountDetails(stAccount, dbAccount);
+
+                stAccount.Transactions.ForEach(x => x.AccountId = dbAccount.Id);
+                _accountRepository.AddTransactions(stAccount.Transactions);
+            }
+
+            _accountRepository.SaveChanges();
         }
 
-        private void HandleAddTransactions(List<Transaction> transactions, Guid accountId)
+        private void UpdateAccountDetails(Account newDetails, Account currentDetails)
         {
-            transactions.ForEach(x => x.AccountId = accountId);
-            _accountRepository.AddTransactions(transactions);
+            currentDetails.AccountNumber = newDetails.AccountNumber;
+            currentDetails.IBAN = newDetails.IBAN;
+            currentDetails.Currency = newDetails.Currency;
         }
 
         private List<string> GetNotSetupAccounts(string content, List<string> accountNumbers)

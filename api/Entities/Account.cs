@@ -16,6 +16,8 @@ namespace api.Entities
 
         [MaxLength(45)]
         public string? BankName { get; set; }
+        public string? IBAN { get; set; }
+        public string? Currency { get; set; }
 
         public virtual List<Statement> Statements { get; set; }
         public virtual List<Transaction> Transactions { get; set; }
