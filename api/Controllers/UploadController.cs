@@ -60,6 +60,15 @@ namespace api.Controllers
                 return Ok(HandleNewAccount(file, userId, accountsToBeSetup));
 
             Statement statement = GetStatement(content, accounts, userId);
+            if (
+                _accountRepository.StatementAlreadyUploaded(
+                    accounts[0].Id,
+                    statement.From.Value,
+                    statement.To.Value
+                )
+            )
+                return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
+
             _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
 
@@ -124,6 +133,14 @@ namespace api.Controllers
                 return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
 
             Statement statement = GetStatement(content, accounts, userId, model.UploadId);
+            if (
+                _accountRepository.StatementAlreadyUploaded(
+                    accounts[0].Id,
+                    statement.From.Value,
+                    statement.To.Value
+                )
+            )
+                return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
             _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
@@ -178,6 +195,14 @@ namespace api.Controllers
             }
 
             Statement statement = GetStatement(content, accounts, userId, model.UploadId);
+            if (
+                _accountRepository.StatementAlreadyUploaded(
+                    accounts[0].Id,
+                    statement.From.Value,
+                    statement.To.Value
+                )
+            )
+                return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
             _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
