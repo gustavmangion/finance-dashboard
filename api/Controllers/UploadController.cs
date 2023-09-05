@@ -4,6 +4,7 @@ using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
 namespace api.Controllers
 {
@@ -116,6 +117,51 @@ namespace api.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("ResubmitUpload")]
+        public ActionResult ResubmitUpload(StatementResubmitModel model)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (model.UploadId == new Guid())
+                ModelState.AddModelError("message", "Upload id is required");
+            else if (!_accountRepository.PendingStatementExists(userId, model.UploadId))
+                ModelState.AddModelError("message", "Upload id does not exist");
+
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string path = AppSettingHelper.getStatementFileDirectory(model.UploadId);
+
+            if (!System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError("message", "File no longer exists");
+                return BadRequest(ModelState);
+            }
+
+            string content = string.Empty;
+            List<Account> accounts = _accountRepository.GetAccounts(userId);
+            List<string> statementCodes = _accountRepository
+               .GetStatementCodes(userId)
+               .Select(x => x.Code)
+               .ToList();
+
+            using (Stream stream = new FileStream(path, FileMode.Open))
+            {
+                content = StatementHelper.OpenStatementFile(stream, statementCodes);
+            }
+
+            if (string.IsNullOrEmpty(content))
+            {
+                ModelState.AddModelError("message", "Unable to process statement");
+                return BadRequest(ModelState);
+            }
+
+            SaveAccountTransactions(content, accounts);
+
+            return NoContent();
+        }
+
 
         private void SaveAccountTransactions(string content, List<Account> accounts)
         {

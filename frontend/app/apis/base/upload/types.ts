@@ -14,3 +14,7 @@ export class SetNewStatementPassword {
 	uploadId: string = "";
 	password: string = "";
 }
+
+export class ResubmitUpload {
+	uploadId: string = "";
+}

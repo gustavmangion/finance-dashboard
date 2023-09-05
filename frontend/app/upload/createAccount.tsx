@@ -21,6 +21,8 @@ import { displayError } from "../stores/notificationSlice";
 import UploadSuccessModal from "./uploadSuccessModal";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import UploadingSpinner from "./uploadingSpinner";
+import { useResubmitUploadMutation } from "../apis/base/upload/uploadService";
+import { ResubmitUpload } from "../apis/base/upload/types";
 
 type Props = {
 	uploadId: string;
@@ -43,6 +45,7 @@ export default function CreateAccount({
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
 	const [createAccounts] = useCreateAccountsMutation();
+	const [resubmitUpload] = useResubmitUploadMutation();
 
 	const [formState, setFormState] = useState({
 		portfolio: portfolios.length === 1 ? portfolios[0].id : "",
@@ -57,12 +60,25 @@ export default function CreateAccount({
 			model.uploadId = uploadId;
 			createAccounts(model).then((result) => {
 				if ("data" in result) {
-					setModalOpen(true);
+					const resubmitModel: ResubmitUpload = new ResubmitUpload();
+					resubmitModel.uploadId = uploadId;
+					resubmitUpload(resubmitModel).then((uploadResult) => {
+						if ("data" in uploadResult) {
+							setModalOpen(true);
+						}
+					});
 				} else dispatch(displayError("Unable to create your account"));
 				setLoading(false);
 			});
 		}
-	}, [accounts, dispatch, accountsToBeSetup.length, uploadId, createAccounts]);
+	}, [
+		accounts,
+		dispatch,
+		accountsToBeSetup.length,
+		uploadId,
+		createAccounts,
+		resubmitUpload,
+	]);
 
 	return (
 		<div className={styles.newAccount}>
