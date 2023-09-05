@@ -43,12 +43,18 @@ namespace api.Repositories
             _context.Statements.Add(statement);
         }
 
-        public bool StatementAlreadyUploaded(Guid accountId, DateOnly from, DateOnly to)
+        public bool StatementAlreadyUploaded(
+            Guid accountId,
+            DateOnly from,
+            DateOnly to,
+            Statement? statement = null
+        )
         {
             return _context.Accounts
                 .Where(x => x.Id == accountId)
                 .First()
                 .AccountStatements.Select(xa => xa.Statement)
+                .Where(xa => xa != statement)
                 .Any(xs => xs.From == from && xs.To == to);
         }
 

@@ -137,7 +137,8 @@ namespace api.Controllers
                 _accountRepository.StatementAlreadyUploaded(
                     accounts[0].Id,
                     statement.From.Value,
-                    statement.To.Value
+                    statement.To.Value,
+                    statement
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
@@ -198,7 +199,8 @@ namespace api.Controllers
                 _accountRepository.StatementAlreadyUploaded(
                     accounts[0].Id,
                     statement.From.Value,
-                    statement.To.Value
+                    statement.To.Value,
+                    statement
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
