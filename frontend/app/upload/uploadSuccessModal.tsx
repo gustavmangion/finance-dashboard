@@ -31,7 +31,7 @@ export default function UploadSuccessModal({
 						) : null}
 					</>
 				) : statementAlreadyUploaded ? (
-					<h3>Statement wasn&apos;t uploaded as it was already uploaded</h3>
+					<h3>Statement wasn&apos;t uploaded as it was previously uploaded</h3>
 				) : (
 					<h3>Your statement has been uploaded</h3>
 				)}
