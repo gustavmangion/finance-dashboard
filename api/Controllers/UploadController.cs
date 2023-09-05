@@ -59,7 +59,9 @@ namespace api.Controllers
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(file, userId, accountsToBeSetup));
 
-            ImportStatement(content, accounts, userId);
+            Statement statement = GetStatement(content, accounts, userId);
+            _accountRepository.AddStatement(statement);
+            _accountRepository.SaveChanges();
 
             return Ok(
                 new StatementUploadResultModel()
@@ -121,7 +123,9 @@ namespace api.Controllers
             if (accountsToBeSetup.Count > 0)
                 return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
 
-            ImportStatement(content, accounts, userId, model.UploadId);
+            Statement statement = GetStatement(content, accounts, userId, model.UploadId);
+            _accountRepository.AddStatement(statement);
+            _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
 
             return Ok(
@@ -173,7 +177,9 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
 
-            ImportStatement(content, accounts, userId, model.UploadId);
+            Statement statement = GetStatement(content, accounts, userId, model.UploadId);
+            _accountRepository.AddStatement(statement);
+            _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
 
             return Ok(
@@ -186,7 +192,7 @@ namespace api.Controllers
             );
         }
 
-        private void ImportStatement(
+        private Statement GetStatement(
             string content,
             List<Account> dbAccounts,
             string userId,
@@ -199,7 +205,6 @@ namespace api.Controllers
                 statement = new Statement();
                 (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
                 statement.UserId = userId;
-                _accountRepository.AddStatement(statement);
             }
             else
             {
@@ -221,8 +226,7 @@ namespace api.Controllers
                     Statement = statement,
                     Account = dbAccount
                 };
-
-                _accountRepository.AddStatementAccount(statementAccount);
+                statement.StatementAccounts.Add(statementAccount);
 
                 if (string.IsNullOrEmpty(dbAccount.IBAN))
                     UpdateAccountDetails(stAccount, dbAccount);
@@ -232,9 +236,10 @@ namespace api.Controllers
                     x.Account = dbAccount;
                     x.Statement = statement;
                 });
-                _accountRepository.AddTransactions(stAccount.Transactions);
+
+                statement.Transactions.AddRange(stAccount.Transactions);
             }
-            _accountRepository.SaveChanges();
+            return statement;
         }
 
         private void UpdateAccountDetails(Account newDetails, Account currentDetails)

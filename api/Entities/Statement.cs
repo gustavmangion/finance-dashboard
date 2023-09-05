@@ -8,7 +8,8 @@
         public DateOnly? From { get; set; }
         public DateOnly? To { get; set; }
 
-        public virtual List<Transaction> Transactions { get; set; }
-        public virtual List<StatementAccount> StatementAccounts { get; set; }
+        public virtual List<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public virtual List<StatementAccount> StatementAccounts { get; set; } =
+            new List<StatementAccount>();
     }
 }
