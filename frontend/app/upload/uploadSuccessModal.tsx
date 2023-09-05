@@ -18,7 +18,7 @@ export default function UploadSuccessModal({
 	return (
 		<Modal open={modalOpen} onClose={handleModalClose}>
 			<div className={materialStyles.modal}>
-				<p>Your statement is being processed and will be available shortly</p>
+				<p>Your statement has been uploaded</p>
 				<Button
 					className={materialStyles.primaryButton}
 					onClick={handleModalClose}
