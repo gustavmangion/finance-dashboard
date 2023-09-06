@@ -70,7 +70,7 @@ export default function CreateAccount({
 
 	return (
 		<div className={styles.newAccount}>
-			{index === accountsToBeSetup.length ? (
+			{index >= accountsToBeSetup.length ? (
 				<UploadingSpinner />
 			) : (
 				<>
