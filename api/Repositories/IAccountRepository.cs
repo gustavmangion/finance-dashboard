@@ -9,6 +9,7 @@ namespace api.Repositories
         bool AccountNameExists(string name, Guid portfolioId);
         Statement GetStatement(Guid id);
         Statement? GetPreviousStatement(DateOnly statementStartDate);
+        Statement? GetNextStatement(DateOnly statementEndDate);
         void AddStatement(Statement statement);
         bool StatementAlreadyUploaded(
             Guid accountId,
@@ -21,6 +22,7 @@ namespace api.Repositories
         void AddStatementCode(StatementCode statementCode);
         List<StatementCode> GetStatementCodes(string userId);
         bool PendingStatementExists(string userId, Guid id);
+        void DeleteTransactions(List<Transaction> transactions);
         bool SaveChanges();
     }
 }

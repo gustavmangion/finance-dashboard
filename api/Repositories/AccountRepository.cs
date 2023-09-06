@@ -43,6 +43,11 @@ namespace api.Repositories
             return _context.Statements.Where(x => x.To < statementStartDate).OrderByDescending(x => x.From).FirstOrDefault();
         }
 
+        public Statement? GetNextStatement(DateOnly statementEndtDate)
+        {
+            return _context.Statements.Where(x => x.From > statementEndtDate).OrderBy(x => x.From).FirstOrDefault();
+        }
+
         public void AddStatement(Statement statement)
         {
             _context.Statements.Add(statement);
@@ -86,6 +91,11 @@ namespace api.Repositories
         public bool PendingStatementExists(string userId, Guid id)
         {
             return _context.Statements.Where(x => x.UserId == userId && x.Id == id).Any();
+        }
+
+        public void DeleteTransactions(List<Transaction> transactions)
+        {
+            _context.Transactions.RemoveRange(transactions);
         }
 
         public bool SaveChanges()

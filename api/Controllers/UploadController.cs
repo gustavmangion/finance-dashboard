@@ -142,8 +142,9 @@ namespace api.Controllers
 				)
 			)
 				return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
+			HandleGapsBetweenStatements(statement);
 			_accountRepository.SaveChanges();
-			DeleteStatementFile(model.UploadId, path);
+            DeleteStatementFile(model.UploadId, path);
 
 			return Ok(
 				new StatementUploadResultModel()
@@ -204,8 +205,9 @@ namespace api.Controllers
 				)
 			)
 				return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
+			HandleGapsBetweenStatements(statement);
 			_accountRepository.SaveChanges();
-			DeleteStatementFile(model.UploadId, path);
+            DeleteStatementFile(model.UploadId, path);
 
 			return Ok(
 				new StatementUploadResultModel()
@@ -365,11 +367,14 @@ namespace api.Controllers
 		private void HandleGapsBetweenStatements(Statement statement)
 		{
             Statement? previousStatement = _accountRepository.GetPreviousStatement(statement.From.Value);
-			HandleGapBeforeStatement(statement, previousStatement);
-
+			List<Transaction> fillers =  HandleGapBeforeStatement(statement, previousStatement);
+			Statement? nextStatement = _accountRepository.GetNextStatement(statement.To.Value);
+			if (nextStatement != null)
+				fillers.AddRange(HandleGapAfterStatement(statement, nextStatement));
+			_accountRepository.AddTransactions(fillers);
         }
 
-        private List<Transaction> HandleGapBeforeStatement(Statement statement, Statement previousStatement)
+        private List<Transaction> HandleGapBeforeStatement(Statement statement, Statement? previousStatement)
 		{
             List<Transaction> beforeFillers = new List<Transaction>();
             foreach (StatementAccount statementAccount in statement.StatementAccounts)
@@ -378,7 +383,7 @@ namespace api.Controllers
                 if (previousStatement != null)
                     amountBefore = statementAccount.BalanceBroughtForward - previousStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).First().BalanceCarriedForward;
 
-                Transaction fillerBefore = new Transaction()
+                beforeFillers.Add(new Transaction()
                 {
                     Category = TranCategory.BalanceBroughtForward,
                     Type = TranType.Credit,
@@ -386,10 +391,32 @@ namespace api.Controllers
                     Statement = statement,
                     Amount = amountBefore,
                     Date = statement.From.Value.AddDays(-1)
-                };
-
+                });
             }
-			return beforeFillers;
+
+			_accountRepository.DeleteTransactions(previousStatement.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward && x.Date > x.Statement.To).ToList());
+            return beforeFillers;
         }
-	}
+
+        private List<Transaction> HandleGapAfterStatement(Statement statement, Statement nextStatement)
+		{
+			List<Transaction> afterFillers = new List<Transaction>();
+			foreach(StatementAccount statementAccount in statement.StatementAccounts)
+			{
+				decimal amountAfter = statementAccount.BalanceCarriedForward - nextStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).First().BalanceBroughtForward;
+                afterFillers.Add(new Transaction()
+                {
+                    Category = TranCategory.BalanceBroughtForward,
+                    Type = TranType.Credit,
+                    Account = statementAccount.Account,
+                    Statement = statement,
+                    Amount = amountAfter,
+                    Date = statement.From.Value.AddDays(-1)
+                });
+            }
+            _accountRepository.DeleteTransactions(nextStatement.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward && x.Date < x.Statement.From).ToList());
+            return afterFillers;
+        }
+
+    }
 }
