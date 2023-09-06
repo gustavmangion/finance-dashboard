@@ -376,12 +376,14 @@ namespace api.Controllers
         private List<Transaction> HandleGapBeforeStatement(Statement statement, Statement? previousStatement)
 		{
             List<Transaction> beforeFillers = new List<Transaction>();
+
             foreach (StatementAccount statementAccount in statement.StatementAccounts)
             {
                 decimal amountBefore = statementAccount.BalanceBroughtForward;
                 if (previousStatement != null)
                     amountBefore = statementAccount.BalanceBroughtForward - previousStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).First().BalanceCarriedForward;
 
+				if()
                 beforeFillers.Add(new Transaction()
                 {
                     Category = TranCategory.BalanceBroughtForward,
@@ -400,18 +402,26 @@ namespace api.Controllers
         private List<Transaction> HandleGapAfterStatement(Statement statement, Statement nextStatement)
 		{
 			List<Transaction> afterFillers = new List<Transaction>();
-			foreach(StatementAccount statementAccount in statement.StatementAccounts)
+
+            foreach (StatementAccount statementAccount in statement.StatementAccounts)
 			{
-				decimal amountAfter = nextStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).First().BalanceBroughtForward - statementAccount.BalanceCarriedForward;
-                afterFillers.Add(new Transaction()
-                {
-                    Category = TranCategory.BalanceBroughtForward,
-                    Type = TranType.Credit,
-                    Account = statementAccount.Account,
-                    Statement = statement,
-                    Amount = amountAfter,
-                    Date = statement.To.Value.AddDays(1)
-                });
+				StatementAccount? futureStatementAccount = nextStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).FirstOrDefault();
+
+				if (futureStatementAccount != null)
+				{
+					decimal amountAfter = futureStatementAccount.BalanceBroughtForward - statementAccount.BalanceCarriedForward;
+
+					if (nextStatement.From != statement.To.Value.AddDays(1))
+						afterFillers.Add(new Transaction()
+						{
+							Category = TranCategory.BalanceBroughtForward,
+							Type = TranType.Credit,
+							Account = statementAccount.Account,
+							Statement = statement,
+							Amount = amountAfter,
+							Date = statement.To.Value.AddDays(1)
+						});
+				}
             }
             _accountRepository.DeleteTransactions(nextStatement.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward && x.Date < x.Statement.From).ToList());
             return afterFillers;
