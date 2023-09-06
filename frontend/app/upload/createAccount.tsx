@@ -23,7 +23,7 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 type Props = {
 	uploadId: string;
 	accountsToBeSetup: string[];
-	handleNextFile: () => void;
+	handleNextFile: (uploadError: boolean) => void;
 };
 
 export default function CreateAccount({
@@ -51,12 +51,16 @@ export default function CreateAccount({
 			const resubmitModel: ResubmitUpload = new ResubmitUpload();
 			resubmitModel.uploadId = uploadId;
 			resubmitUpload(resubmitModel).then((result) => {
-				if ("error" in result)
+				if ("error" in result) {
 					dispatch(
 						displayError("Unable to upload your statement, please try again")
 					);
-				setIndex(index + 1); //prevent component from firing again
-				handleNextFile();
+					setIndex(index + 1); //prevent component from firing again
+					handleNextFile(true);
+				} else {
+					setIndex(index + 1); //prevent component from firing again
+					handleNextFile(false);
+				}
 			});
 		}
 	}, [

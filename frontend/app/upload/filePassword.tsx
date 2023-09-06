@@ -15,7 +15,7 @@ type Props = {
 	fileId: string;
 	setFormStep: (val: number) => void;
 	setAccountsToBeSetup: (val: string[]) => void;
-	handleNextFile: () => void;
+	handleNextFile: (uploadError: boolean) => void;
 	setStatementAlreadyUploaded: (val: boolean) => void;
 };
 
@@ -84,13 +84,16 @@ export default function FilePassword({
 				if (response.needPassword) setDisplayPasswordIncorrect(true);
 				else if (response.statementAlreadyUploaded) {
 					setStatementAlreadyUploaded(true);
-					handleNextFile();
-				} else if (response.accountsToSetup.length === 0) handleNextFile();
+					handleNextFile(false);
+				} else if (response.accountsToSetup.length === 0) handleNextFile(false);
 				else {
 					setAccountsToBeSetup(response.accountsToSetup);
 					setFormStep(3);
 				}
-			} else dispatch(displayError(null));
+			} else {
+				dispatch(displayError(null));
+				handleNextFile(true);
+			}
 			setLoading(false);
 		});
 	}

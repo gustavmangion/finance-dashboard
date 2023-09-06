@@ -27,6 +27,7 @@ export default function UploadPage() {
 	const [uploadIndex, setUploadIndex] = useState(0);
 	const [uploadDone, setUploadDone] = useState(true);
 	const [modalOpen, setModalOpen] = useState(false);
+	const [uploadError, setUploadError] = useState(false);
 	const [statementAlreadyUploaded, setStatementsAlreadyUploaded] =
 		useState(false);
 
@@ -62,7 +63,11 @@ export default function UploadPage() {
 						} else if (uploadIndex + 1 === uploadFiles.length) {
 							setModalOpen(true);
 						} else setUploadIndex(uploadIndex + 1);
-					} else dispatch(displayError("File wasn't upload, please try again"));
+					} else {
+						setUploadError(true);
+						setModalOpen(true);
+						dispatch(displayError("File wasn't upload, please try again"));
+					}
 				});
 			} else {
 				setModalOpen(true);
@@ -105,14 +110,16 @@ export default function UploadPage() {
 					modalOpen={modalOpen}
 					multipleStatements={uploadFiles.length > 1}
 					statementAlreadyUploaded={statementAlreadyUploaded}
+					uploadError={uploadError}
 					reset={Reset}
 				/>
 			</div>
 		);
 
-	function HandleNextFile() {
+	function HandleNextFile(uploadError: boolean) {
 		setUploadIndex(uploadIndex + 1);
 		setUploadDone(true);
+		setUploadError(uploadError);
 	}
 
 	function Reset() {
@@ -122,6 +129,7 @@ export default function UploadPage() {
 		setFileId("");
 		setAccountsToBeSetup([]);
 		setStatementsAlreadyUploaded(false);
+		setUploadError(false);
 		setModalOpen(false);
 	}
 }
