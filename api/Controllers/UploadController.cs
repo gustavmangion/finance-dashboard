@@ -388,6 +388,7 @@ namespace api.Controllers
 					amountBefore = statementAccount.BalanceBroughtForward - pastStatementAccount.BalanceCarriedForward;
 				}
 
+				if(!(previousStatement != null && previousStatement.To == statement.From.Value.AddDays(-1)))
                 beforeFillers.Add(new Transaction()
                 {
                     Category = TranCategory.BalanceBroughtForward,
