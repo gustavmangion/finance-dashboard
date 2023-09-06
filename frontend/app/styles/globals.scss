@@ -11,7 +11,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 }
 
 main {
@@ -25,6 +25,10 @@ main {
 	background-image: url("/home_back.jpg");
 	background-color: $navbar-background;
 	background-attachment: fixed;
+
+	@media (max-width: 330px) {
+		padding: 0;
+	}
 }
 
 h1 {
@@ -103,6 +107,7 @@ input {
 
 .MuiFormControl-root {
 	margin-top: 0.5em;
+	text-align: left;
 }
 
 .MuiInputLabel-shrink {
