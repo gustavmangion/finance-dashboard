@@ -2,6 +2,6 @@
 {
     public class UserModelForCreation
     {
-        public string BucketName { get; set; }
+        public string PortfolioName { get; set; }
     }
 }

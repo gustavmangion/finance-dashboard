@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api.Entities
 {
-    public class Bucket
+    public class Portfolio
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
@@ -11,6 +11,7 @@ namespace api.Entities
         [MaxLength(40)]
         public string Name { get; set; }
 
-        public virtual List<UserBucket> UserBuckets { get; set; }
+        public virtual List<UserPortfolio> UserPortfolios { get; set; }
+        public virtual List<Account> Accounts { get; set; }
     }
 }

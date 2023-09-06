@@ -3,30 +3,26 @@
 import User, { CreateUserModel } from "@/app/apis/base/user/types";
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
-import {
-	setBucketInput,
-	setNeedUploadStatement,
-	setUser,
-} from "@/app/stores/userSlice";
+import { setNeedUploadStatement, setUser } from "@/app/stores/userSlice";
 import { Button, Modal, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import styles from "../../styles/home.module.scss";
 import materialStyles from "../../styles/material.module.scss";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 import { useRouter } from "next/navigation";
 
 export default function SetupUser() {
 	const [loading, setLoading] = useState(false);
+	const [formState, setFormState] = useState({
+		portfolioName: "",
+	});
 	const router = useRouter();
 
 	const dispatch = useDispatch();
 	const user: User | undefined = useAppSelector(
 		(state) => state.userReducer.user
-	);
-	const bucketInput: string = useAppSelector(
-		(state) => state.userReducer.bucketInput
 	);
 	const needUploadStatement: boolean = useAppSelector(
 		(state) => state.userReducer.needUploadStatement
@@ -40,13 +36,13 @@ export default function SetupUser() {
 			<h2>Let&apos;s get you started</h2>
 			<form onSubmit={handleSubmit}>
 				<TextField
-					id="bucket-name"
-					label="Bucket name"
+					name="portfolioName"
+					label="Portfolio name"
 					variant="standard"
-					value={bucketInput}
+					value={formState.portfolioName}
 					required
-					onChange={updateBucketInput}
-					helperText="You can use buckets to group multiple accounts"
+					onChange={handleChange}
+					helperText="You can use portfolios to group multiple accounts"
 				/>
 				<LoadingButton
 					className={materialStyles.primaryButton}
@@ -73,16 +69,19 @@ export default function SetupUser() {
 		</div>
 	);
 
-	function updateBucketInput(e: ChangeEvent<HTMLInputElement>) {
-		dispatch(setBucketInput(e.target.value));
+	function handleChange(e: ChangeEvent<HTMLInputElement>) {
+		setFormState({
+			...formState,
+			[e.target.name]: e.target.value,
+		});
 	}
 
-	async function handleSubmit(e: any) {
+	async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
 		if (user?.id === "Not Found") {
 			const newUser = new CreateUserModel();
-			newUser.bucketName = bucketInput as string;
+			newUser.portfolioName = formState.portfolioName;
 			await addUser(newUser)
 				.then((result) => {
 					setLoading(false);
