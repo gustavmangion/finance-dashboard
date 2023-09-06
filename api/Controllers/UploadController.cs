@@ -402,7 +402,7 @@ namespace api.Controllers
 			List<Transaction> afterFillers = new List<Transaction>();
 			foreach(StatementAccount statementAccount in statement.StatementAccounts)
 			{
-				decimal amountAfter = statementAccount.BalanceCarriedForward - nextStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).First().BalanceBroughtForward;
+				decimal amountAfter = nextStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).First().BalanceBroughtForward - statementAccount.BalanceCarriedForward;
                 afterFillers.Add(new Transaction()
                 {
                     Category = TranCategory.BalanceBroughtForward,
@@ -410,7 +410,7 @@ namespace api.Controllers
                     Account = statementAccount.Account,
                     Statement = statement,
                     Amount = amountAfter,
-                    Date = statement.From.Value.AddDays(-1)
+                    Date = statement.To.Value.AddDays(1)
                 });
             }
             _accountRepository.DeleteTransactions(nextStatement.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward && x.Date < x.Statement.From).ToList());
