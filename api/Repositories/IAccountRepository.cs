@@ -8,6 +8,7 @@ namespace api.Repositories
         void AddAccount(Account account);
         bool AccountNameExists(string name, Guid portfolioId);
         Statement GetStatement(Guid id);
+        Statement? GetPreviousStatement(DateOnly statementStartDate);
         void AddStatement(Statement statement);
         bool StatementAlreadyUploaded(
             Guid accountId,

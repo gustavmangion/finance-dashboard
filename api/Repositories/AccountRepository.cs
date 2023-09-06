@@ -38,6 +38,11 @@ namespace api.Repositories
             return _context.Statements.Where(x => x.Id == id).FirstOrDefault();
         }
 
+        public Statement? GetPreviousStatement(DateOnly statementStartDate)
+        {
+            return _context.Statements.Where(x => x.To < statementStartDate).OrderByDescending(x => x.From).FirstOrDefault();
+        }
+
         public void AddStatement(Statement statement)
         {
             _context.Statements.Add(statement);
