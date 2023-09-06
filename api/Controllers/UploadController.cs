@@ -246,11 +246,20 @@ namespace api.Controllers
                     .Where(x => x.AccountNumber == stAccount.AccountNumber)
                     .First();
 
+                Transaction balanceBroughtForward = stAccount.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward).First();
+                stAccount.Transactions.Remove(balanceBroughtForward);
+                decimal balanceCarriedForward = balanceBroughtForward.Amount 
+                    + stAccount.Transactions.Where(x => x.Type == TranType.Credit).Sum(x => x.Amount) 
+                    - stAccount.Transactions.Where(x => x.Type == TranType.Debit).Sum(x => x.Amount);
+
                 StatementAccount statementAccount = new StatementAccount()
                 {
                     Statement = statement,
-                    Account = dbAccount
+                    Account = dbAccount,
+                    BalanceBroughtForward = balanceBroughtForward.Amount,
+                    BalanceCarriedForward = balanceCarriedForward
                 };
+
                 statement.StatementAccounts.Add(statementAccount);
 
                 if (string.IsNullOrEmpty(dbAccount.IBAN))

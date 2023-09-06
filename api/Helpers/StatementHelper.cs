@@ -195,7 +195,7 @@ namespace api.Helpers
                 .Split(content)
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToList();
-
+            transactions.Add(TransactionHelper.GetBalanceBroughtForward(transactionsContent[1]));
             for (int i = 2; i < transactionsContent.Count - 1; i += 2)
             {
                 transactions.Add(
@@ -226,12 +226,6 @@ namespace api.Helpers
 
             TransactionHelper.getSecondPart(p2, transaction);
             return transaction;
-        }
-
-        private static decimal GetBalanceBroughtForward(string p1)
-        {
-            int index = p1.IndexOf("B/F...");
-            return decimal.Parse(p1.Substring(index + 18, p1.Length - 17));
         }
     }
 }

@@ -6,5 +6,7 @@
         public virtual Statement Statement { get; set; }
         public Guid AccountId { get; set; }
         public virtual Account Account { get; set; }
+        public decimal BalanceBroughtForward { get; set; }
+        public decimal BalanceCarriedForward { get; set; }
     }
 }

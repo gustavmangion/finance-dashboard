@@ -77,10 +77,14 @@ namespace api.Helpers
             transaction.Category = TranCategory.Purchase;
         }
 
-        public static decimal getBalanceBroughtForward(string p1)
+        public static Transaction GetBalanceBroughtForward(string p1)
         {
             int index = p1.IndexOf("B/F...");
-            return decimal.Parse(p1.Substring(index + 18, p1.Length - 17));
+            return new Transaction()
+            {
+                Category = TranCategory.BalanceBroughtForward,
+                Amount = decimal.Parse(p1.Substring(index + 18, p1.Length - 17))
+            };
         }
 
         private static DateOnly getEnteredBank(string p1)

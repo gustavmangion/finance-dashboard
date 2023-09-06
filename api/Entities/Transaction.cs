@@ -32,6 +32,7 @@
         ATMWithdrawal = 4,
         Salary = 5,
         Refund = 6,
-        Other = 99
+        Other = 99,
+        BalanceBroughtForward = -1
     }
 }
