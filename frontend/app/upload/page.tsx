@@ -44,7 +44,10 @@ export default function UploadPage() {
 				uploadStatement(uploadFiles[uploadIndex]).then((result) => {
 					if ("data" in result) {
 						const response: UploadStatementResponse = result.data;
-						if (response.statementAlreadyUploaded) {
+						if (
+							response.statementAlreadyUploaded &&
+							uploadIndex + 1 === uploadFiles.length
+						) {
 							setStatementsAlreadyUploaded(true);
 							setUploadIndex(uploadIndex + 1);
 						} else if (response.needPassword) {
@@ -90,6 +93,7 @@ export default function UploadPage() {
 						setFormStep={setFormStep}
 						setAccountsToBeSetup={setAccountsToBeSetup}
 						handleNextFile={HandleNextFile}
+						setStatementAlreadyUploaded={setStatementsAlreadyUploaded}
 					/>
 				) : (
 					<CreateAccount

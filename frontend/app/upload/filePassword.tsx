@@ -16,6 +16,7 @@ type Props = {
 	setFormStep: (val: number) => void;
 	setAccountsToBeSetup: (val: string[]) => void;
 	handleNextFile: () => void;
+	setStatementAlreadyUploaded: (val: boolean) => void;
 };
 
 export default function FilePassword({
@@ -23,6 +24,7 @@ export default function FilePassword({
 	setFormStep,
 	setAccountsToBeSetup,
 	handleNextFile,
+	setStatementAlreadyUploaded,
 }: Props) {
 	const [passwordInput, setPasswordInput] = useState("");
 	const [displayPasswordIncorrect, setDisplayPasswordIncorrect] =
@@ -80,7 +82,10 @@ export default function FilePassword({
 			if ("data" in result) {
 				const response: UploadStatementResponse = result.data;
 				if (response.needPassword) setDisplayPasswordIncorrect(true);
-				else if (response.accountsToSetup.length === 0) handleNextFile();
+				else if (response.statementAlreadyUploaded) {
+					setStatementAlreadyUploaded(true);
+					handleNextFile();
+				} else if (response.accountsToSetup.length === 0) handleNextFile();
 				else {
 					setAccountsToBeSetup(response.accountsToSetup);
 					setFormStep(3);
