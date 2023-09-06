@@ -61,7 +61,6 @@ export default function UploadPage() {
 							setUploadDone(false);
 						} else if (uploadIndex + 1 === uploadFiles.length) {
 							setModalOpen(true);
-							Reset();
 						} else setUploadIndex(uploadIndex + 1);
 					} else dispatch(displayError("File wasn't upload, please try again"));
 				});
