@@ -380,10 +380,14 @@ namespace api.Controllers
             foreach (StatementAccount statementAccount in statement.StatementAccounts)
             {
                 decimal amountBefore = statementAccount.BalanceBroughtForward;
-                if (previousStatement != null)
-                    amountBefore = statementAccount.BalanceBroughtForward - previousStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).First().BalanceCarriedForward;
+				if (previousStatement != null)
+				{
+					StatementAccount? pastStatementAccount = previousStatement.StatementAccounts.Where(x => x.Account == statementAccount.Account).FirstOrDefault();
 
-				if()
+                    if (pastStatementAccount != null)
+					amountBefore = statementAccount.BalanceBroughtForward - pastStatementAccount.BalanceCarriedForward;
+				}
+
                 beforeFillers.Add(new Transaction()
                 {
                     Category = TranCategory.BalanceBroughtForward,
