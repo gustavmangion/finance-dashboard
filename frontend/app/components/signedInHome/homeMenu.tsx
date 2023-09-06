@@ -18,7 +18,7 @@ export default function HomeMenu() {
 				className={materialStyles.primaryButton}
 				onClick={() => router.push("/upload")}
 			>
-				Upload E-Statement
+				Upload Statement
 			</Button>
 			<Button className={materialStyles.primaryButton}>Statement Viewer</Button>
 		</div>
