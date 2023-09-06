@@ -11,10 +11,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-
-	@media (min-width: 350px) {
-		height: 100%;
-	}
+	height: 100vh;
 }
 
 main {
@@ -28,6 +25,10 @@ main {
 	background-image: url("/home_back.jpg");
 	background-color: $navbar-background;
 	background-attachment: fixed;
+
+	@media (max-width: 330px) {
+		padding: 0;
+	}
 }
 
 h1 {
@@ -50,6 +51,7 @@ h3 {
 	width: 100%;
 	height: 100%;
 	padding: 1em;
+	text-align: center;
 
 	background: rgba(255, 255, 255, 0.62);
 	border-radius: 16px;
@@ -79,6 +81,12 @@ h3 {
 	}
 }
 
+.errorMessage {
+	margin-top: 0.5em;
+	color: $error-red;
+	font-size: 1.2rem;
+}
+
 // /--------------Material----------------------/
 
 input {
@@ -91,6 +99,19 @@ input {
 	&.Mui-focused {
 		color: $black;
 	}
+}
+
+.MuiInput-root {
+	width: 14rem;
+}
+
+.MuiFormControl-root {
+	margin-top: 0.5em;
+	text-align: left;
+}
+
+.MuiInputLabel-shrink {
+	transform: translate(1px, 0px) scale(0.75);
 }
 
 .MuiFormHelperText-root {

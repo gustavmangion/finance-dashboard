@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 .env.test
 .env.production
+/api/WorkingDirectory

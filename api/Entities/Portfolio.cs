@@ -12,5 +12,6 @@ namespace api.Entities
         public string Name { get; set; }
 
         public virtual List<UserPortfolio> UserPortfolios { get; set; }
+        public virtual List<Account> Accounts { get; set; }
     }
 }
