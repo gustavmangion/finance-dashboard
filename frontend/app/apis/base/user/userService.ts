@@ -34,6 +34,18 @@ export const userApi = createApi({
 				method: "POST",
 				body: { ...payload },
 			}),
+			async onQueryStarted(id, { dispatch, queryFulfilled }) {
+				try {
+					const { data } = await queryFulfilled;
+					dispatch(setUser(data));
+				} catch (error) {
+					dispatch(
+						displayError(
+							"Unable to load your profile, please contact us to resolve this issue"
+						)
+					);
+				}
+			},
 		}),
 	}),
 });
