@@ -251,8 +251,7 @@ namespace api.Controllers
 				Transaction balanceBroughtForward = stAccount.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward).First();
 				stAccount.Transactions.Remove(balanceBroughtForward);
 				decimal balanceCarriedForward = balanceBroughtForward.Amount 
-					+ stAccount.Transactions.Where(x => x.Type == TranType.Credit).Sum(x => x.Amount) 
-					- stAccount.Transactions.Where(x => x.Type == TranType.Debit).Sum(x => x.Amount);
+					+ stAccount.Transactions.Sum(x => x.Amount);
 
 				StatementAccount statementAccount = new StatementAccount()
 				{
@@ -393,8 +392,8 @@ namespace api.Controllers
                     Date = statement.From.Value.AddDays(-1)
                 });
             }
-
-			_accountRepository.DeleteTransactions(previousStatement.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward && x.Date > x.Statement.To).ToList());
+			if(previousStatement != null)
+				_accountRepository.DeleteTransactions(previousStatement.Transactions.Where(x => x.Category == TranCategory.BalanceBroughtForward && x.Date > x.Statement.To).ToList());
             return beforeFillers;
         }
 
