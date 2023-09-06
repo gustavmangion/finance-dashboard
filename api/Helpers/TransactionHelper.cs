@@ -5,12 +5,12 @@ namespace api.Helpers
 {
     public static class TransactionHelper
     {
+        private static readonly Regex _secondPartRegex = new Regex("([0-9]{2}/[0-9]{2}/[0-9]{4})|([0-9,]*\\.[0-9]{2})");
+        private static readonly Regex _extraSpaceRegex = new Regex("[ ]{2,}");
+
         public static void getSecondPart(string p2, Transaction transaction)
         {
-            string pattern = "([0-9]{2}/[0-9]{2}/[0-9]{4})|([0-9,]*\\.[0-9]{2})";
-            Regex regex = new Regex(pattern);
-
-            List<string> matches = regex.Split(p2).Where(x => !string.IsNullOrEmpty(x)).ToList();
+            List<string> matches = _secondPartRegex.Split(p2).Where(x => !string.IsNullOrEmpty(x)).ToList();
 
             transaction.Date = DateOnly.Parse(matches[0]);
             transaction.Amount = decimal.Parse(matches[1]) * (transaction.Type == TranType.Debit? -1 : 1);
@@ -27,7 +27,7 @@ namespace api.Helpers
         public static void getATMWithdrawal(string p1, Transaction transaction)
         {
             transaction.EnteredBank = getEnteredBank(p1);
-            transaction.Description = p1.Substring(29, p1.Length - 57);
+            transaction.Description = RemoveExtraSpaces(p1.Substring(24, p1.Length - 42));
             transaction.Reference = p1.Substring(p1.Length - 8, 8);
             transaction.Category = TranCategory.ATMWithdrawal;
         }
@@ -37,7 +37,7 @@ namespace api.Helpers
             int index = p1.IndexOf("B/O");
 
             transaction.EnteredBank = getEnteredBank(p1);
-            transaction.Description = p1.Substring(index + 4, p1.Length - (index + 12));
+            transaction.Description = RemoveExtraSpaces(p1.Substring(index + 4, p1.Length - (index + 12)));
             transaction.Reference = p1.Substring(p1.Length - 8, 8);
             transaction.Type = TranType.Credit;
             transaction.Category = TranCategory.BankTransfer;
@@ -46,7 +46,7 @@ namespace api.Helpers
         public static void getRefund(string p1, Transaction transaction)
         {
             transaction.EnteredBank = getEnteredBank(p1);
-            transaction.Description = p1.Substring(20, p1.Length - 31);
+            transaction.Description = RemoveExtraSpaces(p1.Substring(20, p1.Length - 31));
             transaction.CardNo = p1.Substring(p1.Length - 4, 4);
             transaction.Type = TranType.Credit;
             transaction.Category = TranCategory.Refund;
@@ -63,7 +63,7 @@ namespace api.Helpers
         public static void getMiscellaneousCharge(string p1, Transaction transaction)
         {
             transaction.EnteredBank = getEnteredBank(p1);
-            transaction.Description = p1.Substring(10, p1.Length - 18);
+            transaction.Description = RemoveExtraSpaces(p1.Substring(10, p1.Length - 18));
             transaction.Reference = p1.Substring(p1.Length - 8, 8);
             transaction.Category = TranCategory.Other;
         }
@@ -71,7 +71,7 @@ namespace api.Helpers
         public static void getPurchase(string p1, Transaction transaction)
         {
             transaction.EnteredBank = getEnteredBank(p1);
-            transaction.Description = p1.Substring(20, p1.Length - 31);
+            transaction.Description = RemoveExtraSpaces(p1.Substring(20, p1.Length - 31));
             transaction.CardNo = p1.Substring(p1.Length - 10, 4);
             transaction.Reference = p1.Substring(p1.Length - 6, 6);
             transaction.Category = TranCategory.Purchase;
@@ -90,6 +90,12 @@ namespace api.Helpers
         private static DateOnly getEnteredBank(string p1)
         {
             return DateOnly.Parse(p1.Substring(0, 10));
+        }
+
+
+        private static string RemoveExtraSpaces(string s)
+        {
+            return _extraSpaceRegex.Replace(s, " ").Trim();
         }
     }
 }
