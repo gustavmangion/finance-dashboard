@@ -2,6 +2,7 @@
 using api.Helpers;
 using api.Models;
 using api.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,14 +13,17 @@ namespace api.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
-        private IAccountRepository _accountRepository;
+        private readonly IMapper _mapper;
+        private readonly IAccountRepository _accountRepository;
         private readonly IPortfolioRepository _portfolioRespository;
 
         public AccountController(
+            IMapper mapper,
             IAccountRepository accountRepository,
             IPortfolioRepository portfolioRepository
         )
         {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _accountRepository =
                 accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
             _portfolioRespository =
@@ -52,6 +56,16 @@ namespace api.Controllers
             _accountRepository.SaveChanges();
 
             return NoContent();
+        }
+
+        [HttpGet()]
+        public ActionResult GetAccounts()
+        {
+            return Ok(
+                _mapper.Map<List<AccountModel>>(
+                    _accountRepository.GetAccounts(GetUserIdFromToken())
+                )
+            );
         }
     }
 }
