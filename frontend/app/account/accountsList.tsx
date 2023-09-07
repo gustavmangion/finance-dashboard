@@ -2,6 +2,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Account from "../apis/base/account/types";
 import styles from "../styles/account.module.scss";
+import getCurrencySymbol from "../helpers/currencyHelper";
 
 type Props = {
 	accounts: Account[];
@@ -19,7 +20,8 @@ export default function AccountsList({ accounts }: Props) {
 							expandIcon={<ExpandMoreIcon />}
 						>
 							<h4>
-								{account.name} - {account.balance}
+								{account.name} - {getCurrencySymbol(account.currency)}{" "}
+								{account.balance}
 							</h4>
 						</AccordionSummary>
 						<AccordionDetails className={styles.accountListDetails}>
