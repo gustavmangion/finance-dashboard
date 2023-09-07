@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
-        public string UserId { get; set; }
+        public string UploadedUserId { get; set; }
         public DateOnly? From { get; set; }
         public DateOnly? To { get; set; }
 
