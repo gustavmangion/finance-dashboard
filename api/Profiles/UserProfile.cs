@@ -8,7 +8,10 @@ namespace api.Profiles
     {
         public UserProfile()
         {
-            CreateMap<User, UserModel>();
+            CreateMap<User, BasicUserModel>();
+            CreateMap<User, UserModel>()
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.Portfolios, opt => opt.MapFrom( src => src.UserPortfolios.Select(x => x.Portfolio)));
         }
     }
 }

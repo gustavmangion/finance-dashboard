@@ -11,6 +11,6 @@ namespace api.Entities
         public bool SetupNeeded { get; set; }
 
         public virtual List<UserPortfolio> UserPortfolios { get; set; } =
-            new List<UserPortfolio> { };
+            new List<UserPortfolio>();
     }
 }

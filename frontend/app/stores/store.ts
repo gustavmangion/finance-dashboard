@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import navBarReducer from "./navBarSlice";
-import userReducer from "./userSlice";
+import _userReducer from "./userSlice";
 import notificationReducer from "./notificationSlice";
 import { uploadApi } from "../apis/base/upload/uploadService";
 import storage from "./storage";
@@ -24,7 +24,7 @@ const persistConfig = {
 	storage,
 };
 
-// const someReducerPersisted = persistReducer(persistConfig, someReducer);
+const userReducer = persistReducer(persistConfig, _userReducer);
 
 export const store = configureStore({
 	reducer: {

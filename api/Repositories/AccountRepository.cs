@@ -40,12 +40,18 @@ namespace api.Repositories
 
         public Statement? GetPreviousStatement(DateOnly statementStartDate)
         {
-            return _context.Statements.Where(x => x.To < statementStartDate).OrderByDescending(x => x.From).FirstOrDefault();
+            return _context.Statements
+                .Where(x => x.To < statementStartDate)
+                .OrderByDescending(x => x.From)
+                .FirstOrDefault();
         }
 
         public Statement? GetNextStatement(DateOnly statementEndtDate)
         {
-            return _context.Statements.Where(x => x.From > statementEndtDate).OrderBy(x => x.From).FirstOrDefault();
+            return _context.Statements
+                .Where(x => x.From > statementEndtDate)
+                .OrderBy(x => x.From)
+                .FirstOrDefault();
         }
 
         public void AddStatement(Statement statement)
@@ -90,7 +96,7 @@ namespace api.Repositories
 
         public bool PendingStatementExists(string userId, Guid id)
         {
-            return _context.Statements.Where(x => x.UserId == userId && x.Id == id).Any();
+            return _context.Statements.Where(x => x.UploadedUserId == userId && x.Id == id).Any();
         }
 
         public void DeleteTransactions(List<Transaction> transactions)
