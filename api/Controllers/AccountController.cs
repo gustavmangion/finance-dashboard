@@ -58,7 +58,7 @@ namespace api.Controllers
             return NoContent();
         }
 
-        [HttpGet()]
+        [HttpGet]
         public ActionResult GetAccounts()
         {
             return Ok(
@@ -66,6 +66,18 @@ namespace api.Controllers
                     _accountRepository.GetAccounts(GetUserIdFromToken())
                 )
             );
+        }
+
+        [HttpGet]
+        public ActionResult GetAccount(Guid id)
+        {
+            if (_accountRepository.UserCanAccessAccount(id, GetUserIdFromToken()))
+            {
+                ModelState.AddModelError("message", "Account does not exist");
+                return BadRequest(ModelState);
+            }
+
+            return Ok(_mapper.Map<AccountModel>(_accountRepository.GetAccount(id)));
         }
     }
 }
