@@ -11,7 +11,7 @@ export default function AccountPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
-	const [accounts] = useGetAccountsQuery(null);
+	const { accounts } = useGetAccountsQuery(null);
 
 	useEffect(() => {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");

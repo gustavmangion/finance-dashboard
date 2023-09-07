@@ -1,4 +1,5 @@
 ﻿using api.Entities;
+using api.Models;
 using AutoMapper;
 
 namespace api.Profiles
@@ -7,7 +8,7 @@ namespace api.Profiles
     {
         public AccountProfile()
         {
-            CreateMap<Account, AccountProfile>();
+            CreateMap<Account, AccountModel>();
         }
     }
 }
