@@ -1,8 +1,14 @@
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Button,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Account from "../apis/base/account/types";
 import styles from "../styles/account.module.scss";
-import { getCurrencySymbol, getMoneyFormat } from "../helpers/moneyHelper";
+import materialStyles from "../styles/material.module.scss";
+import { getMoneyFormat } from "../helpers/moneyHelper";
 
 type Props = {
 	accounts: Account[];
@@ -31,6 +37,19 @@ export default function AccountsList({ accounts }: Props) {
 								<p>Currency: {account.currency}</p>
 								<p>Total Debit: {getMoneyFormat(account.totalOut)}</p>
 								<p>Total Credit: {getMoneyFormat(account.totalIn)}</p>
+							</div>
+							<div className={styles.buttons}>
+								<Button className={materialStyles.smallButton}>
+									View Transactions
+								</Button>
+								<Button
+									className={[
+										materialStyles.smallButton,
+										materialStyles.secondary,
+									].join(" ")}
+								>
+									Edit
+								</Button>
 							</div>
 						</AccordionDetails>
 					</Accordion>

@@ -12,5 +12,11 @@
 	}
 	.accountListDetails {
 		text-align: left;
+
+		.buttons {
+			display: flex;
+			justify-content: center;
+			margin-top: 0.5em;
+		}
 	}
 }
