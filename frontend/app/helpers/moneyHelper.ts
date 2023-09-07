@@ -1,4 +1,14 @@
-export default function getCurrencySymbol(code: string): string {
+export function getMoneyFormat(value: number, code: string = ""): string {
+	const valueFormatted = (Math.round(value * 100) / 100).toFixed(2);
+	if (code === "") return valueFormatted;
+
+	const symbol = getCurrencySymbol(code);
+	if (symbol === "") return valueFormatted;
+
+	return `${symbol} ${valueFormatted}`;
+}
+
+export function getCurrencySymbol(code: string): string {
 	switch (code) {
 		case "AED":
 			return "AED";
