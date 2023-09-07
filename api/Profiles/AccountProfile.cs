@@ -18,9 +18,11 @@ namespace api.Profiles
                     opt =>
                         opt.MapFrom(
                             src =>
-                                src.Transactions
-                                    .Where(x => x.Type == TranType.Debit)
-                                    .Sum(x => x.Amount)
+                                Math.Abs(
+                                    src.Transactions
+                                        .Where(x => x.Type == TranType.Debit)
+                                        .Sum(x => x.Amount)
+                                )
                         )
                 )
                 .ForMember(
