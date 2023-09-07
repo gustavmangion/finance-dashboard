@@ -24,7 +24,7 @@ export default function AccountsList({ accounts }: Props) {
 							className={styles.accountListHeader}
 							expandIcon={<ExpandMoreIcon />}
 						>
-							<h4>
+							<h4 className={account.balance < 0 ? styles.negativeBalance : ""}>
 								{`${account.name} - 
 								${getMoneyFormat(account.balance, account.currency)}`}
 							</h4>
