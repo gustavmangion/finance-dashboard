@@ -8,12 +8,15 @@ import LoadingSkeleton from "../components/loadingSkeleton";
 import { useGetAccountsQuery } from "../apis/base/account/accountService";
 import AccountsList from "./accountsList";
 import styles from "../styles/account.module.scss";
+import EditAccount from "./editAccount";
+import Account from "../apis/base/account/types";
 
 export default function AccountPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
 	const [view, setView] = useState(PageView.Accounts);
+	const [accountToEdit, setAccountToEdit] = useState<Account | undefined>();
 
 	const { data, isLoading } = useGetAccountsQuery(null);
 
@@ -26,7 +29,6 @@ export default function AccountPage() {
 	if (authStatus == AuthStatus.Authorized)
 		return (
 			<div className="container">
-				<h2>Your Accounts</h2>
 				<div className={styles.accountList}>
 					{isLoading ? <LoadingSkeleton /> : getView()}
 				</div>
@@ -34,11 +36,27 @@ export default function AccountPage() {
 		);
 
 	function getView() {
-		if (view === PageView.Accounts) return <AccountsList accounts={data!} />;
+		switch (view) {
+			case PageView.Accounts:
+				return (
+					<AccountsList
+						accounts={data!}
+						setAccountToEdit={setAccountToEdit}
+						setPageView={setView}
+					/>
+				);
+			case PageView.Edit:
+				return (
+					<EditAccount
+						account={accountToEdit}
+						setAccountToEdit={setAccountToEdit}
+					/>
+				);
+		}
 	}
 }
 
-enum PageView {
+export enum PageView {
 	Accounts,
 	Edit,
 	Transactions,

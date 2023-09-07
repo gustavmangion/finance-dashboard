@@ -1,7 +1,10 @@
 @import "./variables";
 
 .accountList {
-	margin-top: 1em;
+	h2 {
+		margin-bottom: 0.5em;
+	}
+
 	.accountListHeader {
 		background-color: $secondary;
 		color: $white;

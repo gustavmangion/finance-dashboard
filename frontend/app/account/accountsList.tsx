@@ -9,14 +9,23 @@ import Account from "../apis/base/account/types";
 import styles from "../styles/account.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import { getMoneyFormat } from "../helpers/moneyHelper";
+import { PageView } from "./page";
 
 type Props = {
 	accounts: Account[];
+	setAccountToEdit: (val: Account | undefined) => void;
+	setPageView: (val: PageView) => void;
 };
 
-export default function AccountsList({ accounts }: Props) {
+export default function AccountsList({
+	accounts,
+	setAccountToEdit,
+	setPageView,
+}: Props) {
 	return (
 		<>
+			<h2>Your Accounts</h2>
+
 			{accounts.map((account) => {
 				return (
 					<Accordion key={account.id}>
@@ -46,6 +55,7 @@ export default function AccountsList({ accounts }: Props) {
 										materialStyles.smallButton,
 										materialStyles.secondary,
 									].join(" ")}
+									onClick={(e) => handleEditClick(e, account)}
 								>
 									Edit
 								</Button>
@@ -56,4 +66,12 @@ export default function AccountsList({ accounts }: Props) {
 			})}
 		</>
 	);
+
+	function handleEditClick(
+		e: React.MouseEvent<HTMLButtonElement>,
+		account: Account
+	) {
+		setAccountToEdit(account);
+		setPageView(PageView.Edit);
+	}
 }
