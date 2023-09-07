@@ -24,7 +24,7 @@ export default function AccountPage() {
 	if (authStatus == AuthStatus.Authorized)
 		return (
 			<div className="container">
-				<h3>Your Accounts</h3>
+				<h2>Your Accounts</h2>
 				<div className={styles.accountList}>
 					{isLoading ? <LoadingSkeleton /> : <AccountsList accounts={data!} />}
 				</div>

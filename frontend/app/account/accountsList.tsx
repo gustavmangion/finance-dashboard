@@ -15,7 +15,6 @@ type Props = {
 };
 
 export default function AccountsList({ accounts }: Props) {
-	console.log(accounts);
 	return (
 		<>
 			{accounts.map((account) => {
