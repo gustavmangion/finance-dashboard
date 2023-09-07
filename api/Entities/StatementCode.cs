@@ -1,10 +1,10 @@
 ﻿namespace api.Entities
 {
-    public class UserBucket
+    public class StatementCode
     {
+        public Guid Id { get; set; }
         public string UserId { get; set; }
         public virtual User User { get; set; }
-        public Guid BucketId { get; set; }
-        public virtual Bucket Bucket { get; set; }
+        public string Code { get; set; }
     }
 }

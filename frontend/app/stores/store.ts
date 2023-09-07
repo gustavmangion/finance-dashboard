@@ -1,8 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
-import { testApi } from "../apis/base/test/testService";
 import navBarReducer from "./navBarSlice";
-import userReducer from "./userSlice";
+import _userReducer from "./userSlice";
 import notificationReducer from "./notificationSlice";
 import { uploadApi } from "../apis/base/upload/uploadService";
 import storage from "./storage";
@@ -17,19 +16,22 @@ import {
 	persistStore,
 } from "redux-persist";
 import { userApi } from "../apis/base/user/userService";
+import { portfolioApi } from "../apis/base/portfolio/portfolioService";
+import { accountApi } from "../apis/base/account/accountService";
 
 const persistConfig = {
 	key: "root",
 	storage,
 };
 
-// const someReducerPersisted = persistReducer(persistConfig, someReducer);
+const userReducer = persistReducer(persistConfig, _userReducer);
 
 export const store = configureStore({
 	reducer: {
-		[testApi.reducerPath]: testApi.reducer,
 		[uploadApi.reducerPath]: uploadApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
+		[portfolioApi.reducerPath]: portfolioApi.reducer,
+		[accountApi.reducerPath]: accountApi.reducer,
 		navBarReducer,
 		userReducer,
 		notificationReducer,
@@ -41,7 +43,12 @@ export const store = configureStore({
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
-		}).concat(testApi.middleware, uploadApi.middleware, userApi.middleware),
+		}).concat(
+			uploadApi.middleware,
+			userApi.middleware,
+			portfolioApi.middleware,
+			accountApi.middleware
+		),
 });
 
 setupListeners(store.dispatch);

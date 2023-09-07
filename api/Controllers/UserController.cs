@@ -40,6 +40,8 @@ namespace api.Controllers
                 user = new User { Id = "Not Found", SetupNeeded = true };
 
             UserModel model = _mapper.Map<UserModel>(user);
+            if (user.UserPortfolios.Count() == 0)
+                model.User.SetupNeeded = true;
 
             return Ok(model);
         }
@@ -47,8 +49,8 @@ namespace api.Controllers
         [HttpPost]
         public ActionResult SaveUser(UserModelForCreation model)
         {
-            if (string.IsNullOrEmpty(model.BucketName))
-                ModelState.AddModelError("message", "Bucket Name is required");
+            if (string.IsNullOrEmpty(model.PortfolioName))
+                ModelState.AddModelError("message", "Portfolio Name is required");
 
             string userId = GetUserIdFromToken();
 
@@ -60,15 +62,15 @@ namespace api.Controllers
 
             User newUser = new User();
             newUser.Id = GetUserIdFromToken();
-            newUser.UserBuckets.Add(
-                new UserBucket { Bucket = new Bucket { Name = model.BucketName }, }
+            newUser.UserPortfolios.Add(
+                new UserPortfolio { Portfolio = new Portfolio { Name = model.PortfolioName }, }
             );
 
             _userRepository.AddUser(newUser);
             _userRepository.SaveChanges();
 
             UserModel newUserModel = _mapper.Map<UserModel>(newUser);
-            newUserModel.SetupNeeded = false;
+            newUserModel.User.SetupNeeded = false;
 
             return Ok(newUserModel);
         }

@@ -10,6 +10,7 @@ namespace api.Entities
         [NotMapped]
         public bool SetupNeeded { get; set; }
 
-        public virtual List<UserBucket> UserBuckets { get; set; } = new List<UserBucket> { };
+        public virtual List<UserPortfolio> UserPortfolios { get; set; } =
+            new List<UserPortfolio>();
     }
 }
