@@ -63,7 +63,7 @@ namespace api.Controllers
         {
             return Ok(
                 _mapper.Map<List<AccountModel>>(
-                    _accountRepository.GetAccounts(GetUserIdFromToken())
+                    _accountRepository.GetAccounts(GetUserIdFromToken()).OrderBy(x => x.Name)
                 )
             );
         }

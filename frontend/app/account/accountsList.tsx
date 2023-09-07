@@ -18,13 +18,17 @@ export default function AccountsList({ accounts }: Props) {
 							className={styles.accountListHeader}
 							expandIcon={<ExpandMoreIcon />}
 						>
-							<h4>{account.name}</h4>
+							<h4>
+								{account.name} - {account.balance}
+							</h4>
 						</AccordionSummary>
 						<AccordionDetails className={styles.accountListDetails}>
 							<div>
 								<p>Account Number: {account.accountNumber}</p>
 								<p>IBAN: {account.iban}</p>
 								<p>Currency: {account.currency}</p>
+								<p>Total Debit: {account.totalOut}</p>
+								<p>Total Credit: {account.totalIn}</p>
 							</div>
 						</AccordionDetails>
 					</Accordion>

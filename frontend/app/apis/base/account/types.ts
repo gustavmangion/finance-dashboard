@@ -5,6 +5,9 @@ export default interface Account {
 	name: string;
 	iban: string;
 	currency: string;
+	balance: number;
+	totalOut: number;
+	totalIn: number;
 }
 
 export class AccountCreationModel {

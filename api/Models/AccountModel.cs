@@ -8,5 +8,8 @@
         public string Name { get; set; }
         public string IBAN { get; set; }
         public string Currency { get; set; }
+        public decimal Balance { get; set; }
+        public decimal TotalIn { get; set; }
+        public decimal TotalOut { get; set; }
     }
 }
