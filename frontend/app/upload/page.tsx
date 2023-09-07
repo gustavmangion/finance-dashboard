@@ -15,6 +15,8 @@ import { UploadStatementResponse } from "../apis/base/upload/types";
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 import UploadSuccessModal from "./uploadSuccessModal";
+import { useAppSelector } from "../hooks/reduxHook";
+import { setNeedUploadStatement } from "../stores/userSlice";
 
 export default function UploadPage() {
 	const authStatus = useSecurePage();
@@ -32,6 +34,9 @@ export default function UploadPage() {
 		useState(false);
 
 	const dispatch = useDispatch();
+	const needUploadStatement: boolean = useAppSelector(
+		(state) => state.userReducer.needUploadStatement
+	);
 	const [uploadStatement] = useUploadStatementMutation();
 
 	useEffect(() => {
@@ -61,6 +66,8 @@ export default function UploadPage() {
 							setAccountsToBeSetup(response.accountsToSetup);
 							setUploadDone(false);
 						} else if (uploadIndex + 1 === uploadFiles.length) {
+							if (needUploadStatement) dispatch(setNeedUploadStatement(false));
+
 							setModalOpen(true);
 						} else setUploadIndex(uploadIndex + 1);
 					} else {
@@ -70,10 +77,19 @@ export default function UploadPage() {
 					}
 				});
 			} else {
+				if (needUploadStatement) dispatch(setNeedUploadStatement(false));
+
 				setModalOpen(true);
 			}
 		}
-	}, [uploadIndex, dispatch, uploadFiles, uploadStatement, uploadDone]);
+	}, [
+		uploadIndex,
+		dispatch,
+		uploadFiles,
+		uploadStatement,
+		uploadDone,
+		needUploadStatement,
+	]);
 
 	if (authStatus == AuthStatus.Loading) return <LoadingSkeleton />;
 

@@ -1,6 +1,7 @@
+import Portfolio from "../portfolio/types";
+
 export default interface User {
 	id: string;
-	joinDate: Date;
 	setupNeeded: boolean;
 }
 
@@ -8,4 +9,9 @@ export type GetUser = { id: string };
 
 export class CreateUserModel {
 	portfolioName: string = "";
+}
+
+export class GetUserModel {
+	user!: User;
+	portfolios: Portfolio[] = [];
 }

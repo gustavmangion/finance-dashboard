@@ -2,8 +2,7 @@
 {
     public class UserModel
     {
-        public string Id { get; set; }
-        public DateOnly Joined { get; set; }
-        public bool SetupNeeded { get; set; }
+        public BasicUserModel User { get; set; }
+        public List<PortfolioModel> Portfolios { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import User from "../apis/base/user/types";
+import User, { GetUserModel } from "../apis/base/user/types";
 import Portfolio from "../apis/base/portfolio/types";
 
 type UserState = {
@@ -18,8 +18,9 @@ export const user = createSlice({
 	name: "user",
 	initialState,
 	reducers: {
-		setUser: (state: any, action: PayloadAction<User | undefined>) => {
-			state.user = action.payload;
+		setUser: (state: any, action: PayloadAction<GetUserModel | undefined>) => {
+			state.user = action.payload?.user;
+			state.portfolios = action.payload?.portfolios;
 		},
 		setNeedUploadStatement: (state: any, action: PayloadAction<boolean>) => {
 			state.needUploadStatement = action.payload;

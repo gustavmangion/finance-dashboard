@@ -12,6 +12,7 @@ import materialStyles from "../../styles/material.module.scss";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 import { useRouter } from "next/navigation";
+import Portfolio from "@/app/apis/base/portfolio/types";
 
 export default function SetupUser() {
 	const [loading, setLoading] = useState(false);
@@ -24,10 +25,15 @@ export default function SetupUser() {
 	const user: User | undefined = useAppSelector(
 		(state) => state.userReducer.user
 	);
+	const portfolios: Portfolio[] = useAppSelector(
+		(state) => state.userReducer.portfolios
+	);
 	const needUploadStatement: boolean = useAppSelector(
 		(state) => state.userReducer.needUploadStatement
 	);
-	const [modalOpen, setModalOpen] = useState(needUploadStatement);
+	const [modalOpen, setModalOpen] = useState(
+		needUploadStatement && portfolios.length > 0
+	);
 
 	const [addUser] = useAddUserMutation();
 
