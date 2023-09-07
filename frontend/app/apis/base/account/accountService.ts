@@ -18,7 +18,7 @@ export const accountApi = createApi({
 				body: { ...payload },
 			}),
 		}),
-		getAccounts: builder.query<Account, null>({
+		getAccounts: builder.query<Account[], null>({
 			query: () => "/",
 		}),
 	}),

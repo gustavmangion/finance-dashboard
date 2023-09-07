@@ -1,0 +1,16 @@
+@import "./variables";
+
+.accountList {
+	margin-top: 1em;
+	.accountListHeader {
+		background-color: $secondary;
+		color: $white;
+
+		svg {
+			color: $white;
+		}
+	}
+	.accountListDetails {
+		text-align: left;
+	}
+}

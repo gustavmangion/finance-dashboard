@@ -6,12 +6,14 @@ import { useEffect } from "react";
 import { AuthStatus } from "../enums/authStatusEnum";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import { useGetAccountsQuery } from "../apis/base/account/accountService";
+import AccountsList from "./accountsList";
+import styles from "../styles/account.module.scss";
 
 export default function AccountPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
-	const { accounts } = useGetAccountsQuery(null);
+	const { data, isLoading } = useGetAccountsQuery(null);
 
 	useEffect(() => {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");
@@ -23,6 +25,9 @@ export default function AccountPage() {
 		return (
 			<div className="container">
 				<h3>Your Accounts</h3>
+				<div className={styles.accountList}>
+					{isLoading ? <LoadingSkeleton /> : <AccountsList accounts={data!} />}
+				</div>
 			</div>
 		);
 }
