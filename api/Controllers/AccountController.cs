@@ -68,7 +68,7 @@ namespace api.Controllers
             );
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public ActionResult GetAccount(Guid id)
         {
             if (_accountRepository.UserCanAccessAccount(id, GetUserIdFromToken()))
