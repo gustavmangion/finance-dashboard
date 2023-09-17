@@ -1,20 +1,29 @@
 import { TextField } from "@mui/material";
-import Account from "../apis/base/account/types";
+import Account, { EditAccountModel } from "../apis/base/account/types";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import materialStyles from "../styles/material.module.scss";
+import { useEditAccountMutation } from "../apis/base/account/accountService";
+import { useDispatch } from "react-redux";
+import {
+	displayNotification,
+	displaySuccess,
+} from "../stores/notificationSlice";
+import { PageView } from "./page";
 
 type Props = {
 	account: Account | undefined;
-	setAccountToEdit: (val: Account | undefined) => void;
+	setView: (val: PageView) => void;
 };
 
-export default function EditAccount({ account, setAccountToEdit }: Props) {
+export default function EditAccount({ account, setView }: Props) {
 	const [loading, setLoading] = useState(false);
 	const [formState, setFormState] = useState({
-		name: account?.name,
-		accountNumber: account?.accountNumber,
+		name: account?.name as string,
 	});
+
+	const dispatch = useDispatch();
+	const [editAccount] = useEditAccountMutation();
 
 	return (
 		<>
@@ -52,5 +61,16 @@ export default function EditAccount({ account, setAccountToEdit }: Props) {
 	function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
+		const model: EditAccountModel = new EditAccountModel();
+		model.id = account?.id as string;
+		model.body.name = formState.name;
+		console.log(model);
+		editAccount(model).then((result) => {
+			setLoading(false);
+			if ("data" in result) {
+				dispatch(displaySuccess("Account has been updated"));
+				setView(PageView.Accounts);
+			}
+		});
 	}
 }

@@ -46,12 +46,7 @@ export default function AccountPage() {
 					/>
 				);
 			case PageView.Edit:
-				return (
-					<EditAccount
-						account={accountToEdit}
-						setAccountToEdit={setAccountToEdit}
-					/>
-				);
+				return <EditAccount account={accountToEdit} setView={setView} />;
 		}
 	}
 }

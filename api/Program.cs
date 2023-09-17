@@ -84,7 +84,7 @@ try
         app.UseHttpsRedirection();
     }
 
-    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
+    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
     if (app.Environment.IsProduction())
     {

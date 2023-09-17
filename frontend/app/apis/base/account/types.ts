@@ -15,3 +15,12 @@ export class AccountCreationModel {
 	name: string = "";
 	accountNumber: string = "";
 }
+
+export class EditAccountModel {
+	id: string = "";
+	body: EditAccountModelBody = new EditAccountModelBody();
+}
+
+class EditAccountModelBody {
+	name: string = "";
+}
