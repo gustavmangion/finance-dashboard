@@ -24,4 +24,5 @@ export class EditAccountModel {
 
 class EditAccountModelBody {
 	name: string = "";
+	portfolio: string = "";
 }

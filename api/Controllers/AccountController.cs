@@ -83,10 +83,14 @@ namespace api.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateAccount(Guid id, [FromBody] AccountForUpdateModel model)
         {
-            if (_accountRepository.UserCanAccessAccount(id, GetUserIdFromToken()))
+            string userId = GetUserIdFromToken();
+
+            if (_accountRepository.UserCanAccessAccount(id, userId))
                 ModelState.AddModelError("message", "Account does not exist");
             else if (string.IsNullOrEmpty(model.Name))
                 ModelState.AddModelError("message", "Account name is required");
+            else if (!_portfolioRespository.PortfolioExists(userId, model.PortfolioId))
+                ModelState.AddModelError("message", "Portfolio does not exist");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -94,6 +98,7 @@ namespace api.Controllers
             Account? account = _accountRepository.GetAccount(id);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             account.Name = model.Name;
+            account.PortfolioId = model.PortfolioId;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             _accountRepository.SaveChanges();
 
