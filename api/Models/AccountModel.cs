@@ -6,6 +6,7 @@
         public Guid PortfolioId { get; set; }
         public string AccountNumber { get; set; }
         public string Name { get; set; }
+        public string BankName { get; set; }
         public string IBAN { get; set; }
         public string Currency { get; set; }
         public decimal Balance { get; set; }

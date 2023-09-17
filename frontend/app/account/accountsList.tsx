@@ -41,6 +41,7 @@ export default function AccountsList({
 						<AccordionDetails className={styles.accountListDetails}>
 							<div>
 								<p>Account Number: {account.accountNumber}</p>
+								<p>Bank: {account.bankName}</p>
 								<p>IBAN: {account.iban}</p>
 								<p>Currency: {account.currency}</p>
 								<p>Total Debit: {getMoneyFormat(account.totalOut)}</p>

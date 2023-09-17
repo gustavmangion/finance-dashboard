@@ -3,6 +3,7 @@ export default interface Account {
 	portfolioId: string;
 	accountNumber: string;
 	name: string;
+	bankName: string;
 	iban: string;
 	currency: string;
 	balance: number;
