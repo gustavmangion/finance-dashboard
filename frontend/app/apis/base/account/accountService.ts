@@ -10,6 +10,7 @@ export const accountApi = createApi({
 			return getHeaders(headers);
 		},
 	}),
+	tagTypes: ["Accounts"],
 	endpoints: (builder) => ({
 		createAccount: builder.mutation({
 			query: (payload: AccountCreationModel) => ({
@@ -20,6 +21,7 @@ export const accountApi = createApi({
 		}),
 		getAccounts: builder.query<Account[], null>({
 			query: () => "/",
+			providesTags: ["Accounts"],
 		}),
 		editAccount: builder.mutation({
 			query: (payload: EditAccountModel) => ({
@@ -27,6 +29,7 @@ export const accountApi = createApi({
 				method: "PUT",
 				body: { ...payload.body },
 			}),
+			invalidatesTags: ["Accounts"],
 		}),
 	}),
 });

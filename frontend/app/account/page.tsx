@@ -18,7 +18,7 @@ export default function AccountPage() {
 	const [view, setView] = useState(PageView.Accounts);
 	const [accountToEdit, setAccountToEdit] = useState<Account | undefined>();
 
-	const { data, isLoading } = useGetAccountsQuery(null);
+	const { data, isLoading, isFetching } = useGetAccountsQuery(null);
 
 	useEffect(() => {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");
@@ -30,7 +30,7 @@ export default function AccountPage() {
 		return (
 			<div className="container">
 				<div className={styles.accountList}>
-					{isLoading ? <LoadingSkeleton /> : getView()}
+					{isLoading || isFetching ? <LoadingSkeleton /> : getView()}
 				</div>
 			</div>
 		);
