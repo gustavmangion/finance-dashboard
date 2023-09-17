@@ -13,7 +13,7 @@ import { LoadingButton } from "@mui/lab";
 import materialStyles from "../styles/material.module.scss";
 import { useEditAccountMutation } from "../apis/base/account/accountService";
 import { useDispatch } from "react-redux";
-import { displaySuccess } from "../stores/notificationSlice";
+import { displayError, displaySuccess } from "../stores/notificationSlice";
 import { PageView } from "./page";
 import { useAppSelector } from "../hooks/reduxHook";
 
@@ -26,7 +26,7 @@ export default function EditAccount({ account, setView }: Props) {
 	const [loading, setLoading] = useState(false);
 	const [formState, setFormState] = useState({
 		name: account?.name as string,
-		portfolio: account?.portfolioId as string,
+		portfolioId: account?.portfolioId as string,
 	});
 
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
@@ -56,7 +56,7 @@ export default function EditAccount({ account, setView }: Props) {
 						label="Portfolio"
 						variant="standard"
 						onChange={handleSelectChange}
-						value={formState.portfolio}
+						value={formState.portfolioId}
 						required
 						placeholder="Portfolio"
 					>
@@ -105,14 +105,14 @@ export default function EditAccount({ account, setView }: Props) {
 		const model: EditAccountModel = new EditAccountModel();
 		model.id = account?.id as string;
 		model.body.name = formState.name;
-		model.body.portfolio = formState.portfolio;
+		model.body.portfolioId = formState.portfolioId;
 		console.log(model);
 		editAccount(model).then((result) => {
 			setLoading(false);
 			if ("data" in result) {
 				dispatch(displaySuccess("Account has been updated"));
 				setView(PageView.Accounts);
-			}
+			} else dispatch(displayError(null));
 		});
 	}
 }
