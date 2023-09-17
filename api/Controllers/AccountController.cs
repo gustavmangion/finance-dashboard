@@ -84,10 +84,12 @@ namespace api.Controllers
         public ActionResult UpdateAccount(Guid id, [FromBody] AccountForUpdateModel model)
         {
             if (_accountRepository.UserCanAccessAccount(id, GetUserIdFromToken()))
-            {
                 ModelState.AddModelError("message", "Account does not exist");
+            else if (string.IsNullOrEmpty(model.Name))
+                ModelState.AddModelError("message", "Account name is required");
+
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            }
 
             Account? account = _accountRepository.GetAccount(id);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
