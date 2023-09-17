@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import Account, { EditAccountModel } from "../apis/base/account/types";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { LoadingButton } from "@mui/lab";
@@ -48,6 +48,7 @@ export default function EditAccount({ account, setView }: Props) {
 					Update
 				</LoadingButton>
 			</form>
+			<Button onClick={handleBack}>Back</Button>
 		</>
 	);
 
@@ -56,6 +57,10 @@ export default function EditAccount({ account, setView }: Props) {
 			...formState,
 			[e.target.name]: e.target.value,
 		});
+	}
+
+	function handleBack() {
+		setView(PageView.Accounts);
 	}
 
 	function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
