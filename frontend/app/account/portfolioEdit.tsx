@@ -17,11 +17,15 @@ import materialStyles from "../styles/material.module.scss";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import {
+	useAddPortfolioMutation,
 	useDeletePortfolioMutation,
 	useEditPortfolioMutation,
 	useGetPortfoliosQuery,
 } from "../apis/base/portfolio/portfolioService";
-import { EditPortfolioModel } from "../apis/base/portfolio/types";
+import Portfolio, {
+	CreatePortfolioModel,
+	EditPortfolioModel,
+} from "../apis/base/portfolio/types";
 import { displayError, displaySuccess } from "../stores/notificationSlice";
 import LoadingSkeleton from "../components/loadingSkeleton";
 
@@ -36,10 +40,13 @@ export default function PortfolioEdit({ setView }: Props) {
 	const [submitLoading, setSubmitLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showNameExistsModal, setShowNameExistsModal] = useState(false);
+	const [addingNewPortfolio, setAddingNewPortfolio] = useState(false);
 
 	const dispatch = useDispatch();
 	const [editPortfolio] = useEditPortfolioMutation();
 	const [deletePortfolio] = useDeletePortfolioMutation();
+	const [createPortfolio] = useAddPortfolioMutation();
 	const { isLoading, isFetching } = useGetPortfoliosQuery(null);
 
 	if (isLoading) return <LoadingSkeleton />;
@@ -51,26 +58,31 @@ export default function PortfolioEdit({ setView }: Props) {
 				<CircularProgress />
 			) : (
 				<>
-					<FormControl>
-						<InputLabel>Portfolio</InputLabel>
-						<Select
-							name="portfolio"
-							label="Portfolio"
-							variant="standard"
-							onChange={handleSelectChange}
-							value={selectedPortfolio}
-							required
-							placeholder="Portfolio"
-						>
-							{portfolios.map((x) => {
-								return (
-									<MenuItem key={x.id} value={x.id}>
-										{x.name}
-									</MenuItem>
-								);
-							})}
-						</Select>
-					</FormControl>
+					{addingNewPortfolio ? null : (
+						<>
+							<Button onClick={handleNewPortfolio}>Create New</Button>
+							<FormControl>
+								<InputLabel>Portfolio</InputLabel>
+								<Select
+									name="portfolio"
+									label="Portfolio"
+									variant="standard"
+									onChange={handleSelectChange}
+									value={selectedPortfolio}
+									required
+									placeholder="Portfolio"
+								>
+									{portfolios.map((x) => {
+										return (
+											<MenuItem key={x.id} value={x.id}>
+												{x.name}
+											</MenuItem>
+										);
+									})}
+								</Select>
+							</FormControl>
+						</>
+					)}
 					<form onSubmit={handleSubmit}>
 						<TextField
 							name="name"
@@ -89,14 +101,23 @@ export default function PortfolioEdit({ setView }: Props) {
 							>
 								Save
 							</LoadingButton>
-							<LoadingButton
-								className={materialStyles.secondaryButton}
-								loading={deleteLoading}
-								disabled={submitLoading}
-								onClick={handleDelete}
-							>
-								Delete
-							</LoadingButton>
+							{addingNewPortfolio ? (
+								<Button
+									className={materialStyles.secondaryButton}
+									onClick={handleCancelAddNew}
+								>
+									Cancel
+								</Button>
+							) : (
+								<LoadingButton
+									className={materialStyles.secondaryButton}
+									loading={deleteLoading}
+									disabled={submitLoading}
+									onClick={handleDelete}
+								>
+									Delete
+								</LoadingButton>
+							)}
 						</div>
 					</form>
 					<Button onClick={() => setView(PageView.Accounts)}>Back</Button>
@@ -109,6 +130,21 @@ export default function PortfolioEdit({ setView }: Props) {
 					<Button
 						className={materialStyles.primaryButton}
 						onClick={() => setShowDeleteModal(false)}
+					>
+						Ok
+					</Button>
+				</div>
+			</Modal>
+			<Modal
+				open={showNameExistsModal}
+				onClose={() => setShowNameExistsModal(false)}
+			>
+				<div className={materialStyles.modal}>
+					<h3>Another portfolio already has this name</h3>
+					<p>Please chose another name</p>
+					<Button
+						className={materialStyles.primaryButton}
+						onClick={() => setShowNameExistsModal(false)}
 					>
 						Ok
 					</Button>
@@ -131,15 +167,34 @@ export default function PortfolioEdit({ setView }: Props) {
 	function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setSubmitLoading(true);
-		const model: EditPortfolioModel = new EditPortfolioModel();
-		model.id = selectedPortfolio;
-		model.body.name = portfolioName.trim();
-		editPortfolio(model).then((result) => {
-			setSubmitLoading(false);
-			if ("data" in result) {
-				dispatch(displaySuccess("Portfolio updated"));
-			} else dispatch(displayError(null));
-		});
+		if (!addingNewPortfolio) {
+			const model: EditPortfolioModel = new EditPortfolioModel();
+			model.id = selectedPortfolio;
+			model.body.name = portfolioName.trim();
+			editPortfolio(model).then((result) => {
+				setSubmitLoading(false);
+				if ("data" in result) {
+					dispatch(displaySuccess("Portfolio updated"));
+				} else dispatch(displayError(null));
+			});
+		} else {
+			const model: CreatePortfolioModel = new CreatePortfolioModel();
+			model.name = portfolioName;
+			createPortfolio(model).then((result) => {
+				setSubmitLoading(false);
+				if ("data" in result) {
+					dispatch(displaySuccess("Portfolio created"));
+					const data: Portfolio = result.data;
+					setSelectedPortfolio(data.id);
+					setAddingNewPortfolio(false);
+				} else if ("error" in result) {
+					const error = result.error;
+					if ("data" in error && error.data === "Name already used")
+						setShowNameExistsModal(true);
+					else dispatch(displayError(null));
+				}
+			});
+		}
 	}
 
 	function handleDelete() {
@@ -157,5 +212,15 @@ export default function PortfolioEdit({ setView }: Props) {
 				else dispatch(displayError(null));
 			}
 		});
+	}
+
+	function handleNewPortfolio() {
+		setAddingNewPortfolio(true);
+		setPortfolioName("");
+	}
+
+	function handleCancelAddNew() {
+		setAddingNewPortfolio(false);
+		setPortfolioName(portfolios.find((x) => x.id === selectedPortfolio)!.name);
 	}
 }

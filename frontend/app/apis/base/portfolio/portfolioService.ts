@@ -49,6 +49,7 @@ export const portfolioApi = createApi({
 
 export const {
 	useGetPortfoliosQuery,
+	useAddPortfolioMutation,
 	useEditPortfolioMutation,
 	useDeletePortfolioMutation,
 } = portfolioApi;
