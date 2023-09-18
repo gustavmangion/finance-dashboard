@@ -27,7 +27,8 @@ export default function AccountsList({
 	setAccountToEdit,
 	setPageView,
 }: Props) {
-	const [selectedPortfolio, setSelectedPortfolio] = useState("all");
+	const [selectedPortfolio, setSelectedPortfolio] = useState("All");
+	const [filteredAccounts, setFilteredAccounts] = useState(accounts);
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
 	return (
@@ -46,7 +47,7 @@ export default function AccountsList({
 			>
 				{mapPortfolioOptions()}
 			</Select>
-			{accounts.map((account) => {
+			{filteredAccounts.map((account) => {
 				return (
 					<Accordion key={account.id}>
 						<AccordionSummary
@@ -96,12 +97,23 @@ export default function AccountsList({
 		setPageView(PageView.Edit);
 	}
 
-	function handlePortfolioChange(e: SelectChangeEvent) {}
+	function handlePortfolioChange(e: SelectChangeEvent) {
+		setSelectedPortfolio(e.target.value);
+		console.log(e.target.value);
+
+		if (e.target.value === "All") setFilteredAccounts(accounts);
+		else
+			setFilteredAccounts(
+				accounts.filter((account) => {
+					return account.portfolioId === e.target.value;
+				})
+			);
+	}
 
 	function mapPortfolioOptions() {
 		const options: React.ReactElement[] = [];
 		options.push(
-			<MenuItem key="all" value="all">
+			<MenuItem key="All" value="All">
 				All
 			</MenuItem>
 		);
