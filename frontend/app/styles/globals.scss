@@ -100,6 +100,15 @@ input {
 	color: $black;
 }
 
+.MuiButton-root {
+	background-color: transparentize($primary, 0.9);
+	color: $primary;
+
+	&:hover {
+		background-color: transparentize($primary, 0.8);
+	}
+}
+
 .MuiInputLabel-root {
 	color: $black;
 
