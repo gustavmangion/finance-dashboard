@@ -20,9 +20,33 @@ namespace api.Repositories
                 .ToList();
         }
 
+        public Portfolio GetPortfolio(Guid id)
+        {
+            return _context.Portfolios.Where(x => x.Id == id).First();
+        }
+
         public bool PortfolioExists(string userId, Guid id)
         {
-            return _context.UserPortfolios.Where(x => x.UserId == userId && x.PortfolioId == id).Any();
+            return _context.UserPortfolios
+                .Where(x => x.UserId == userId && x.PortfolioId == id)
+                .Any();
+        }
+
+        public bool PortfolioNameExists(string userId, string name, Guid currentPortfolio)
+        {
+            return _context.UserPortfolios
+                .Where(
+                    x =>
+                        x.UserId == userId
+                        && x.Portfolio.Name == name
+                        && x.PortfolioId != currentPortfolio
+                )
+                .Any();
+        }
+
+        public bool SaveChanges()
+        {
+            return _context.SaveChanges() >= 0;
         }
     }
 }

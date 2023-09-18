@@ -9,10 +9,14 @@ import {
 } from "@mui/material";
 import { PageView } from "./page";
 import { useAppSelector } from "../hooks/reduxHook";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useState } from "react";
 import styles from "../styles/account.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import { LoadingButton } from "@mui/lab";
+import { useDispatch } from "react-redux";
+import { useEditPortfolioMutation } from "../apis/base/portfolio/portfolioService";
+import { EditPortfolioModel } from "../apis/base/portfolio/types";
+import { displayError, displaySuccess } from "../stores/notificationSlice";
 
 type Props = {
 	setView: (val: PageView) => void;
@@ -22,7 +26,12 @@ export default function PortfolioEdit({ setView }: Props) {
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 	const [selectedPortfolio, setSelectedPortfolio] = useState(portfolios[0].id);
 	const [portfolioName, setPortfolioName] = useState(portfolios[0].name);
-	const [loading, setLoading] = useState(false);
+	const [submitLoading, setSubmitLoading] = useState(false);
+	const [deleteLoading, setDeleteLoading] = useState(false);
+
+	const dispatch = useDispatch();
+	const [editPortfolio] = useEditPortfolioMutation();
+
 	return (
 		<div className={styles.portfolioEdit}>
 			<h2>Manage Portfolios</h2>
@@ -59,13 +68,15 @@ export default function PortfolioEdit({ setView }: Props) {
 					<LoadingButton
 						className={materialStyles.primaryButton}
 						type="submit"
-						loading={loading}
+						loading={submitLoading}
+						disabled={deleteLoading}
 					>
 						Save
 					</LoadingButton>
 					<LoadingButton
 						className={materialStyles.secondaryButton}
-						loading={loading}
+						loading={deleteLoading}
+						disabled={submitLoading}
 					>
 						Delete
 					</LoadingButton>
@@ -86,5 +97,17 @@ export default function PortfolioEdit({ setView }: Props) {
 		setPortfolioName(e.target.value);
 	}
 
-	function handleSubmit() {}
+	function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
+		e.preventDefault();
+		setSubmitLoading(true);
+		const model: EditPortfolioModel = new EditPortfolioModel();
+		model.id = selectedPortfolio;
+		model.body.name = portfolioName.trim();
+		editPortfolio(model).then((result) => {
+			setSubmitLoading(false);
+			if ("data" in result) {
+				dispatch(displaySuccess("Portfolio Updated"));
+			} else dispatch(displayError(null));
+		});
+	}
 }

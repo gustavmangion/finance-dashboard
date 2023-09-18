@@ -106,7 +106,6 @@ export default function EditAccount({ account, setView }: Props) {
 		model.id = account?.id as string;
 		model.body.name = formState.name;
 		model.body.portfolioId = formState.portfolioId;
-		console.log(model);
 		editAccount(model).then((result) => {
 			setLoading(false);
 			if ("data" in result) {
