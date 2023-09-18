@@ -39,11 +39,13 @@ export default function AccountPage() {
 		switch (view) {
 			case PageView.Accounts:
 				return (
-					<AccountsList
-						accounts={data!}
-						setAccountToEdit={setAccountToEdit}
-						setPageView={setView}
-					/>
+					<>
+						<AccountsList
+							accounts={data!}
+							setAccountToEdit={setAccountToEdit}
+							setPageView={setView}
+						/>
+					</>
 				);
 			case PageView.Edit:
 				return <EditAccount account={accountToEdit} setView={setView} />;

@@ -3,6 +3,9 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Button,
+	MenuItem,
+	Select,
+	SelectChangeEvent,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Account from "../apis/base/account/types";
@@ -10,6 +13,8 @@ import styles from "../styles/account.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import { getMoneyFormat } from "../helpers/moneyHelper";
 import { PageView } from "./page";
+import React, { useState } from "react";
+import { useAppSelector } from "../hooks/reduxHook";
 
 type Props = {
 	accounts: Account[];
@@ -22,10 +27,25 @@ export default function AccountsList({
 	setAccountToEdit,
 	setPageView,
 }: Props) {
+	const [selectedPortfolio, setSelectedPortfolio] = useState("all");
+	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
+
 	return (
 		<>
 			<h2>Your Accounts</h2>
-
+			<h3>Portfolio</h3>
+			<Select
+				className={styles.portfolioPicker}
+				name="portfolio"
+				label="Portfolio"
+				variant="standard"
+				onChange={handlePortfolioChange}
+				value={selectedPortfolio}
+				required
+				placeholder="Portfolio"
+			>
+				{mapPortfolioOptions()}
+			</Select>
 			{accounts.map((account) => {
 				return (
 					<Accordion key={account.id}>
@@ -74,5 +94,25 @@ export default function AccountsList({
 	) {
 		setAccountToEdit(account);
 		setPageView(PageView.Edit);
+	}
+
+	function handlePortfolioChange(e: SelectChangeEvent) {}
+
+	function mapPortfolioOptions() {
+		const options: React.ReactElement[] = [];
+		options.push(
+			<MenuItem key="all" value="all">
+				All
+			</MenuItem>
+		);
+		portfolios.map((x) => {
+			options.push(
+				<MenuItem key={x.id} value={x.id}>
+					{x.name}
+				</MenuItem>
+			);
+		});
+
+		return options;
 	}
 }
