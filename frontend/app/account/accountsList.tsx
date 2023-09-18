@@ -47,7 +47,10 @@ export default function AccountsList({
 				>
 					{mapPortfolioOptions()}
 				</Select>
-				<Button onClick={() => setPageView(PageView.Portfolios)}>
+				<Button
+					className={styles.managePortfoliosButton}
+					onClick={() => setPageView(PageView.Portfolios)}
+				>
 					Manage Portfolios
 				</Button>
 			</div>

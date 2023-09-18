@@ -16,7 +16,7 @@ export default function AccountPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
-	const [view, setView] = useState(PageView.Portfolios);
+	const [view, setView] = useState(PageView.Accounts);
 	const [accountToEdit, setAccountToEdit] = useState<Account | undefined>();
 
 	const { data, isLoading, isFetching } = useGetAccountsQuery(null);
