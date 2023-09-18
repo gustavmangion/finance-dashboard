@@ -1,5 +1,6 @@
 import {
 	Button,
+	CircularProgress,
 	FormControl,
 	InputLabel,
 	MenuItem,
@@ -14,9 +15,14 @@ import styles from "../styles/account.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
-import { useEditPortfolioMutation } from "../apis/base/portfolio/portfolioService";
+import {
+	portfolioApi,
+	useEditPortfolioMutation,
+	useGetPortfoliosQuery,
+} from "../apis/base/portfolio/portfolioService";
 import { EditPortfolioModel } from "../apis/base/portfolio/types";
 import { displayError, displaySuccess } from "../stores/notificationSlice";
+import LoadingSkeleton from "../components/loadingSkeleton";
 
 type Props = {
 	setView: (val: PageView) => void;
@@ -31,58 +37,67 @@ export default function PortfolioEdit({ setView }: Props) {
 
 	const dispatch = useDispatch();
 	const [editPortfolio] = useEditPortfolioMutation();
+	const { isLoading, isFetching } = useGetPortfoliosQuery(null);
+
+	if (isLoading) return <LoadingSkeleton />;
 
 	return (
 		<div className={styles.portfolioEdit}>
 			<h2>Manage Portfolios</h2>
-			<FormControl>
-				<InputLabel>Portfolio</InputLabel>
-				<Select
-					name="portfolio"
-					label="Portfolio"
-					variant="standard"
-					onChange={handleSelectChange}
-					value={selectedPortfolio}
-					required
-					placeholder="Portfolio"
-				>
-					{portfolios.map((x) => {
-						return (
-							<MenuItem key={x.id} value={x.id}>
-								{x.name}
-							</MenuItem>
-						);
-					})}
-				</Select>
-			</FormControl>
-			<form onSubmit={handleSubmit}>
-				<TextField
-					name="name"
-					label="Portfolio Name"
-					variant="standard"
-					onChange={handleChange}
-					value={portfolioName}
-					required
-				/>
-				<div className={styles.formButtons}>
-					<LoadingButton
-						className={materialStyles.primaryButton}
-						type="submit"
-						loading={submitLoading}
-						disabled={deleteLoading}
-					>
-						Save
-					</LoadingButton>
-					<LoadingButton
-						className={materialStyles.secondaryButton}
-						loading={deleteLoading}
-						disabled={submitLoading}
-					>
-						Delete
-					</LoadingButton>
-				</div>
-			</form>
-			<Button onClick={() => setView(PageView.Accounts)}>Back</Button>
+			{isFetching ? (
+				<CircularProgress />
+			) : (
+				<>
+					<FormControl>
+						<InputLabel>Portfolio</InputLabel>
+						<Select
+							name="portfolio"
+							label="Portfolio"
+							variant="standard"
+							onChange={handleSelectChange}
+							value={selectedPortfolio}
+							required
+							placeholder="Portfolio"
+						>
+							{portfolios.map((x) => {
+								return (
+									<MenuItem key={x.id} value={x.id}>
+										{x.name}
+									</MenuItem>
+								);
+							})}
+						</Select>
+					</FormControl>
+					<form onSubmit={handleSubmit}>
+						<TextField
+							name="name"
+							label="Portfolio Name"
+							variant="standard"
+							onChange={handleChange}
+							value={portfolioName}
+							required
+						/>
+						<div className={styles.formButtons}>
+							<LoadingButton
+								className={materialStyles.primaryButton}
+								type="submit"
+								loading={submitLoading}
+								disabled={deleteLoading}
+							>
+								Save
+							</LoadingButton>
+							<LoadingButton
+								className={materialStyles.secondaryButton}
+								loading={deleteLoading}
+								disabled={submitLoading}
+							>
+								Delete
+							</LoadingButton>
+						</div>
+					</form>
+					<Button onClick={() => setView(PageView.Accounts)}>Back</Button>
+				</>
+			)}
 		</div>
 	);
 
@@ -106,7 +121,7 @@ export default function PortfolioEdit({ setView }: Props) {
 		editPortfolio(model).then((result) => {
 			setSubmitLoading(false);
 			if ("data" in result) {
-				dispatch(displaySuccess("Portfolio Updated"));
+				dispatch(displaySuccess("Portfolio updated"));
 			} else dispatch(displayError(null));
 		});
 	}

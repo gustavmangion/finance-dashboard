@@ -39,11 +39,7 @@ namespace api.Controllers
             if (user == null)
                 user = new User { Id = "Not Found", SetupNeeded = true };
 
-            UserModel model = _mapper.Map<UserModel>(user);
-            if (user.UserPortfolios.Count() == 0)
-                model.User.SetupNeeded = true;
-
-            return Ok(model);
+            return Ok(_mapper.Map<UserModel>(user));
         }
 
         [HttpPost]
@@ -69,10 +65,7 @@ namespace api.Controllers
             _userRepository.AddUser(newUser);
             _userRepository.SaveChanges();
 
-            UserModel newUserModel = _mapper.Map<UserModel>(newUser);
-            newUserModel.User.SetupNeeded = false;
-
-            return Ok(newUserModel);
+            return Ok(_mapper.Map<UserModel>(newUser));
         }
     }
 }

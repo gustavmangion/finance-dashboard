@@ -10,8 +10,3 @@ export type GetUser = { id: string };
 export class CreateUserModel {
 	portfolioName: string = "";
 }
-
-export class GetUserModel {
-	user!: User;
-	portfolios: Portfolio[] = [];
-}
