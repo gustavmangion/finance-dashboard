@@ -65,7 +65,7 @@ namespace api.Controllers
             else if (string.IsNullOrEmpty(model.Name))
                 ModelState.AddModelError("message", "Name is required");
             else if (_portfolioRepository.PortfolioNameExists(userId, model.Name, id))
-                ModelState.AddModelError("message", "Name already used");
+                return BadRequest("Name already used");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

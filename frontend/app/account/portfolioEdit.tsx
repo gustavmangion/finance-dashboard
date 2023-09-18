@@ -175,7 +175,12 @@ export default function PortfolioEdit({ setView }: Props) {
 				setSubmitLoading(false);
 				if ("data" in result) {
 					dispatch(displaySuccess("Portfolio updated"));
-				} else dispatch(displayError(null));
+				} else if ("error" in result) {
+					const error = result.error;
+					if ("data" in error && error.data === "Name already used")
+						setShowNameExistsModal(true);
+					else dispatch(displayError(null));
+				}
 			});
 		} else {
 			const model: CreatePortfolioModel = new CreatePortfolioModel();
