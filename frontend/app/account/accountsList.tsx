@@ -54,45 +54,56 @@ export default function AccountsList({
 					Manage Portfolios
 				</Button>
 			</div>
-			{filteredAccounts.map((account) => {
-				return (
-					<Accordion key={account.id}>
-						<AccordionSummary
-							className={styles.accountListHeader}
-							expandIcon={<ExpandMoreIcon />}
-						>
-							<h4 className={account.balance < 0 ? styles.negativeBalance : ""}>
-								{`${account.name} - 
-								${getMoneyFormat(account.balance, account.currency)}`}
-							</h4>
-						</AccordionSummary>
-						<AccordionDetails className={styles.accountListDetails}>
-							<div>
-								<p>Account Number: {account.accountNumber}</p>
-								<p>Bank: {account.bankName}</p>
-								<p>IBAN: {account.iban}</p>
-								<p>Currency: {account.currency}</p>
-								<p>Total Debit: {getMoneyFormat(account.totalOut)}</p>
-								<p>Total Credit: {getMoneyFormat(account.totalIn)}</p>
-							</div>
-							<div className={styles.buttons}>
-								<Button className={materialStyles.smallButton}>
-									View Transactions
-								</Button>
-								<Button
-									className={[
-										materialStyles.smallButton,
-										materialStyles.secondaryButton,
-									].join(" ")}
-									onClick={(e) => handleEditClick(e, account)}
+
+			{filteredAccounts.length === 0 ? (
+				<h3>No accounts linked to this portfolio</h3>
+			) : (
+				<>
+					{filteredAccounts.map((account) => {
+						return (
+							<Accordion key={account.id}>
+								<AccordionSummary
+									className={styles.accountListHeader}
+									expandIcon={<ExpandMoreIcon />}
 								>
-									Edit
-								</Button>
-							</div>
-						</AccordionDetails>
-					</Accordion>
-				);
-			})}
+									<h4
+										className={
+											account.balance < 0 ? styles.negativeBalance : ""
+										}
+									>
+										{`${account.name} - 
+								${getMoneyFormat(account.balance, account.currency)}`}
+									</h4>
+								</AccordionSummary>
+								<AccordionDetails className={styles.accountListDetails}>
+									<div>
+										<p>Account Number: {account.accountNumber}</p>
+										<p>Bank: {account.bankName}</p>
+										<p>IBAN: {account.iban}</p>
+										<p>Currency: {account.currency}</p>
+										<p>Total Debit: {getMoneyFormat(account.totalOut)}</p>
+										<p>Total Credit: {getMoneyFormat(account.totalIn)}</p>
+									</div>
+									<div className={styles.buttons}>
+										<Button className={materialStyles.smallButton}>
+											View Transactions
+										</Button>
+										<Button
+											className={[
+												materialStyles.smallButton,
+												materialStyles.secondaryButton,
+											].join(" ")}
+											onClick={(e) => handleEditClick(e, account)}
+										>
+											Edit
+										</Button>
+									</div>
+								</AccordionDetails>
+							</Accordion>
+						);
+					})}
+				</>
+			)}
 		</>
 	);
 
