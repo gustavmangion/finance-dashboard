@@ -35,18 +35,22 @@ export default function AccountsList({
 		<>
 			<h2>Your Accounts</h2>
 			<h3>Portfolio</h3>
-			<Select
-				className={styles.portfolioPicker}
-				name="portfolio"
-				label="Portfolio"
-				variant="standard"
-				onChange={handlePortfolioChange}
-				value={selectedPortfolio}
-				required
-				placeholder="Portfolio"
-			>
-				{mapPortfolioOptions()}
-			</Select>
+			<div className={styles.portfolioPicker}>
+				<Select
+					name="portfolio"
+					label="Portfolio"
+					variant="standard"
+					onChange={handlePortfolioChange}
+					value={selectedPortfolio}
+					required
+					placeholder="Portfolio"
+				>
+					{mapPortfolioOptions()}
+				</Select>
+				<Button onClick={() => setPageView(PageView.Portfolios)}>
+					Manage Portfolios
+				</Button>
+			</div>
 			{filteredAccounts.map((account) => {
 				return (
 					<Accordion key={account.id}>
