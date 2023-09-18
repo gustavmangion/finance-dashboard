@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { displayError, displaySuccess } from "../stores/notificationSlice";
 import { PageView } from "./page";
 import { useAppSelector } from "../hooks/reduxHook";
+import styles from "../styles/account.module.scss";
 
 type Props = {
 	account: Account | undefined;
@@ -39,44 +40,46 @@ export default function EditAccount({ account, setView }: Props) {
 			<h2>Editing Account</h2>
 			<h4>Account Name: {account?.name}</h4>
 			<h4>Account Number: {account?.accountNumber}</h4>
-			<form onSubmit={handleSubmit}>
-				<TextField
-					name="name"
-					label="Account Name"
-					variant="standard"
-					value={formState.name}
-					onChange={handleChange}
-					inputProps={{ maxLength: 45 }}
-					required
-				/>
-				<FormControl>
-					<InputLabel>Portfolio</InputLabel>
-					<Select
-						name="portfolio"
-						label="Portfolio"
+			<div className={styles.accountEditForm}>
+				<form onSubmit={handleSubmit}>
+					<TextField
+						name="name"
+						label="Account Name"
 						variant="standard"
-						onChange={handleSelectChange}
-						value={formState.portfolioId}
+						value={formState.name}
+						onChange={handleChange}
+						inputProps={{ maxLength: 45 }}
 						required
-						placeholder="Portfolio"
+					/>
+					<FormControl>
+						<InputLabel>Portfolio</InputLabel>
+						<Select
+							name="portfolioId"
+							label="Portfolio"
+							variant="standard"
+							onChange={handleSelectChange}
+							value={formState.portfolioId}
+							required
+							placeholder="Portfolio"
+						>
+							{portfolios.map((x) => {
+								return (
+									<MenuItem key={x.id} value={x.id}>
+										{x.name}
+									</MenuItem>
+								);
+							})}
+						</Select>
+					</FormControl>
+					<LoadingButton
+						className={materialStyles.primaryButton}
+						type="submit"
+						loading={loading}
 					>
-						{portfolios.map((x) => {
-							return (
-								<MenuItem key={x.id} value={x.id}>
-									{x.name}
-								</MenuItem>
-							);
-						})}
-					</Select>
-				</FormControl>
-				<LoadingButton
-					className={materialStyles.primaryButton}
-					type="submit"
-					loading={loading}
-				>
-					Update
-				</LoadingButton>
-			</form>
+						Update
+					</LoadingButton>
+				</form>
+			</div>
 			<Button onClick={handleBack}>Back</Button>
 		</>
 	);
