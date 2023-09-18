@@ -1,5 +1,6 @@
 ﻿using api.Contexts;
 using api.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories
 {
@@ -25,6 +26,12 @@ namespace api.Repositories
             return _context.Portfolios.Where(x => x.Id == id).First();
         }
 
+        public void DeletePortfolio(Portfolio portfolio)
+        {
+            _context.UserPortfolios.RemoveRange(portfolio.UserPortfolios);
+            _context.Portfolios.Remove(portfolio);
+        }
+
         public bool PortfolioExists(string userId, Guid id)
         {
             return _context.UserPortfolios
@@ -42,6 +49,11 @@ namespace api.Repositories
                         && x.PortfolioId != currentPortfolio
                 )
                 .Any();
+        }
+
+        public bool PortfolioHasAccounts(Guid id)
+        {
+            return _context.Accounts.Where(x => x.PortfolioId == id).Any();
         }
 
         public bool SaveChanges()

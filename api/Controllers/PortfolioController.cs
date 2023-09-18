@@ -50,7 +50,25 @@ namespace api.Controllers
             portfolio.Name = model.Name;
             _portfolioRepository.SaveChanges();
 
-            return Ok(_mapper.Map<PortfolioModel>(portfolio));
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeletePortfolio(Guid id)
+        {
+            if (!_portfolioRepository.PortfolioExists(GetUserIdFromToken(), id))
+                ModelState.AddModelError("message", "Portfolio does not exist");
+            else if (_portfolioRepository.PortfolioHasAccounts(id))
+                return BadRequest("Portfolio has linked accounts");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Portfolio portfolio = _portfolioRepository.GetPortfolio(id);
+            _portfolioRepository.DeletePortfolio(portfolio);
+            _portfolioRepository.SaveChanges();
+
+            return Ok();
         }
     }
 }

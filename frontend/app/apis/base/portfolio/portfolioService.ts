@@ -29,7 +29,18 @@ export const portfolioApi = createApi({
 			}),
 			invalidatesTags: ["Portfolios"],
 		}),
+		deletePortfolio: builder.mutation({
+			query: (payload: string) => ({
+				url: `/${payload}`,
+				method: "DELETE",
+			}),
+			invalidatesTags: ["Portfolios"],
+		}),
 	}),
 });
 
-export const { useGetPortfoliosQuery, useEditPortfolioMutation } = portfolioApi;
+export const {
+	useGetPortfoliosQuery,
+	useEditPortfolioMutation,
+	useDeletePortfolioMutation,
+} = portfolioApi;

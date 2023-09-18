@@ -4,6 +4,7 @@ import {
 	FormControl,
 	InputLabel,
 	MenuItem,
+	Modal,
 	Select,
 	SelectChangeEvent,
 	TextField,
@@ -16,7 +17,7 @@ import materialStyles from "../styles/material.module.scss";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import {
-	portfolioApi,
+	useDeletePortfolioMutation,
 	useEditPortfolioMutation,
 	useGetPortfoliosQuery,
 } from "../apis/base/portfolio/portfolioService";
@@ -34,9 +35,11 @@ export default function PortfolioEdit({ setView }: Props) {
 	const [portfolioName, setPortfolioName] = useState(portfolios[0].name);
 	const [submitLoading, setSubmitLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 	const dispatch = useDispatch();
 	const [editPortfolio] = useEditPortfolioMutation();
+	const [deletePortfolio] = useDeletePortfolioMutation();
 	const { isLoading, isFetching } = useGetPortfoliosQuery(null);
 
 	if (isLoading) return <LoadingSkeleton />;
@@ -89,7 +92,8 @@ export default function PortfolioEdit({ setView }: Props) {
 							<LoadingButton
 								className={materialStyles.secondaryButton}
 								loading={deleteLoading}
-								disabled={submitLoading}
+								disabled={submitLoading || portfolios.length === 1}
+								onClick={handleDelete}
 							>
 								Delete
 							</LoadingButton>
@@ -123,6 +127,23 @@ export default function PortfolioEdit({ setView }: Props) {
 			if ("data" in result) {
 				dispatch(displaySuccess("Portfolio updated"));
 			} else dispatch(displayError(null));
+		});
+	}
+
+	function handleDelete() {
+		setDeleteLoading(true);
+		deletePortfolio(selectedPortfolio).then((result) => {
+			setDeleteLoading(false);
+			if ("data" in result) {
+				dispatch(displaySuccess("Portfolio deleted"));
+				setSelectedPortfolio(portfolios[0].id);
+				setPortfolioName(portfolios[0].name);
+			} else if ("error" in result) {
+				const error = result.error;
+				if ("data" in error && error.data === "Portfolio has linked accounts")
+					setShowDeleteModal(true);
+				else dispatch(displayError(null));
+			}
 		});
 	}
 }

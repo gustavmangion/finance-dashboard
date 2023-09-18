@@ -6,8 +6,10 @@ namespace api.Repositories
     {
         List<Portfolio> GetPortfolios(string userId);
         Portfolio GetPortfolio(Guid id);
+        void DeletePortfolio(Portfolio portfolio);
         bool PortfolioExists(string userId, Guid id);
         bool PortfolioNameExists(string userId, string name, Guid currentPortfolio);
+        bool PortfolioHasAccounts(Guid id);
         bool SaveChanges();
     }
 }
