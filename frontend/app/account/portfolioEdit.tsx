@@ -92,7 +92,7 @@ export default function PortfolioEdit({ setView }: Props) {
 							<LoadingButton
 								className={materialStyles.secondaryButton}
 								loading={deleteLoading}
-								disabled={submitLoading || portfolios.length === 1}
+								disabled={submitLoading}
 								onClick={handleDelete}
 							>
 								Delete
@@ -102,6 +102,18 @@ export default function PortfolioEdit({ setView }: Props) {
 					<Button onClick={() => setView(PageView.Accounts)}>Back</Button>
 				</>
 			)}
+			<Modal open={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+				<div className={materialStyles.modal}>
+					<h3>There are accounts linked to this portfolio</h3>
+					<p>Delete move these accounts to other portfolios before deleting</p>
+					<Button
+						className={materialStyles.primaryButton}
+						onClick={() => setShowDeleteModal(false)}
+					>
+						Ok
+					</Button>
+				</div>
+			</Modal>
 		</div>
 	);
 
