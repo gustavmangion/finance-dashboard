@@ -32,6 +32,30 @@ namespace api.Controllers
             );
         }
 
+        [HttpPost]
+        public ActionResult CreatePortfilio([FromBody] PortfolioModelForCreation model)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (_portfolioRepository.PortfolioNameExists(userId, model.Name, new Guid()))
+                return BadRequest("Name already used");
+
+            if (string.IsNullOrEmpty(model.Name))
+                ModelState.AddModelError("message", "Name is required");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Portfolio portfolio = new Portfolio();
+            portfolio.Name = model.Name;
+            portfolio.UserPortfolios.Add(new UserPortfolio() { UserId = userId });
+
+            _portfolioRepository.AddPortfolio(portfolio);
+            _portfolioRepository.SaveChanges();
+
+            return Ok(portfolio);
+        }
+
         [HttpPut("{id}")]
         public ActionResult UpdatePortfolio(Guid id, [FromBody] PortfolioForUpdateModel model)
         {

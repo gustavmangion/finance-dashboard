@@ -11,3 +11,7 @@ export class EditPortfolioModel {
 class EditPortfolioModelBody {
 	name: string = "";
 }
+
+export class CreatePortfolioModel {
+	name: string = "";
+}

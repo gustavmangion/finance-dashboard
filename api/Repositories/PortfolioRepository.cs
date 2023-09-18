@@ -26,6 +26,11 @@ namespace api.Repositories
             return _context.Portfolios.Where(x => x.Id == id).First();
         }
 
+        public void AddPortfolio(Portfolio portfolio)
+        {
+            _context.Add(portfolio);
+        }
+
         public void DeletePortfolio(Portfolio portfolio)
         {
             _context.UserPortfolios.RemoveRange(portfolio.UserPortfolios);

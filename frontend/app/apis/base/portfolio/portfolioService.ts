@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getHeaders from "../headers";
-import Portfolio, { EditPortfolioModel } from "./types";
+import Portfolio, { CreatePortfolioModel, EditPortfolioModel } from "./types";
 import { setPortfolios } from "@/app/stores/userSlice";
 
 export const portfolioApi = createApi({
@@ -20,6 +20,14 @@ export const portfolioApi = createApi({
 				dispatch(setPortfolios(data));
 			},
 			providesTags: ["Portfolios"],
+		}),
+		addPortfolio: builder.mutation({
+			query: (payload: CreatePortfolioModel) => ({
+				url: "/",
+				method: "POST",
+				body: { ...payload },
+			}),
+			invalidatesTags: ["Portfolios"],
 		}),
 		editPortfolio: builder.mutation({
 			query: (payload: EditPortfolioModel) => ({
