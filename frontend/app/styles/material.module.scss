@@ -11,9 +11,11 @@
 	}
 }
 
-.secondary {
+.secondaryButton {
 	background-color: transparentize($primary, 0.8) !important;
 	color: $primary !important;
+	font-size: 1em;
+	margin-top: 1em;
 
 	&:hover {
 		background-color: transparentize($primary, 0.9) !important;

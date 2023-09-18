@@ -79,7 +79,7 @@ export default function AccountsList({
 								<Button
 									className={[
 										materialStyles.smallButton,
-										materialStyles.secondary,
+										materialStyles.secondaryButton,
 									].join(" ")}
 									onClick={(e) => handleEditClick(e, account)}
 								>
@@ -103,7 +103,6 @@ export default function AccountsList({
 
 	function handlePortfolioChange(e: SelectChangeEvent) {
 		setSelectedPortfolio(e.target.value);
-		console.log(e.target.value);
 
 		if (e.target.value === "All") setFilteredAccounts(accounts);
 		else
