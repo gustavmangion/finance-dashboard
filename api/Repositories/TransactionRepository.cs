@@ -1,5 +1,7 @@
 ﻿using api.Contexts;
 using api.Entities;
+using api.Helpers;
+using api.ResourceParameters;
 
 namespace api.Repositories
 {
@@ -12,9 +14,22 @@ namespace api.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public List<Transaction> GetTransactions(Guid accountId)
+        public PagedList<Transaction> GetTransactions(
+            TransactionResourceParameters resourceParameters
+        )
         {
-            return _context.Transactions.Where(x => x.AccountId == accountId).ToList();
+            if (resourceParameters == null)
+                throw new ArgumentNullException(nameof(resourceParameters));
+
+            List<Transaction> transactions = _context.Transactions
+                .Where(x => x.AccountId == resourceParameters.AccountId)
+                .ToList();
+
+            return PagedList<Transaction>.Create(
+                transactions,
+                resourceParameters.PageNumber,
+                resourceParameters.PageSize
+            );
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using api.Entities;
+using api.Helpers;
+using api.ResourceParameters;
 
 namespace api.Repositories
 {
     public interface ITransactionRepository
     {
-        List<Transaction> GetTransactions(Guid accountId);
+        PagedList<Transaction> GetTransactions(TransactionResourceParameters resourceParameters);
     }
 }
