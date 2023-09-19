@@ -53,26 +53,16 @@ namespace api.Controllers
                 resouceParamters
             );
 
-            string? previousPageLink = transactions.HasPrevious
-                ? CreateTransactionsResourceUri(resouceParamters, ResourceUriType.PreviousPage)
-                : null;
-            string? nextPageLink = transactions.HasPrevious
-                ? CreateTransactionsResourceUri(resouceParamters, ResourceUriType.NextPage)
-                : null;
+            PaginationModel<TransactionModel> paginationModel =
+                PaginationModel<TransactionModel>.Create(
+                    _mapper.Map<List<TransactionModel>>(transactions),
+                    transactions.TotalCount,
+                    transactions.TotalPages,
+                    resouceParamters.PageNumber,
+                    resouceParamters.PageSize
+                );
 
-            var paginationMetaData = new
-            {
-                totalCount = transactions.TotalCount,
-                pageSize = transactions.PageSize,
-                currentPage = transactions.CurrentPage,
-                totalPages = transactions.TotalPages,
-                previousPageLink,
-                nextPageLink
-            };
-
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
-
-            return Ok(_mapper.Map<List<TransactionModel>>(transactions));
+            return Ok(paginationModel);
         }
 
         private string CreateTransactionsResourceUri(
