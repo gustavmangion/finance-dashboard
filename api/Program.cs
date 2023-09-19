@@ -85,7 +85,14 @@ try
         app.UseHttpsRedirection();
     }
 
-    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    app.UseCors(
+        options =>
+            options
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithExposedHeaders("X-Pagination")
+    );
 
     if (app.Environment.IsProduction())
     {
