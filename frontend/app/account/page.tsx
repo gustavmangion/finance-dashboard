@@ -11,13 +11,14 @@ import styles from "../styles/account.module.scss";
 import EditAccount from "./editAccount";
 import Account from "../apis/base/account/types";
 import PortfolioEdit from "./portfolioEdit";
+import TransactionsList from "./transacationsList";
 
 export default function AccountPage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
 
 	const [view, setView] = useState(PageView.Accounts);
-	const [accountToEdit, setAccountToEdit] = useState<Account | undefined>();
+	const [accountForView, setAccountForView] = useState<Account | undefined>();
 
 	const { data, isLoading, isFetching } = useGetAccountsQuery(null);
 
@@ -43,15 +44,17 @@ export default function AccountPage() {
 					<>
 						<AccountsList
 							accounts={data!}
-							setAccountToEdit={setAccountToEdit}
+							setAccountForView={setAccountForView}
 							setPageView={setView}
 						/>
 					</>
 				);
 			case PageView.Edit:
-				return <EditAccount account={accountToEdit} setView={setView} />;
+				return <EditAccount account={accountForView!} setView={setView} />;
 			case PageView.Portfolios:
 				return <PortfolioEdit setView={setView} />;
+			case PageView.Transactions:
+				return <TransactionsList account={accountForView!} setView={setView} />;
 		}
 	}
 }

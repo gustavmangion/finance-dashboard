@@ -19,7 +19,7 @@ import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/account.module.scss";
 
 type Props = {
-	account: Account | undefined;
+	account: Account;
 	setView: (val: PageView) => void;
 };
 

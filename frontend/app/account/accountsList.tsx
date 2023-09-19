@@ -18,13 +18,13 @@ import { useAppSelector } from "../hooks/reduxHook";
 
 type Props = {
 	accounts: Account[];
-	setAccountToEdit: (val: Account | undefined) => void;
+	setAccountForView: (val: Account | undefined) => void;
 	setPageView: (val: PageView) => void;
 };
 
 export default function AccountsList({
 	accounts,
-	setAccountToEdit,
+	setAccountForView,
 	setPageView,
 }: Props) {
 	const [selectedPortfolio, setSelectedPortfolio] = useState("All");
@@ -85,10 +85,15 @@ export default function AccountsList({
 										<p>Total Credit: {getMoneyFormat(account.totalIn)}</p>
 									</div>
 									<div className={styles.buttons}>
-										<Button className={materialStyles.smallButton}>
+										<Button
+											name="Transactions"
+											onClick={(e) => handleEditClick(e, account)}
+											className={materialStyles.smallButton}
+										>
 											View Transactions
 										</Button>
 										<Button
+											name="Edit"
 											className={[
 												materialStyles.smallButton,
 												materialStyles.secondaryButton,
@@ -111,8 +116,11 @@ export default function AccountsList({
 		e: React.MouseEvent<HTMLButtonElement>,
 		account: Account
 	) {
-		setAccountToEdit(account);
-		setPageView(PageView.Edit);
+		setAccountForView(account);
+
+		if (e.currentTarget.name === "Transactions")
+			setPageView(PageView.Transactions);
+		else setPageView(PageView.Edit);
 	}
 
 	function handlePortfolioChange(e: SelectChangeEvent) {
