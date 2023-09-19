@@ -22,7 +22,7 @@ namespace api.Repositories
             Account? account = _context.Accounts.Find(id);
 
             if (account != null)
-                account.Portfolio.UserPortfolios.Any(x => x.UserId == userID);
+                return account.Portfolio.UserPortfolios.Any(x => x.UserId == userID);
 
             return false;
         }
