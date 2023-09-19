@@ -3,7 +3,5 @@ export interface ListResponse<T> {
 	pageSize: number;
 	currentPage: number;
 	totalPages: number;
-	previousPageLink: string;
-	nextPageLink: string;
 	data: T[];
 }
