@@ -23,6 +23,7 @@ namespace api.Repositories
 
             List<Transaction> transactions = _context.Transactions
                 .Where(x => x.AccountId == resourceParameters.AccountId)
+                .OrderByDescending(x => x.Date)
                 .ToList();
 
             return PagedList<Transaction>.Create(

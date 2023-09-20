@@ -44,7 +44,7 @@ export default function TransactionsList({ account, setView }: Props) {
 
 	return (
 		<>
-			<h2>Transactionss for {account.name}</h2>
+			<h2>Transactions for {account.name}</h2>
 			<Paper className={styles.transactionsTable}>
 				<TableContainer className={styles.tableContainer}>
 					<Table stickyHeader>
