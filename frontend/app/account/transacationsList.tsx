@@ -1,4 +1,5 @@
 import {
+	LinearProgress,
 	Paper,
 	Table,
 	TableBody,
@@ -40,7 +41,7 @@ export default function TransactionsList({ account, setView }: Props) {
 		pageSize: pageSize,
 	});
 
-	if (isLoading || isFetching) return <LoadingSkeleton />;
+	if (isLoading) return <LoadingSkeleton />;
 
 	return (
 		<>
@@ -62,28 +63,42 @@ export default function TransactionsList({ account, setView }: Props) {
 					<Table stickyHeader size="small">
 						<TableHead>
 							<TableRow>
-								<TableCell>Date</TableCell>
-								<TableCell>Category</TableCell>
-								<TableCell>Description</TableCell>
-								<TableCell>Card</TableCell>
-								<TableCell>Reference</TableCell>
-								<TableCell>Amount</TableCell>
+								<TableCell className={styles.normalColumn}>Date</TableCell>
+								<TableCell className={styles.normalColumn}>Category</TableCell>
+								<TableCell className={styles.wideColumn}>Description</TableCell>
+								<TableCell className={styles.normalColumn}>Card</TableCell>
+								<TableCell className={styles.normalColumn}>Reference</TableCell>
+								<TableCell className={styles.normalColumn}>Amount</TableCell>
 							</TableRow>
 						</TableHead>
-						<TableBody>
-							{searchMeta?.data.map((transaction) => (
-								<TableRow key={transaction.id}>
-									<TableCell>{getDate(transaction.tranDate)}</TableCell>
-									<TableCell>
-										{getCategoryFromId(transaction.category)}
-									</TableCell>
-									<TableCell>{transaction.description}</TableCell>
-									<TableCell>{transaction.cardNo}</TableCell>
-									<TableCell>{transaction.reference}</TableCell>
-									<TableCell>{getMoneyFormat(transaction.amount)}</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
+						{isFetching ? (
+							getLoadingRows()
+						) : (
+							<TableBody>
+								{searchMeta?.data.map((transaction) => (
+									<TableRow key={transaction.id}>
+										<TableCell className={styles.normalColumn}>
+											{getDate(transaction.tranDate)}
+										</TableCell>
+										<TableCell className={styles.normalColumn}>
+											{getCategoryFromId(transaction.category)}
+										</TableCell>
+										<TableCell className={styles.wideColumn}>
+											{transaction.description}
+										</TableCell>
+										<TableCell className={styles.normalColumn}>
+											{transaction.cardNo}
+										</TableCell>
+										<TableCell className={styles.normalColumn}>
+											{transaction.reference}
+										</TableCell>
+										<TableCell className={styles.normalColumn}>
+											{getMoneyFormat(transaction.amount)}
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						)}
 					</Table>
 				</TableContainer>
 			</Paper>
@@ -103,5 +118,34 @@ export default function TransactionsList({ account, setView }: Props) {
 		let date = new Date(0);
 		date.setUTCSeconds(transactionDate);
 		return date.toLocaleDateString();
+	}
+
+	function getLoadingRows() {
+		const rows = [];
+		for (let i = 0; i < pageSize; i++) {
+			rows.push(
+				<TableRow>
+					<TableCell className={styles.normalColumn}>
+						<i>Loading...</i>
+					</TableCell>
+					<TableCell className={styles.normalColumn}>
+						<LinearProgress color="inherit" />
+					</TableCell>
+					<TableCell className={styles.wideColumn}>
+						<LinearProgress color="inherit" />
+					</TableCell>
+					<TableCell className={styles.normalColumn}>
+						<LinearProgress color="inherit" />
+					</TableCell>
+					<TableCell className={styles.normalColumn}>
+						<LinearProgress color="inherit" />
+					</TableCell>
+					<TableCell className={styles.normalColumn}>
+						<LinearProgress color="inherit" />
+					</TableCell>
+				</TableRow>
+			);
+		}
+		return rows;
 	}
 }

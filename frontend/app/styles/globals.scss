@@ -142,3 +142,7 @@ input {
 .MuiInput-underline:after {
 	border-bottom-color: $secondary;
 }
+
+.MuiLinearProgress-root {
+	color: $primary;
+}
