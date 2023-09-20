@@ -45,9 +45,21 @@ export default function TransactionsList({ account, setView }: Props) {
 	return (
 		<>
 			<h2>Transactions for {account.name}</h2>
+			<Paper className={styles.tablePagination}>
+				<TablePagination
+					rowsPerPageOptions={rowsPerPageOptions}
+					component="div"
+					count={searchMeta!.totalCount}
+					page={searchMeta!.currentPage}
+					rowsPerPage={searchMeta!.pageSize}
+					onPageChange={handlePageChange}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+					showFirstButton
+				/>
+			</Paper>
 			<Paper className={styles.transactionsTable}>
 				<TableContainer className={styles.tableContainer}>
-					<Table stickyHeader>
+					<Table stickyHeader size="small">
 						<TableHead>
 							<TableRow>
 								<TableCell>Date</TableCell>
@@ -74,16 +86,6 @@ export default function TransactionsList({ account, setView }: Props) {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={rowsPerPageOptions}
-					component="div"
-					count={searchMeta!.totalCount}
-					page={searchMeta!.currentPage}
-					rowsPerPage={searchMeta!.pageSize}
-					onPageChange={handlePageChange}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-					showFirstButton
-				/>
 			</Paper>
 		</>
 	);

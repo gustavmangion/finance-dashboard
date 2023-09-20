@@ -61,7 +61,16 @@
 }
 
 .transactionsTable {
+	// margin-top: 1em;
+	width: 100%;
+	max-height: 80%;
+
+	.tableContainer {
+		max-height: 100%;
+	}
+}
+
+.tablePagination {
 	margin-top: 1em;
 	width: 100%;
-	overflow: scroll;
 }
