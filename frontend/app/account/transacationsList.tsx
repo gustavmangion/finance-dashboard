@@ -21,7 +21,7 @@ type Props = {
 };
 
 export default function TransactionsList({ account, setView }: Props) {
-	const [pageSize, setPageSize] = useState(30);
+	const [pageSize, setPageSize] = useState(20);
 	const [currentPage, setCurrentPage] = useState(0);
 	let rowsPerPageOptions: number[] = [];
 
