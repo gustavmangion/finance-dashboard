@@ -15,6 +15,8 @@ import LoadingSkeleton from "../components/loadingSkeleton";
 import { useState } from "react";
 import styles from "../styles/account.module.scss";
 import React from "react";
+import { getMoneyFormat } from "../helpers/moneyHelper";
+import { getCategoryFromId } from "../helpers/transactionHelper";
 
 type Props = {
 	account: Account;
@@ -49,7 +51,10 @@ export default function TransactionsList({ account, setView }: Props) {
 						<TableHead>
 							<TableRow>
 								<TableCell>Date</TableCell>
+								<TableCell>Category</TableCell>
 								<TableCell>Description</TableCell>
+								<TableCell>Card</TableCell>
+								<TableCell>Reference</TableCell>
 								<TableCell>Amount</TableCell>
 							</TableRow>
 						</TableHead>
@@ -57,9 +62,13 @@ export default function TransactionsList({ account, setView }: Props) {
 							{searchMeta?.data.map((transaction) => (
 								<TableRow key={transaction.id}>
 									<TableCell>{getDate(transaction.tranDate)}</TableCell>
-									{/* <TableCell>{transaction.description}</TableCell> */}
+									<TableCell>
+										{getCategoryFromId(transaction.category)}
+									</TableCell>
 									<TableCell>{transaction.description}</TableCell>
-									<TableCell>{transaction.amount}</TableCell>
+									<TableCell>{transaction.cardNo}</TableCell>
+									<TableCell>{transaction.reference}</TableCell>
+									<TableCell>{getMoneyFormat(transaction.amount)}</TableCell>
 								</TableRow>
 							))}
 						</TableBody>

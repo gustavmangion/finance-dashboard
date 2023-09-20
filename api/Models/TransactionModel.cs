@@ -8,6 +8,6 @@
         public string CardNo { get; set; }
         public string Reference { get; set; }
         public decimal Amount { get; set; }
-        public string Category { get; set; }
+        public int Category { get; set; }
     }
 }

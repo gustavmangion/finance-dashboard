@@ -19,7 +19,6 @@ namespace api.Profiles
                                 ).ToUnixTimeSeconds()
                         )
                 );
-            //.ForMember(dest =>  dest.Category, opt => opt.MapFrom(src => src.Category));
         }
     }
 }

@@ -5,7 +5,7 @@ export default interface Transaction {
 	cardNo: string;
 	reference: string;
 	amount: number;
-	category: string;
+	category: number;
 }
 
 export interface TransactionParameters {
