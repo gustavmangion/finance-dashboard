@@ -32,7 +32,7 @@ export default function AccountsList({
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
 	return (
-		<>
+		<div className={styles.accountList}>
 			<h2>Your Accounts</h2>
 			<h3>Portfolio</h3>
 			<div className={styles.portfolioPicker}>
@@ -109,7 +109,7 @@ export default function AccountsList({
 					})}
 				</>
 			)}
-		</>
+		</div>
 	);
 
 	function handleEditClick(

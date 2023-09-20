@@ -31,9 +31,7 @@ export default function AccountPage() {
 	if (authStatus == AuthStatus.Authorized)
 		return (
 			<div className="container">
-				<div className={styles.accountList}>
-					{isLoading || isFetching ? <LoadingSkeleton /> : getView()}
-				</div>
+				{isLoading || isFetching ? <LoadingSkeleton /> : getView()}
 			</div>
 		);
 

@@ -13,6 +13,7 @@ import { useGetTransactionsQuery } from "../apis/base/transaction/transactionSer
 import { PageView } from "./page";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import { useState } from "react";
+import styles from "../styles/account.module.scss";
 
 type Props = {
 	account: Account;
@@ -20,7 +21,7 @@ type Props = {
 };
 
 export default function TransactionsList({ account, setView }: Props) {
-	const [pageSize, setPageSize] = useState(10);
+	const [pageSize, setPageSize] = useState(30);
 	const [currentPage, setCurrentPage] = useState(0);
 
 	const {
@@ -38,27 +39,30 @@ export default function TransactionsList({ account, setView }: Props) {
 	return (
 		<>
 			<h2>Transactions for {account.name}</h2>
-			<TableContainer component={Paper}>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Date</TableCell>
-							<TableCell>Description</TableCell>
-							<TableCell>Amount</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{searchMeta?.data.map((transaction) => (
-							<TableRow key={transaction.id}>
-								<TableCell>{transaction.tranDate.toString()}</TableCell>
-								<TableCell>{transaction.description}</TableCell>
-								<TableCell>{transaction.amount}</TableCell>
+			<Paper className={styles.transactionsTable}>
+				<TableContainer className={styles.tableContainer}>
+					<Table stickyHeader>
+						<TableHead>
+							<TableRow>
+								<TableCell>Date</TableCell>
+								<TableCell>Description</TableCell>
+								<TableCell>Amount</TableCell>
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
+						</TableHead>
+						<TableBody>
+							{searchMeta?.data.map((transaction) => (
+								<TableRow key={transaction.id}>
+									<TableCell>{transaction.tranDate.toString()}</TableCell>
+									<TableCell>{transaction.description}</TableCell>
+									<TableCell>{transaction.amount}</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</TableContainer>
 				<TablePagination
-					rowsPerPageOptions={[5, 10, 20]}
+					rowsPerPageOptions={[5, 10, 20, 50]}
+					// rowsPerPageOptions={[]}
 					component="div"
 					count={searchMeta!.totalCount}
 					page={searchMeta!.currentPage}
@@ -66,7 +70,7 @@ export default function TransactionsList({ account, setView }: Props) {
 					onPageChange={handlePageChange}
 					onRowsPerPageChange={handleChangeRowsPerPage}
 				/>
-			</TableContainer>
+			</Paper>
 		</>
 	);
 
