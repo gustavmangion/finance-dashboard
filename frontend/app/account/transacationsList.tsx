@@ -23,6 +23,9 @@ type Props = {
 export default function TransactionsList({ account, setView }: Props) {
 	const [pageSize, setPageSize] = useState(30);
 	const [currentPage, setCurrentPage] = useState(0);
+	let rowsPerPageOptions: number[] = [];
+
+	if (window.innerWidth > 500) rowsPerPageOptions = [5, 10, 20, 50];
 
 	const {
 		isLoading,
@@ -35,7 +38,6 @@ export default function TransactionsList({ account, setView }: Props) {
 	});
 
 	if (isLoading || isFetching) return <LoadingSkeleton />;
-	console.log(searchMeta);
 	return (
 		<>
 			<h2>Transactions for {account.name}</h2>
@@ -61,7 +63,7 @@ export default function TransactionsList({ account, setView }: Props) {
 					</Table>
 				</TableContainer>
 				<TablePagination
-					rowsPerPageOptions={[5, 10, 20, 50]}
+					rowsPerPageOptions={rowsPerPageOptions}
 					// rowsPerPageOptions={[]}
 					component="div"
 					count={searchMeta!.totalCount}
@@ -69,6 +71,7 @@ export default function TransactionsList({ account, setView }: Props) {
 					rowsPerPage={searchMeta!.pageSize}
 					onPageChange={handlePageChange}
 					onRowsPerPageChange={handleChangeRowsPerPage}
+					showFirstButton
 				/>
 			</Paper>
 		</>
