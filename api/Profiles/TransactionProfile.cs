@@ -9,7 +9,16 @@ namespace api.Profiles
         public TransactionProfile()
         {
             CreateMap<Transaction, TransactionModel>()
-                .ForMember(dest => dest.TranDate, opt => opt.MapFrom(src => src.Date));
+                .ForMember(
+                    dest => dest.TranDate,
+                    opt =>
+                        opt.MapFrom(
+                            src =>
+                                (
+                                    (DateTimeOffset)src.Date.ToDateTime(new TimeOnly())
+                                ).ToUnixTimeSeconds()
+                        )
+                );
             //.ForMember(dest =>  dest.Category, opt => opt.MapFrom(src => src.Category));
         }
     }

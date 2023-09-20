@@ -14,6 +14,7 @@ import { PageView } from "./page";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import { useState } from "react";
 import styles from "../styles/account.module.scss";
+import React from "react";
 
 type Props = {
 	account: Account;
@@ -38,9 +39,10 @@ export default function TransactionsList({ account, setView }: Props) {
 	});
 
 	if (isLoading || isFetching) return <LoadingSkeleton />;
+
 	return (
 		<>
-			<h2>Transactions for {account.name}</h2>
+			<h2>Transactionss for {account.name}</h2>
 			<Paper className={styles.transactionsTable}>
 				<TableContainer className={styles.tableContainer}>
 					<Table stickyHeader>
@@ -54,7 +56,8 @@ export default function TransactionsList({ account, setView }: Props) {
 						<TableBody>
 							{searchMeta?.data.map((transaction) => (
 								<TableRow key={transaction.id}>
-									<TableCell>{transaction.tranDate.toString()}</TableCell>
+									<TableCell>{getDate(transaction.tranDate)}</TableCell>
+									{/* <TableCell>{transaction.description}</TableCell> */}
 									<TableCell>{transaction.description}</TableCell>
 									<TableCell>{transaction.amount}</TableCell>
 								</TableRow>
@@ -64,7 +67,6 @@ export default function TransactionsList({ account, setView }: Props) {
 				</TableContainer>
 				<TablePagination
 					rowsPerPageOptions={rowsPerPageOptions}
-					// rowsPerPageOptions={[]}
 					component="div"
 					count={searchMeta!.totalCount}
 					page={searchMeta!.currentPage}
@@ -84,5 +86,11 @@ export default function TransactionsList({ account, setView }: Props) {
 	function handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
 		setPageSize(parseInt(event.target.value, 10));
 		setCurrentPage(0);
+	}
+
+	function getDate(transactionDate: number) {
+		let date = new Date(0);
+		date.setUTCSeconds(transactionDate);
+		return date.toLocaleDateString();
 	}
 }

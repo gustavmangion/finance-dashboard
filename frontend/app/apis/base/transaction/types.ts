@@ -1,6 +1,6 @@
 export default interface Transaction {
 	id: string;
-	tranDate: Date;
+	tranDate: number;
 	description: string;
 	cardNo: string;
 	reference: string;
