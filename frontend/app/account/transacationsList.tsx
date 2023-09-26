@@ -18,6 +18,7 @@ import styles from "../styles/account.module.scss";
 import React from "react";
 import { getMoneyFormat } from "../helpers/moneyHelper";
 import { getCategoryFromId } from "../helpers/transactionHelper";
+import TransactionsListFilter from "./transactionsListFilter";
 
 type Props = {
 	account: Account;
@@ -46,6 +47,7 @@ export default function TransactionsList({ account, setView }: Props) {
 	return (
 		<>
 			<h2>Transactions for {account.name}</h2>
+			<TransactionsListFilter />
 			<Paper className={styles.tablePagination}>
 				<TablePagination
 					rowsPerPageOptions={rowsPerPageOptions}
