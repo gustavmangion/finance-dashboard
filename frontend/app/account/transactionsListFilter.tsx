@@ -16,7 +16,7 @@ import { getCategories } from "../helpers/transactionHelper";
 export default function TransactionsListFilter() {
 	const [from, setForm] = useState<Dayjs | null>(null);
 	const [to, setTo] = useState<Dayjs | null>(null);
-	const [category, setCategory] = useState("All");
+	const [category, setCategory] = useState<string[]>([]);
 
 	return (
 		<Paper className={styles.transactionsListFilter}>
@@ -32,6 +32,7 @@ export default function TransactionsListFilter() {
 						onChange={handleSelectChange}
 						value={category}
 						placeholder="Category"
+						multiple
 					>
 						{getCategoryOptions()}
 					</Select>
@@ -45,12 +46,14 @@ export default function TransactionsListFilter() {
 
 		if ((value && !to) || (value && to && value >= to)) {
 			setTo(value.add(1, "day"));
-			console.log("here");
 		}
 	}
 
-	function handleSelectChange(e: SelectChangeEvent) {
-		setCategory(e.target.value);
+	function handleSelectChange(e: SelectChangeEvent<typeof category>) {
+		const {
+			target: { value },
+		} = e;
+		setCategory(typeof value === "string" ? value.split(",") : value);
 	}
 
 	function handleChangeToDate(value: Dayjs | null) {
@@ -62,12 +65,6 @@ export default function TransactionsListFilter() {
 	function getCategoryOptions() {
 		const options: React.ReactElement[] = [];
 		const categories = getCategories();
-
-		options.push(
-			<MenuItem key="All" value="All">
-				All
-			</MenuItem>
-		);
 
 		categories.map((category) => {
 			options.push(
