@@ -46,7 +46,9 @@ export default function TransactionsList({ account, setView }: Props) {
 
 	return (
 		<>
-			<h2>Transactions for {account.name}</h2>
+			<h2 className={styles.transactionsListTitle}>
+				Transactions for {account.name}
+			</h2>
 			<TransactionsListFilter />
 			<Paper className={styles.tablePagination}>
 				<TablePagination

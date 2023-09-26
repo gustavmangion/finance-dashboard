@@ -1,4 +1,7 @@
 import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
 	FormControl,
 	InputLabel,
 	MenuItem,
@@ -12,6 +15,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { ChangeEvent, useState } from "react";
 import { getCategories } from "../helpers/transactionHelper";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function TransactionsListFilter() {
 	const [from, setForm] = useState<Dayjs | null>(null);
@@ -19,26 +23,35 @@ export default function TransactionsListFilter() {
 	const [category, setCategory] = useState<string[]>([]);
 
 	return (
-		<Paper className={styles.transactionsListFilter}>
-			<form onSubmit={handleFilter}>
-				<DatePicker label="From" value={from} onChange={handleChangeFromDate} />
-				<DatePicker label="To" value={to} onChange={handleChangeToDate} />
-				<FormControl>
-					<InputLabel>Category</InputLabel>
-					<Select
-						name="category"
-						label="Category"
-						variant="standard"
-						onChange={handleSelectChange}
-						value={category}
-						placeholder="Category"
-						multiple
-					>
-						{getCategoryOptions()}
-					</Select>
-				</FormControl>
-			</form>
-		</Paper>
+		<Accordion className={styles.transactionsListFilter}>
+			<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+				Filters
+			</AccordionSummary>
+			<AccordionDetails>
+				<form onSubmit={handleFilter}>
+					<DatePicker
+						label="From"
+						value={from}
+						onChange={handleChangeFromDate}
+					/>
+					<DatePicker label="To" value={to} onChange={handleChangeToDate} />
+					<FormControl>
+						<InputLabel>Category</InputLabel>
+						<Select
+							name="category"
+							label="Category"
+							variant="standard"
+							onChange={handleSelectChange}
+							value={category}
+							placeholder="Category"
+							multiple
+						>
+							{getCategoryOptions()}
+						</Select>
+					</FormControl>
+				</form>
+			</AccordionDetails>
+		</Accordion>
 	);
 
 	function handleChangeFromDate(value: Dayjs | null) {
