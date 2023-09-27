@@ -28,8 +28,8 @@ namespace api.Repositories
             if (resourceParameters.From.HasValue && resourceParameters.To.HasValue)
                 transactions = transactions.Where(
                     x =>
-                        x.EnteredBank >= resourceParameters.From.Value
-                        && x.EnteredBank <= resourceParameters.To.Value
+                        x.Date >= resourceParameters.From.Value
+                        && x.Date <= resourceParameters.To.Value
                 );
 
             if (resourceParameters.Category.Count > 0)
