@@ -18,8 +18,17 @@ import { useState } from "react";
 import { getCategories } from "../helpers/transactionHelper";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilterAlt, FilterAltOff } from "@mui/icons-material";
+import { TransactionParameters } from "../apis/base/transaction/types";
 
-export default function TransactionsListFilter() {
+type Props = {
+	searchParameters: TransactionParameters;
+	setSearchParameters: (val: TransactionParameters) => void;
+};
+
+export default function TransactionsListFilter({
+	searchParameters,
+	setSearchParameters,
+}: Props) {
 	const [from, setForm] = useState<Dayjs | null>(null);
 	const [to, setTo] = useState<Dayjs | null>(null);
 	const [category, setCategory] = useState<string[]>([]);
@@ -108,6 +117,23 @@ export default function TransactionsListFilter() {
 		return options;
 	}
 
-	function handleFilter() {}
-	function handleReset() {}
+	function handleFilter() {
+		setSearchParameters({
+			...searchParameters,
+			from: from ? from.toDate().toDateString() : null,
+			to: to ? to.toDate().toDateString() : null,
+			category: category,
+		});
+	}
+	function handleReset() {
+		setForm(null);
+		setTo(null);
+		setCategory([]);
+		setSearchParameters({
+			...searchParameters,
+			from: null,
+			to: null,
+			category: [],
+		});
+	}
 }

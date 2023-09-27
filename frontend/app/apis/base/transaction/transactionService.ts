@@ -16,8 +16,24 @@ export const transactionApi = createApi({
 			ListResponse<Transaction>,
 			TransactionParameters
 		>({
-			query: ({ accountId, currentPage = 0, pageSize = 20 }) =>
-				`/transactions?AccountId=${accountId}&PageNumber=${currentPage}&PageSize=${pageSize}`,
+			query: (parameters: TransactionParameters) => {
+				let queryParameters: string = "";
+				if (parameters.from && parameters.to) {
+					queryParameters = queryParameters.concat(
+						`&From=${parameters.from}&To=${parameters.to}`
+					);
+				}
+				if (parameters.category.length > 0)
+					queryParameters = queryParameters.concat(
+						`&Category=${parameters.category.join(",")}`
+					);
+				return {
+					url:
+						`/transactions?AccountId=${parameters.accountId}` +
+						queryParameters +
+						`&PageNumber=${parameters.currentPage}&PageSize=${parameters.pageSize}`,
+				};
+			},
 		}),
 	}),
 });

@@ -19,6 +19,9 @@ import React from "react";
 import { getMoneyFormat } from "../helpers/moneyHelper";
 import { getCategoryFromId } from "../helpers/transactionHelper";
 import TransactionsListFilter from "./transactionsListFilter";
+import Transaction, {
+	TransactionParameters,
+} from "../apis/base/transaction/types";
 
 type Props = {
 	account: Account;
@@ -28,6 +31,9 @@ type Props = {
 export default function TransactionsList({ account, setView }: Props) {
 	const [pageSize, setPageSize] = useState(20);
 	const [currentPage, setCurrentPage] = useState(0);
+	const [searchParameters, setSearchParameters] = useState(
+		new TransactionParameters(account.id)
+	);
 	let rowsPerPageOptions: number[] = [];
 
 	if (window.innerWidth > 500) rowsPerPageOptions = [5, 10, 20, 50];
@@ -37,9 +43,7 @@ export default function TransactionsList({ account, setView }: Props) {
 		isFetching,
 		data: searchMeta,
 	} = useGetTransactionsQuery({
-		accountId: account.id,
-		currentPage: currentPage,
-		pageSize: pageSize,
+		...searchParameters,
 	});
 
 	if (isLoading) return <LoadingSkeleton />;
@@ -49,7 +53,10 @@ export default function TransactionsList({ account, setView }: Props) {
 			<h2 className={styles.transactionsListTitle}>
 				Transactions for {account.name}
 			</h2>
-			<TransactionsListFilter />
+			<TransactionsListFilter
+				searchParameters={searchParameters}
+				setSearchParameters={setSearchParameters}
+			/>
 			<Paper className={styles.tablePagination}>
 				<TablePagination
 					rowsPerPageOptions={rowsPerPageOptions}
@@ -75,34 +82,32 @@ export default function TransactionsList({ account, setView }: Props) {
 								<TableCell className={styles.normalColumn}>Amount</TableCell>
 							</TableRow>
 						</TableHead>
-						{isFetching ? (
-							getLoadingRows()
-						) : (
-							<TableBody>
-								{searchMeta?.data.map((transaction) => (
-									<TableRow key={transaction.id}>
-										<TableCell className={styles.normalColumn}>
-											{getDate(transaction.tranDate)}
-										</TableCell>
-										<TableCell className={styles.normalColumn}>
-											{getCategoryFromId(transaction.category)}
-										</TableCell>
-										<TableCell className={styles.wideColumn}>
-											{transaction.description}
-										</TableCell>
-										<TableCell className={styles.normalColumn}>
-											{transaction.cardNo}
-										</TableCell>
-										<TableCell className={styles.normalColumn}>
-											{transaction.reference}
-										</TableCell>
-										<TableCell className={styles.normalColumn}>
-											{getMoneyFormat(transaction.amount)}
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						)}
+						<TableBody>
+							{isFetching
+								? getLoadingRows()
+								: searchMeta?.data.map((transaction: Transaction) => (
+										<TableRow key={transaction.id}>
+											<TableCell className={styles.normalColumn}>
+												{transaction.tranDate}
+											</TableCell>
+											<TableCell className={styles.normalColumn}>
+												{getCategoryFromId(transaction.category)}
+											</TableCell>
+											<TableCell className={styles.wideColumn}>
+												{transaction.description}
+											</TableCell>
+											<TableCell className={styles.normalColumn}>
+												{transaction.cardNo}
+											</TableCell>
+											<TableCell className={styles.normalColumn}>
+												{transaction.reference}
+											</TableCell>
+											<TableCell className={styles.normalColumn}>
+												{getMoneyFormat(transaction.amount)}
+											</TableCell>
+										</TableRow>
+								  ))}
+						</TableBody>
 					</Table>
 				</TableContainer>
 			</Paper>
@@ -110,25 +115,25 @@ export default function TransactionsList({ account, setView }: Props) {
 	);
 
 	function handlePageChange(event: unknown, newPage: number) {
-		setCurrentPage(newPage);
+		setSearchParameters({
+			...searchParameters,
+			currentPage: newPage,
+		});
 	}
 
 	function handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
-		setPageSize(parseInt(event.target.value, 10));
-		setCurrentPage(0);
-	}
-
-	function getDate(transactionDate: number) {
-		let date = new Date(0);
-		date.setUTCSeconds(transactionDate);
-		return date.toLocaleDateString();
+		setSearchParameters({
+			...searchParameters,
+			currentPage: 0,
+			pageSize: parseInt(event.target.value, 10),
+		});
 	}
 
 	function getLoadingRows() {
 		const rows = [];
 		for (let i = 0; i < pageSize; i++) {
 			rows.push(
-				<TableRow>
+				<TableRow key={i}>
 					<TableCell className={styles.normalColumn}>
 						<i>Loading...</i>
 					</TableCell>
