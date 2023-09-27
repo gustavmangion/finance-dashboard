@@ -1,4 +1,5 @@
 ﻿using api.Entities;
+using System.Globalization;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Principal;
@@ -12,6 +13,7 @@ namespace api.Helpers
     public class StatementHelper
     {
         private static byte[] salt = Encoding.Unicode.GetBytes("WT7yGYvbg6");
+        private static TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
 
         public static string EncryptPasscode(string passcode)
         {
@@ -151,10 +153,20 @@ namespace api.Helpers
             if (matches.Count == 0 || matches[0].Groups.Count != 3)
                 throw new Exception("Unable to find statement date range");
 
-            return (
-                DateOnly.Parse(matches[0].Groups[1].Value),
-                DateOnly.Parse(matches[0].Groups[2].Value)
-            );
+            try
+            {
+                return (
+                    DateOnly.Parse(matches[0].Groups[1].Value, new CultureInfo("en-GB")),
+                    DateOnly.Parse(matches[0].Groups[2].Value, new CultureInfo("en-GB"))
+                );
+            }
+            catch (FormatException)
+            {
+                return (
+                    DateOnly.Parse(matches[0].Groups[1].Value, new CultureInfo("en-US")),
+                    DateOnly.Parse(matches[0].Groups[2].Value, new CultureInfo("en-US"))
+                );
+            }
         }
 
         public static List<Account> GetAccountsWithTransactions(string content)
@@ -225,6 +237,8 @@ namespace api.Helpers
                 TransactionHelper.getMiscellaneousCharge(p1, transaction);
 
             TransactionHelper.getSecondPart(p2, transaction);
+
+            transaction.Description = textInfo.ToTitleCase(transaction.Description);
             return transaction;
         }
     }
