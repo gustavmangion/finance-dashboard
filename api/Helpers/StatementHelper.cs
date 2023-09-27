@@ -238,7 +238,7 @@ namespace api.Helpers
 
             TransactionHelper.getSecondPart(p2, transaction);
 
-            transaction.Description = textInfo.ToTitleCase(transaction.Description);
+            transaction.Description = textInfo.ToTitleCase(transaction.Description.ToLower());
             return transaction;
         }
     }
