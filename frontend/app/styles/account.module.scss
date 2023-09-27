@@ -77,7 +77,6 @@
 }
 
 .tablePagination {
-	// margin-top: 1em;
 	width: 100%;
 }
 
@@ -91,7 +90,7 @@
 	width: 100%;
 
 	.header {
-		height: 0.5em;
+		min-height: 0.3em !important;
 	}
 
 	form {

@@ -101,48 +101,48 @@ form {
 
 // /--------------Material----------------------/
 
-// input {
-// 	color: $black;
-// }
+input {
+	color: $black;
+}
 
-// .MuiButton-root {
-// 	background-color: transparentize($primary, 0.9);
-// 	color: $primary;
+.MuiButton-root {
+	background-color: transparentize($primary, 0.9);
+	color: $primary;
 
-// 	&:hover {
-// 		background-color: transparentize($primary, 0.8);
-// 	}
-// }
+	&:hover {
+		background-color: transparentize($primary, 0.8);
+	}
+}
 
-// .MuiInputLabel-root {
-// 	color: $black;
+.MuiInputLabel-root {
+	color: $black;
 
-// 	&.Mui-focused {
-// 		color: $black;
-// 	}
-// }
+	&.Mui-focused {
+		color: $black;
+	}
+}
 
-// .MuiInput-root {
-// 	width: 14rem;
-// }
+.MuiInput-root {
+	width: 14rem;
+}
 
-// .MuiFormControl-root {
-// 	margin-top: 0.5em;
-// 	text-align: left;
-// }
+.MuiFormControl-root {
+	margin-top: 0.5em;
+	text-align: left;
+}
 
-// .MuiInputLabel-shrink {
-// 	transform: translate(15px, 0px) scale(0.75);
-// }
+.MuiInputLabel-shrink {
+	transform: translate(15px, 0px) scale(0.75);
+}
 
-// .MuiFormHelperText-root {
-// 	color: $black;
-// }
+.MuiFormHelperText-root {
+	color: $black;
+}
 
-// .MuiInput-underline:after {
-// 	border-bottom-color: $secondary;
-// }
+.MuiInput-underline:after {
+	border-bottom-color: $secondary;
+}
 
-// .MuiLinearProgress-root {
-// 	color: $primary;
-// }
+.MuiLinearProgress-root {
+	color: $primary;
+}

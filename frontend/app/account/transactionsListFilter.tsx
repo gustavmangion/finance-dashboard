@@ -2,20 +2,22 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Button,
 	FormControl,
 	InputLabel,
 	MenuItem,
-	Paper,
 	Select,
 	SelectChangeEvent,
 } from "@mui/material";
 import styles from "../styles/account.module.scss";
-import dayjs, { Dayjs } from "dayjs";
+import materialStyles from "../styles/material.module.scss";
+import { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { getCategories } from "../helpers/transactionHelper";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { FilterAlt, FilterAltOff } from "@mui/icons-material";
 
 export default function TransactionsListFilter() {
 	const [from, setForm] = useState<Dayjs | null>(null);
@@ -49,6 +51,22 @@ export default function TransactionsListFilter() {
 							{getCategoryOptions()}
 						</Select>
 					</FormControl>
+					<div>
+						<Button
+							className={materialStyles.primaryButton}
+							onClick={handleFilter}
+						>
+							<FilterAlt />
+							Filter
+						</Button>
+						<Button
+							className={materialStyles.secondaryButton}
+							onClick={handleReset}
+						>
+							<FilterAltOff />
+							Reset
+						</Button>
+					</div>
 				</form>
 			</AccordionDetails>
 		</Accordion>
@@ -91,4 +109,5 @@ export default function TransactionsListFilter() {
 	}
 
 	function handleFilter() {}
+	function handleReset() {}
 }
