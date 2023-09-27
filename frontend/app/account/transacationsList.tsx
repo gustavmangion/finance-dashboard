@@ -1,4 +1,5 @@
 import {
+	Alert,
 	LinearProgress,
 	Paper,
 	Table,
@@ -29,8 +30,6 @@ type Props = {
 };
 
 export default function TransactionsList({ account, setView }: Props) {
-	const [pageSize, setPageSize] = useState(20);
-	const [currentPage, setCurrentPage] = useState(0);
 	const [searchParameters, setSearchParameters] = useState(
 		new TransactionParameters(account.id)
 	);
@@ -83,30 +82,7 @@ export default function TransactionsList({ account, setView }: Props) {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{isFetching
-								? getLoadingRows()
-								: searchMeta?.data.map((transaction: Transaction) => (
-										<TableRow key={transaction.id}>
-											<TableCell className={styles.normalColumn}>
-												{transaction.tranDate}
-											</TableCell>
-											<TableCell className={styles.normalColumn}>
-												{getCategoryFromId(transaction.category)}
-											</TableCell>
-											<TableCell className={styles.wideColumn}>
-												{transaction.description}
-											</TableCell>
-											<TableCell className={styles.normalColumn}>
-												{transaction.cardNo}
-											</TableCell>
-											<TableCell className={styles.normalColumn}>
-												{transaction.reference}
-											</TableCell>
-											<TableCell className={styles.normalColumn}>
-												{getMoneyFormat(transaction.amount)}
-											</TableCell>
-										</TableRow>
-								  ))}
+							{isFetching ? getLoadingRows() : getTableRows()}
 						</TableBody>
 					</Table>
 				</TableContainer>
@@ -129,9 +105,83 @@ export default function TransactionsList({ account, setView }: Props) {
 		});
 	}
 
+	function getTableRows() {
+		const rows = [];
+		const transactions: Transaction[] = searchMeta.data;
+
+		for (let i = 0; i < searchParameters.pageSize; i++) {
+			if (transactions.length === 0 && i === 0) rows.push(getNoDataRow());
+			else if (i < transactions.length) {
+				rows.push(getDataRow(transactions[i]));
+			} else rows.push(getEmptyRow(i));
+		}
+		return rows;
+	}
+
+	function getDataRow(transaction: Transaction) {
+		return (
+			<TableRow key={transaction.id}>
+				<TableCell className={styles.normalColumn}>
+					{transaction.tranDate}
+				</TableCell>
+				<TableCell className={styles.normalColumn}>
+					{getCategoryFromId(transaction.category)}
+				</TableCell>
+				<TableCell className={styles.wideColumn}>
+					{transaction.description}
+				</TableCell>
+				<TableCell className={styles.normalColumn}>
+					{transaction.cardNo}
+				</TableCell>
+				<TableCell className={styles.normalColumn}>
+					{transaction.reference}
+				</TableCell>
+				<TableCell className={styles.normalColumn}>
+					{getMoneyFormat(transaction.amount)}
+				</TableCell>
+			</TableRow>
+		);
+	}
+
+	function getEmptyRow(key: number) {
+		return (
+			<TableRow key={key}>
+				<TableCell className={styles.normalColumn}>---</TableCell>
+				<TableCell className={styles.normalColumn}>
+					<LinearProgress color="inherit" variant="determinate" value={0} />
+				</TableCell>
+				<TableCell className={styles.wideColumn}>
+					<LinearProgress color="inherit" variant="determinate" value={0} />
+				</TableCell>
+				<TableCell className={styles.normalColumn}>
+					<LinearProgress color="inherit" variant="determinate" value={0} />
+				</TableCell>
+				<TableCell className={styles.normalColumn}>
+					<LinearProgress color="inherit" variant="determinate" value={0} />
+				</TableCell>
+				<TableCell className={styles.normalColumn}>
+					<LinearProgress color="inherit" variant="determinate" value={0} />
+				</TableCell>
+			</TableRow>
+		);
+	}
+
+	function getNoDataRow() {
+		return (
+			<TableRow key={0}>
+				<TableCell colSpan={6}>
+					<Alert severity="info" variant="outlined">
+						{" "}
+						No transactions
+					</Alert>
+				</TableCell>
+			</TableRow>
+		);
+	}
+
 	function getLoadingRows() {
 		const rows = [];
-		for (let i = 0; i < pageSize; i++) {
+		for (let i = 0; i < searchParameters.pageSize; i++) {
 			rows.push(
 				<TableRow key={i}>
 					<TableCell className={styles.normalColumn}>
