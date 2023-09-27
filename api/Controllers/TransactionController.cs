@@ -39,6 +39,20 @@ namespace api.Controllers
         )
         {
             if (
+                (!resouceParamters.From.HasValue && resouceParamters.To.HasValue)
+                || (resouceParamters.From.HasValue && !resouceParamters.To.HasValue)
+            )
+                ModelState.AddModelError(
+                    "message",
+                    "From and To date are both required when filtering by date"
+                );
+            else if (
+                resouceParamters.From.HasValue
+                && resouceParamters.To.HasValue
+                && resouceParamters.From.Value >= resouceParamters.To.Value
+            )
+                ModelState.AddModelError("message", "From must be less than To");
+            else if (
                 !_accountRepository.UserCanAccessAccount(
                     resouceParamters.AccountId,
                     GetUserIdFromToken()

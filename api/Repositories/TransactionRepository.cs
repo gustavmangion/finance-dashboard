@@ -21,13 +21,24 @@ namespace api.Repositories
             if (resourceParameters == null)
                 throw new ArgumentNullException(nameof(resourceParameters));
 
-            List<Transaction> transactions = _context.Transactions
-                .Where(x => x.AccountId == resourceParameters.AccountId)
-                .OrderByDescending(x => x.Date)
-                .ToList();
+            IQueryable<Transaction> transactions = _context.Transactions.Where(
+                x => x.AccountId == resourceParameters.AccountId
+            );
+
+            if (resourceParameters.From.HasValue && resourceParameters.To.HasValue)
+                transactions = transactions.Where(
+                    x =>
+                        x.EnteredBank >= resourceParameters.From.Value
+                        && x.EnteredBank <= resourceParameters.To.Value
+                );
+
+            if (resourceParameters.Category.Count > 0)
+                transactions = transactions.Where(
+                    x => resourceParameters.Category.Contains(x.Category)
+                );
 
             return PagedList<Transaction>.Create(
-                transactions,
+                transactions.OrderByDescending(x => x.Date).ToList(),
                 resourceParameters.PageNumber,
                 resourceParameters.PageSize
             );
