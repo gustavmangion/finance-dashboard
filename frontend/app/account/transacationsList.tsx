@@ -1,5 +1,6 @@
 import {
 	Alert,
+	Button,
 	LinearProgress,
 	Paper,
 	Table,
@@ -87,6 +88,7 @@ export default function TransactionsList({ account, setView }: Props) {
 					</Table>
 				</TableContainer>
 			</Paper>
+			<Button onClick={handleBack}>Back</Button>
 		</>
 	);
 
@@ -209,5 +211,9 @@ export default function TransactionsList({ account, setView }: Props) {
 			);
 		}
 		return rows;
+	}
+
+	function handleBack() {
+		setView(PageView.Accounts);
 	}
 }
