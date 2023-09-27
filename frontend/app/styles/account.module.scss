@@ -67,6 +67,14 @@
 	.tableContainer {
 		max-height: 100%;
 
+		.credit {
+			background-color: #f2fbec;
+		}
+
+		.debit {
+			background-color: $white;
+		}
+
 		.normalColumn {
 			width: 8rem;
 		}

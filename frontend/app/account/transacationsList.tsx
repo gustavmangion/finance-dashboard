@@ -120,7 +120,10 @@ export default function TransactionsList({ account, setView }: Props) {
 
 	function getDataRow(transaction: Transaction) {
 		return (
-			<TableRow key={transaction.id}>
+			<TableRow
+				key={transaction.id}
+				className={transaction.amount < 0 ? styles.debit : styles.credit}
+			>
 				<TableCell className={styles.normalColumn}>
 					{transaction.tranDate}
 				</TableCell>
