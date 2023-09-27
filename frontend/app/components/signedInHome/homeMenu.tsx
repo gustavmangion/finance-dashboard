@@ -20,7 +20,12 @@ export default function HomeMenu() {
 			>
 				Upload Statement
 			</Button>
-			<Button className={materialStyles.primaryButton}>Statement Viewer</Button>
+			<Button
+				className={materialStyles.primaryButton}
+				onClick={() => router.push("/account")}
+			>
+				Accounts
+			</Button>
 		</div>
 	);
 }

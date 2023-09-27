@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import User, { CreateUserModel, GetUserModel } from "./types";
+import User, { CreateUserModel } from "./types";
 import getHeaders from "../headers";
 import { displayError } from "@/app/stores/notificationSlice";
 import { setUser } from "@/app/stores/userSlice";
@@ -13,7 +13,7 @@ export const userApi = createApi({
 		},
 	}),
 	endpoints: (builder) => ({
-		getUser: builder.query<GetUserModel, null>({
+		getUser: builder.query<User, null>({
 			query: () => `/`,
 			async onQueryStarted(id, { dispatch, queryFulfilled }) {
 				try {

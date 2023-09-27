@@ -11,12 +11,40 @@
 	}
 }
 
+.secondaryButton {
+	background-color: transparentize($primary, 0.8) !important;
+	color: $primary !important;
+	font-size: 1em;
+	margin-top: 1em;
+
+	&:hover {
+		background-color: transparentize($primary, 0.9) !important;
+	}
+
+	&:disabled {
+		background-color: transparentize($primary, 0.9) !important;
+		color: transparentize($primary, 0.6) !important;
+	}
+}
+
 .outlinedButton {
 	background-color: transparent;
 	font-size: 1em;
 	color: $white;
 	border: 2px solid;
 	border-color: $primary;
+}
+
+.smallButton {
+	background-color: transparentize($primary, 0.4);
+	font-size: 1rem;
+	color: $white;
+	padding: 0 0.5em;
+	margin: 0.2em;
+
+	&:hover {
+		background-color: transparentize($primary, 0.6);
+	}
 }
 
 .loadingSkeleton {

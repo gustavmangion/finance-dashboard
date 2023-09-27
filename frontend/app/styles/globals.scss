@@ -18,9 +18,10 @@ main {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 100%;
 	width: 100%;
+	height: 100%;
 	padding: 2em;
+	overflow: hidden;
 
 	background-image: url("/home_back.jpg");
 	background-color: $navbar-background;
@@ -52,12 +53,22 @@ h3 {
 	height: 100%;
 	padding: 1em;
 	text-align: center;
+	margin-top: auto;
+	margin-bottom: auto;
+	overflow: scroll;
 
 	background: rgba(255, 255, 255, 0.62);
 	border-radius: 16px;
 	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 	backdrop-filter: blur(7.5px);
 	-webkit-backdrop-filter: blur(7.5px);
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .footer {
@@ -68,6 +79,7 @@ h3 {
 	background-color: $navbar-background;
 	padding: 0.3em;
 	vertical-align: middle;
+	height: 3em;
 
 	img {
 		margin-right: 0.4em;
@@ -93,6 +105,15 @@ input {
 	color: $black;
 }
 
+.MuiButton-root {
+	background-color: transparentize($primary, 0.9);
+	color: $primary;
+
+	&:hover {
+		background-color: transparentize($primary, 0.8);
+	}
+}
+
 .MuiInputLabel-root {
 	color: $black;
 
@@ -111,7 +132,7 @@ input {
 }
 
 .MuiInputLabel-shrink {
-	transform: translate(1px, 0px) scale(0.75);
+	transform: translate(15px, 0px) scale(0.75);
 }
 
 .MuiFormHelperText-root {
@@ -120,4 +141,8 @@ input {
 
 .MuiInput-underline:after {
 	border-bottom-color: $secondary;
+}
+
+.MuiLinearProgress-root {
+	color: $primary;
 }

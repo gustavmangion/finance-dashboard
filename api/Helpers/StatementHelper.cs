@@ -13,6 +13,7 @@ namespace api.Helpers
     public class StatementHelper
     {
         private static byte[] salt = Encoding.Unicode.GetBytes("WT7yGYvbg6");
+        private static TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
 
         public static string EncryptPasscode(string passcode)
         {
@@ -236,6 +237,8 @@ namespace api.Helpers
                 TransactionHelper.getMiscellaneousCharge(p1, transaction);
 
             TransactionHelper.getSecondPart(p2, transaction);
+
+            transaction.Description = textInfo.ToTitleCase(transaction.Description);
             return transaction;
         }
     }

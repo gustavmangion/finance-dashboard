@@ -18,6 +18,7 @@ import {
 import { userApi } from "../apis/base/user/userService";
 import { portfolioApi } from "../apis/base/portfolio/portfolioService";
 import { accountApi } from "../apis/base/account/accountService";
+import { transactionApi } from "../apis/base/transaction/transactionService";
 
 const persistConfig = {
 	key: "root",
@@ -32,6 +33,7 @@ export const store = configureStore({
 		[userApi.reducerPath]: userApi.reducer,
 		[portfolioApi.reducerPath]: portfolioApi.reducer,
 		[accountApi.reducerPath]: accountApi.reducer,
+		[transactionApi.reducerPath]: transactionApi.reducer,
 		navBarReducer,
 		userReducer,
 		notificationReducer,
@@ -47,7 +49,8 @@ export const store = configureStore({
 			uploadApi.middleware,
 			userApi.middleware,
 			portfolioApi.middleware,
-			accountApi.middleware
+			accountApi.middleware,
+			transactionApi.middleware
 		),
 });
 
