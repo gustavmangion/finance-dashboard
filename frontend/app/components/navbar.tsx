@@ -56,7 +56,7 @@ export default function Navbar() {
 		}
 	};
 
-	const navItems = ["Dashboard", "Upload"];
+	const navItems = ["Dashboard", "Upload", "Accounts"];
 
 	const drawer = (
 		<Box onClick={handleDrawerToggle} className={styles.drawer}>
