@@ -1,4 +1,6 @@
 import {
+	Alert,
+	Box,
 	FormControl,
 	InputLabel,
 	MenuItem,
@@ -117,15 +119,19 @@ export default function CreateAccount({
 							</Select>
 						</FormControl>
 						{errorMessage !== "" ? (
-							<p className="errorMessage">{errorMessage}</p>
+							<Alert severity="error" className={materialStyles.formAlert}>
+								{errorMessage}
+							</Alert>
 						) : null}
-						<LoadingButton
-							className={materialStyles.primaryButton}
-							type="submit"
-							loading={loading}
-						>
-							Save
-						</LoadingButton>
+						<Box className={materialStyles.buttonsContainer}>
+							<LoadingButton
+								variant="contained"
+								type="submit"
+								loading={loading}
+							>
+								Save
+							</LoadingButton>
+						</Box>
 					</form>
 				</>
 			)}

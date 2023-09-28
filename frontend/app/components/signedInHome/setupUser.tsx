@@ -4,7 +4,7 @@ import User, { CreateUserModel } from "@/app/apis/base/user/types";
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
 import { setNeedUploadStatement, setUser } from "@/app/stores/userSlice";
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Box, Button, Modal, Paper, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import styles from "../../styles/home.module.scss";
@@ -62,7 +62,7 @@ export default function SetupUser() {
 				</Box>
 			</form>
 			<Modal open={modalOpen} onClose={redirectToUploadStatement}>
-				<div className={materialStyles.modal}>
+				<Paper className={materialStyles.modal}>
 					<p>
 						Your account has been created, now let&apos;s upload your first bank
 						statement
@@ -72,7 +72,7 @@ export default function SetupUser() {
 							Next
 						</Button>
 					</Box>
-				</div>
+				</Paper>
 			</Modal>
 		</div>
 	);

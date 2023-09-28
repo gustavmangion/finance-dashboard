@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Alert, Box, Button, TextField } from "@mui/material";
 import styles from "../styles/upload.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
@@ -52,13 +52,15 @@ export default function FilePassword({
 							onChange={handleChange}
 						/>
 						{displayPasswordIncorrect ? (
-							<p className="errorMessage">
+							<Alert severity="error" className={materialStyles.formAlert}>
 								Password is incorrect, please try again
-							</p>
+							</Alert>
 						) : null}
-						<Button className={materialStyles.primaryButton} type="submit">
-							Next
-						</Button>
+						<Box className={materialStyles.buttonsContainer}>
+							<Button variant="contained" type="submit">
+								Next
+							</Button>
+						</Box>
 					</form>
 				</>
 			)}

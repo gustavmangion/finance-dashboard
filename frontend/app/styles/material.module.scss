@@ -59,9 +59,8 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background-color: $white;
 	padding: 2em;
-	text-align: center;
+	outline: none;
 }
 
 .buttonsContainer {
@@ -70,4 +69,8 @@
 	button:not(:last-child) {
 		margin-right: 1em;
 	}
+}
+
+.formAlert {
+	margin-top: 1em;
 }
