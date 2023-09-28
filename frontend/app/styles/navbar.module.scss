@@ -29,7 +29,7 @@
 		color: $secondary;
 
 		&:hover {
-			background-color: darken($white, 10%);
+			transform: scale(0.97);
 			cursor: pointer;
 		}
 
@@ -47,6 +47,11 @@
 		background-color: $white;
 		border-radius: 10%;
 		padding: 0.6em;
+
+		&:hover {
+			color: $white;
+			background-color: $primary;
+		}
 	}
 
 	@media (min-width: $mobile-screen-width) {
@@ -73,7 +78,8 @@
 				font-size: 1.2rem;
 
 				&:hover {
-					color: darken($white, 10%);
+					color: $primary;
+					transform: scale(1.1);
 				}
 			}
 		}

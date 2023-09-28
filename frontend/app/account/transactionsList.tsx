@@ -17,6 +17,7 @@ import { PageView } from "./page";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import { useState } from "react";
 import styles from "../styles/account.module.scss";
+import materialStyles from "../styles/material.module.scss";
 import React from "react";
 import { getMoneyFormat } from "../helpers/moneyHelper";
 import { getCategoryFromId } from "../helpers/transactionHelper";
@@ -88,7 +89,9 @@ export default function TransactionsList({ account, setView }: Props) {
 					</Table>
 				</TableContainer>
 			</Paper>
-			<Button onClick={handleBack}>Back</Button>
+			<Button className={materialStyles.backButton} onClick={handleBack}>
+				Back
+			</Button>
 		</>
 	);
 
@@ -109,7 +112,7 @@ export default function TransactionsList({ account, setView }: Props) {
 
 	function getTableRows() {
 		const rows = [];
-		const transactions: Transaction[] = searchMeta.data;
+		const transactions: Transaction[] = searchMeta!.data;
 
 		for (let i = 0; i < searchParameters.pageSize; i++) {
 			if (transactions.length === 0 && i === 0) rows.push(getNoDataRow());

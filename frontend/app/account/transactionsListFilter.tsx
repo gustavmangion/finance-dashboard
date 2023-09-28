@@ -2,6 +2,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Box,
 	Button,
 	FormControl,
 	InputLabel,
@@ -60,22 +61,16 @@ export default function TransactionsListFilter({
 							{getCategoryOptions()}
 						</Select>
 					</FormControl>
-					<div>
-						<Button
-							className={materialStyles.primaryButton}
-							onClick={handleFilter}
-						>
+					<Box className={materialStyles.buttonsContainerTight}>
+						<Button variant="contained" onClick={handleFilter}>
 							<FilterAlt />
 							Filter
 						</Button>
-						<Button
-							className={materialStyles.secondaryButton}
-							onClick={handleReset}
-						>
+						<Button variant="contained" color="secondary" onClick={handleReset}>
 							<FilterAltOff />
 							Reset
 						</Button>
-					</div>
+					</Box>
 				</form>
 			</AccordionDetails>
 		</Accordion>

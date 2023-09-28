@@ -7,11 +7,10 @@ import { AuthStatus } from "../enums/authStatusEnum";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import { useGetAccountsQuery } from "../apis/base/account/accountService";
 import AccountsList from "./accountsList";
-import styles from "../styles/account.module.scss";
 import EditAccount from "./editAccount";
 import Account from "../apis/base/account/types";
 import PortfolioEdit from "./portfolioEdit";
-import TransactionsList from "./transacationsList";
+import TransactionsList from "./transactionsList";
 
 export default function AccountPage() {
 	const authStatus = useSecurePage();

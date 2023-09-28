@@ -1,5 +1,5 @@
-import { styled } from "@mui/material";
-import MaterialStyles from "../styles/material.module.scss";
+import { Box, styled } from "@mui/material";
+import materialStyles from "../styles/material.module.scss";
 import styles from "../styles/upload.module.scss";
 import { ChangeEvent, useState } from "react";
 import { LoadingButton } from "@mui/lab";
@@ -27,20 +27,17 @@ export default function SelectFile({ setUploadFiles }: Props) {
 	return (
 		<div className={styles.upload}>
 			<h3>Select the file/s you want to upload</h3>
-
-			<LoadingButton
-				className={MaterialStyles.primaryButton}
-				component="label"
-				loading={loading}
-			>
-				Upload
-				<VisuallyHiddenInput
-					type="file"
-					accept="application/pdf"
-					onChange={handleUploadFile}
-					multiple
-				/>
-			</LoadingButton>
+			<Box className={materialStyles.buttonsContainer}>
+				<LoadingButton variant="contained" component="label" loading={loading}>
+					Upload
+					<VisuallyHiddenInput
+						type="file"
+						accept="application/pdf"
+						onChange={handleUploadFile}
+						multiple
+					/>
+				</LoadingButton>
+			</Box>
 			{uploadError !== "" ? (
 				<h4 className="errorMessage">{uploadError}</h4>
 			) : null}

@@ -27,6 +27,7 @@ import {
 	closeUserMenu,
 	openUserMenu,
 } from "../stores/navBarSlice";
+import { resetUser } from "../stores/userSlice";
 import Link from "next/link";
 import React from "react";
 
@@ -56,7 +57,7 @@ export default function Navbar() {
 		}
 	};
 
-	const navItems = ["Dashboard", "Upload"];
+	const navItems = ["Dashboard", "Upload", "Accounts"];
 
 	const drawer = (
 		<Box onClick={handleDrawerToggle} className={styles.drawer}>
@@ -83,7 +84,7 @@ export default function Navbar() {
 			onClose={handleUserMenuToggle}
 			anchorEl={userMenuAnchor}
 		>
-			<MenuItem onClick={() => signOut()}>Sign Out</MenuItem>
+			<MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
 		</Menu>
 	);
 
@@ -162,4 +163,9 @@ export default function Navbar() {
 			</Drawer>
 		</>
 	);
+
+	function handleSignOut() {
+		dispatch(resetUser());
+		signOut();
+	}
 }

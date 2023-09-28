@@ -27,9 +27,11 @@ export const user = createSlice({
 		setPortfolios: (state: any, action: PayloadAction<Portfolio[]>) => {
 			state.portfolios = action.payload;
 		},
+		resetUser: () => initialState,
 	},
 });
 
-export const { setUser, setNeedUploadStatement, setPortfolios } = user.actions;
+export const { setUser, setNeedUploadStatement, setPortfolios, resetUser } =
+	user.actions;
 
 export default user.reducer;

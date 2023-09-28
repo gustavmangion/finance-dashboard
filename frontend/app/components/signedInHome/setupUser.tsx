@@ -4,7 +4,7 @@ import User, { CreateUserModel } from "@/app/apis/base/user/types";
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
 import { setNeedUploadStatement, setUser } from "@/app/stores/userSlice";
-import { Button, Modal, TextField } from "@mui/material";
+import { Box, Button, Modal, Paper, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
 import styles from "../../styles/home.module.scss";
@@ -50,27 +50,24 @@ export default function SetupUser() {
 					onChange={handleChange}
 					helperText="You can use portfolios to group multiple accounts"
 				/>
-				<LoadingButton
-					className={materialStyles.primaryButton}
-					type="submit"
-					loading={loading}
-				>
-					Save
-				</LoadingButton>
+				<Box className={materialStyles.buttonsContainer}>
+					<LoadingButton variant="contained" type="submit" loading={loading}>
+						Save
+					</LoadingButton>
+				</Box>
 			</form>
 			<Modal open={modalOpen} onClose={redirectToUploadStatement}>
-				<div className={materialStyles.modal}>
+				<Paper className={materialStyles.modal}>
 					<p>
 						Your account has been created, now let&apos;s upload your first bank
 						statement
 					</p>
-					<Button
-						className={materialStyles.primaryButton}
-						onClick={redirectToUploadStatement}
-					>
-						Next
-					</Button>
-				</div>
+					<Box className={materialStyles.buttonsContainer}>
+						<Button variant="contained" onClick={redirectToUploadStatement}>
+							Next
+						</Button>
+					</Box>
+				</Paper>
 			</Modal>
 		</div>
 	);
@@ -88,17 +85,15 @@ export default function SetupUser() {
 		if (user?.id === "Not Found") {
 			const newUser = new CreateUserModel();
 			newUser.portfolioName = formState.portfolioName;
-			await addUser(newUser)
-				.then((result) => {
-					setLoading(false);
-					if ("data" in result) {
-						dispatch(setNeedUploadStatement(true));
-						dispatch(setUser(result.data));
-						dispatch(displaySuccess("Account created!"));
-						setModalOpen(true);
-					} else dispatch(displayError(null));
-				})
-				.catch((error) => console.log(error));
+			await addUser(newUser).then((result) => {
+				setLoading(false);
+				if ("data" in result) {
+					dispatch(setNeedUploadStatement(true));
+					dispatch(setUser(result.data));
+					dispatch(displaySuccess("Account created!"));
+					setModalOpen(true);
+				} else dispatch(displayError(null));
+			});
 		}
 	}
 
