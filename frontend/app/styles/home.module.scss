@@ -76,9 +76,15 @@
 .buttonMenu {
 	display: flex;
 	flex-direction: column;
-	margin-top: 2em;
+	margin-top: 1em;
+	padding: 2em;
+	background-color: transparentize($white, 0.6) !important;
+
+	button {
+		font-size: 1.2rem;
+	}
 
 	button:not(:last-child) {
-		margin-bottom: 0.5em;
+		margin-bottom: 1.2em;
 	}
 }
