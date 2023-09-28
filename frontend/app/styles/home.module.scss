@@ -78,7 +78,7 @@
 	flex-direction: column;
 	margin-top: 1em;
 	padding: 2em;
-	background-color: transparentize($white, 0.6) !important;
+	background-color: $paper-background !important;
 
 	button {
 		font-size: 1.2rem;
