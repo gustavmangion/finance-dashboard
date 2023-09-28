@@ -51,12 +51,7 @@ export default function SetupUser() {
 					helperText="You can use portfolios to group multiple accounts"
 				/>
 				<Box className={materialStyles.buttonsContainer}>
-					<LoadingButton
-						className={materialStyles.primaryButton}
-						variant="contained"
-						type="submit"
-						loading={loading}
-					>
+					<LoadingButton variant="contained" type="submit" loading={loading}>
 						Save
 					</LoadingButton>
 				</Box>

@@ -64,11 +64,27 @@
 }
 
 .buttonsContainer {
+	display: flex;
+	justify-content: center;
 	margin-top: 1em;
 
 	button:not(:last-child) {
 		margin-right: 1em;
 	}
+}
+
+.buttonsContainerTight {
+	display: flex;
+	justify-content: center;
+	margin-top: 0.5em;
+
+	button:not(:last-child) {
+		margin-right: 0.5em;
+	}
+}
+
+.backButton {
+	margin-top: 1em !important;
 }
 
 .formAlert {

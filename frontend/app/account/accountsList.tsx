@@ -2,8 +2,10 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Box,
 	Button,
 	MenuItem,
+	Paper,
 	Select,
 	SelectChangeEvent,
 } from "@mui/material";
@@ -34,8 +36,9 @@ export default function AccountsList({
 	return (
 		<div className={styles.accountList}>
 			<h2>Your Accounts</h2>
-			<h3>Portfolio</h3>
-			<div className={styles.portfolioPicker}>
+			<Paper className={styles.portfolioPicker}>
+				<h3>Portfolio</h3>
+
 				<Select
 					name="portfolio"
 					label="Portfolio"
@@ -47,13 +50,15 @@ export default function AccountsList({
 				>
 					{mapPortfolioOptions()}
 				</Select>
-				<Button
-					className={styles.managePortfoliosButton}
-					onClick={() => setPageView(PageView.Portfolios)}
-				>
-					Manage Portfolios
-				</Button>
-			</div>
+				<Box className={materialStyles.buttonsContainerTight}>
+					<Button
+						variant="text"
+						onClick={() => setPageView(PageView.Portfolios)}
+					>
+						Manage Portfolios
+					</Button>
+				</Box>
+			</Paper>
 
 			{filteredAccounts.length === 0 ? (
 				<h3>No accounts linked to this portfolio</h3>
@@ -84,25 +89,22 @@ export default function AccountsList({
 										<p>Total Debit: {getMoneyFormat(account.totalOut)}</p>
 										<p>Total Credit: {getMoneyFormat(account.totalIn)}</p>
 									</div>
-									<div className={styles.buttons}>
+									<Box className={materialStyles.buttonsContainerTight}>
 										<Button
 											name="Transactions"
 											onClick={(e) => handleEditClick(e, account)}
-											className={materialStyles.smallButton}
+											variant="contained"
 										>
 											View Transactions
 										</Button>
 										<Button
 											name="Edit"
-											className={[
-												materialStyles.smallButton,
-												materialStyles.secondaryButton,
-											].join(" ")}
+											variant="text"
 											onClick={(e) => handleEditClick(e, account)}
 										>
 											Edit
 										</Button>
-									</div>
+									</Box>
 								</AccordionDetails>
 							</Accordion>
 						);

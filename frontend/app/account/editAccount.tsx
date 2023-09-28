@@ -1,4 +1,5 @@
 import {
+	Box,
 	Button,
 	FormControl,
 	InputLabel,
@@ -71,16 +72,16 @@ export default function EditAccount({ account, setView }: Props) {
 							})}
 						</Select>
 					</FormControl>
-					<LoadingButton
-						className={materialStyles.primaryButton}
-						type="submit"
-						loading={loading}
-					>
-						Update
-					</LoadingButton>
+					<Box className={materialStyles.buttonsContainer}>
+						<LoadingButton variant="contained" type="submit" loading={loading}>
+							Update
+						</LoadingButton>
+					</Box>
 				</form>
 			</div>
-			<Button onClick={handleBack}>Back</Button>
+			<Button className={materialStyles.backButton} onClick={handleBack}>
+				Back
+			</Button>
 		</>
 	);
 
