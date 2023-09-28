@@ -63,3 +63,11 @@
 	padding: 2em;
 	text-align: center;
 }
+
+.buttonsContainer {
+	margin-top: 1em;
+
+	button:not(:last-child) {
+		margin-right: 1em;
+	}
+}
