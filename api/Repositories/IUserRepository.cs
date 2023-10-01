@@ -11,6 +11,8 @@ namespace api.Repositories
         void AddShare(UserShare share);
         void DeleteShare(UserShare share);
         UserShareCode? GetShareCode(string userId);
+        bool AliasExists(string alias, string userId);
+        bool InviteCodeExists(int code);
         void AddShareCode(UserShareCode shareCode);
         bool SaveChanges();
     }

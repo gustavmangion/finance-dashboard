@@ -67,5 +67,65 @@ namespace api.Controllers
 
             return Ok(_mapper.Map<UserModel>(newUser));
         }
+
+        [HttpGet("Share")]
+        public ActionResult GetUserSharing()
+        {
+            string userId = GetUserIdFromToken();
+
+            UserShareModel model = new UserShareModel();
+
+            UserShareCode? userShareCode = _userRepository.GetShareCode(userId);
+
+            if (userShareCode != null)
+            {
+                model.ShareCodeSetup = true;
+                model.UserShares = _mapper.Map<List<UserShareModelShares>>(
+                    _userRepository.GetShares(userId)
+                );
+            }
+
+            return Ok(model);
+        }
+
+        [HttpPost("Share")]
+        public ActionResult AddUserShare([FromBody] UserShareModelForCreation model)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (string.IsNullOrEmpty(model.Alias))
+                ModelState.AddModelError("message", "Alias is required");
+            else if (_userRepository.GetShareCode(userId) == null)
+                ModelState.AddModelError("message", "User share code is not setup");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (_userRepository.AliasExists(model.Alias, userId))
+                return BadRequest("Alias already exists");
+
+            UserShare userShare = new UserShare();
+            userShare.UserId = userId;
+            userShare.Alias = model.Alias;
+            userShare.InviteCode = GenerateInviteCode();
+
+            _userRepository.AddShare(userShare);
+            _userRepository.SaveChanges();
+
+            return Ok(_mapper.Map<UserShare>(userShare));
+        }
+
+        private int GenerateInviteCode()
+        {
+            Random random = new Random();
+            int code = random.Next(100000, 999999);
+
+            while (_userRepository.InviteCodeExists(code))
+            {
+                code = random.Next(100000, 999999);
+            }
+
+            return code;
+        }
     }
 }

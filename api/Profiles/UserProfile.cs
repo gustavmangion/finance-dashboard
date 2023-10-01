@@ -9,6 +9,7 @@ namespace api.Profiles
         public UserProfile()
         {
             CreateMap<User, UserModel>();
+            CreateMap<UserShare, UserShareModelShares>();
         }
     }
 }

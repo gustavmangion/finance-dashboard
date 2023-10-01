@@ -29,7 +29,7 @@ namespace api.Repositories
 
         public List<UserShare> GetShares(string userId)
         {
-            return _context.UserShares.Where(x => x.UserId == id).ToList();
+            return _context.UserShares.Where(x => x.UserId == userId).ToList();
         }
 
         public void AddShare(UserShare share)
@@ -45,6 +45,16 @@ namespace api.Repositories
         public UserShareCode? GetShareCode(string userId)
         {
             return _context.UserShareCodes.Where(x => x.UserID == userId).FirstOrDefault();
+        }
+
+        public bool AliasExists(string alias, string userId)
+        {
+            return _context.UserShares.Where(x => x.Alias == alias && x.UserId == userId).Any();
+        }
+
+        public bool InviteCodeExists(int code)
+        {
+            return _context.UserShares.Where(x => x.InviteCode == code).Any();
         }
 
         public void AddShareCode(UserShareCode shareCode)
