@@ -116,6 +116,52 @@ namespace api.Controllers
             return Ok(_mapper.Map<UserShareModelShares>(userShare));
         }
 
+        [HttpPut("Share/{shareId}")]
+        public ActionResult AcceptUserShare([FromBody] UserShareAcceptModel model)
+        {
+            if (string.IsNullOrEmpty(model.Alias))
+            {
+                ModelState.AddModelError("message", "Alias is required");
+                return BadRequest(ModelState);
+            }
+
+            UserShare? userShare = _userRepository.GetUserShare(model.InviteCode);
+            UserShareCode? shareCode = null;
+
+            if (userShare != null)
+            {
+                shareCode = _userRepository.GetShareCode(userShare.UserId);
+            }
+
+            string userId = GetUserIdFromToken();
+
+            if (
+                userShare == null
+                || shareCode == null
+                || userShare.UserId == userId
+                || EncryptionHelper.DecryptString(shareCode.EncryptedCode) != model.ShareCode
+            )
+                return BadRequest("Cannot accept invite");
+
+            if (_userRepository.AliasExists(model.Alias, userId))
+                return BadRequest("Alias already exists");
+
+            userShare.InviteCode = -1;
+            userShare.SharedWith = userId;
+
+            UserShare correspondingShare = new UserShare();
+            correspondingShare.UserId = userId;
+            correspondingShare.SharedWith = userShare.UserId;
+            correspondingShare.InviteCode = -1;
+            correspondingShare.SharedOn = userShare.SharedOn;
+            correspondingShare.Alias = model.Alias;
+
+            _userRepository.AddShare(correspondingShare);
+            _userRepository.SaveChanges();
+
+            return Ok();
+        }
+
         [HttpGet("ShareCode")]
         public ActionResult GetShareCode()
         {

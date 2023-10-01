@@ -19,11 +19,13 @@ import ViewShareCodeModal from "./viewShareCodeModal";
 import CreateInviteModal from "./createInviteModal";
 import { UserShare } from "@/app/apis/base/user/types";
 import { LoadingButton } from "@mui/lab";
+import AcceptInviteModal from "./acceptInviteModal";
 
 export default function LinkedAccounts() {
 	const [shareCodeModalOpen, setShareCodeModalOpen] = useState(false);
 	const [viewCodeModalOpen, setViewCodeModalOpen] = useState(false);
 	const [inviteModalOpen, setInviteModalOpen] = useState(false);
+	const [acceptInviteModalOpen, setAcceptInviteModalOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 
 	const { isLoading, isFetching, data } = useGetUserSharesQuery(null);
@@ -46,7 +48,9 @@ export default function LinkedAccounts() {
 					<Button onClick={() => setInviteModalOpen(true)}>
 						Create Invite
 					</Button>
-					<Button>Accept Invite</Button>
+					<Button onClick={() => setAcceptInviteModalOpen(true)}>
+						Accept Invite
+					</Button>
 				</div>
 			) : null}
 			<div>
@@ -81,6 +85,10 @@ export default function LinkedAccounts() {
 				modalOpen={inviteModalOpen}
 				setModalOpen={setInviteModalOpen}
 			/>
+			<AcceptInviteModal
+				modalOpen={acceptInviteModalOpen}
+				setModalOpen={setAcceptInviteModalOpen}
+			/>
 		</>
 	);
 
@@ -109,7 +117,10 @@ export default function LinkedAccounts() {
 												: `${share.inviteCode} - Pending`}
 										</TableCell>
 										<TableCell>
-											<LoadingButton>
+											<LoadingButton
+												loading={loading}
+												onClick={() => handleRemoveOrRevoke(share.id)}
+											>
 												{share.revoked ? "Remove" : "Revoke"}
 											</LoadingButton>
 										</TableCell>
@@ -122,4 +133,6 @@ export default function LinkedAccounts() {
 			</TableContainer>
 		);
 	}
+
+	function handleRemoveOrRevoke(id: string) {}
 }

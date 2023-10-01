@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import User, {
+	AcceptUserShare,
 	CreateUserModel,
 	CreateUserShare,
 	CreateUserShareCode,
@@ -77,6 +78,14 @@ export const userApi = createApi({
 			}),
 			invalidatesTags: ["UserShareCode"],
 		}),
+		acceptUserShare: builder.mutation({
+			query: (payload: AcceptUserShare) => ({
+				url: `\Share`,
+				method: "PUT",
+				body: { ...payload },
+			}),
+			invalidatesTags: ["UserShare"],
+		}),
 	}),
 });
 
@@ -87,4 +96,5 @@ export const {
 	useAddUserShareMutation,
 	useGetUserShareCodeQuery,
 	useAddOrUpdateUserShareCodeMutation,
+	useAcceptUserShareMutation,
 } = userApi;

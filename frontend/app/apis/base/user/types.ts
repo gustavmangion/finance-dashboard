@@ -34,3 +34,9 @@ export class CreateUserShareCode {
 export class CreateUserShare {
 	alias: string = "";
 }
+
+export class AcceptUserShare {
+	inviteCode: number = 0;
+	shareCode: string = "";
+	alias: string = "";
+}

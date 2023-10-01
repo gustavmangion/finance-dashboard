@@ -27,6 +27,11 @@ namespace api.Repositories
             _context.Users.Add(user);
         }
 
+        public UserShare? GetUserShare(int inviteCode)
+        {
+            return _context.UserShares.Where(x => x.InviteCode == inviteCode).FirstOrDefault();
+        }
+
         public List<UserShare> GetShares(string userId)
         {
             return _context.UserShares.Where(x => x.UserId == userId).ToList();
