@@ -204,7 +204,7 @@ namespace api.Controllers
             Random random = new Random();
             int code = random.Next(100000, 999999);
 
-            while (_userRepository.InviteCodeExists(code))
+            while (_userRepository.InviteCodeExists(code.ToString()))
             {
                 code = random.Next(100000, 999999);
             }
