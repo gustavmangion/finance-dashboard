@@ -146,13 +146,13 @@ namespace api.Controllers
             if (_userRepository.AliasExists(model.Alias, userId))
                 return BadRequest("Alias already exists");
 
-            userShare.InviteCode = -1;
+            userShare.InviteCode = "";
             userShare.SharedWith = userId;
 
             UserShare correspondingShare = new UserShare();
             correspondingShare.UserId = userId;
             correspondingShare.SharedWith = userShare.UserId;
-            correspondingShare.InviteCode = -1;
+            correspondingShare.InviteCode = "";
             correspondingShare.SharedOn = userShare.SharedOn;
             correspondingShare.Alias = model.Alias;
 
@@ -199,7 +199,7 @@ namespace api.Controllers
             return Ok();
         }
 
-        private int GenerateInviteCode()
+        private string GenerateInviteCode()
         {
             Random random = new Random();
             int code = random.Next(100000, 999999);
@@ -209,7 +209,7 @@ namespace api.Controllers
                 code = random.Next(100000, 999999);
             }
 
-            return code;
+            return code.ToString();
         }
     }
 }

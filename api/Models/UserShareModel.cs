@@ -11,7 +11,7 @@
     {
         public Guid Id { get; set; }
         public string Alias { get; set; }
-        public int InviteCode { get; set; }
+        public string InviteCode { get; set; }
         public bool? Revoked { get; set; }
     }
 }

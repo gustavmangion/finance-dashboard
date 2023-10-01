@@ -27,7 +27,7 @@ namespace api.Repositories
             _context.Users.Add(user);
         }
 
-        public UserShare? GetUserShare(int inviteCode)
+        public UserShare? GetUserShare(string inviteCode)
         {
             return _context.UserShares.Where(x => x.InviteCode == inviteCode).FirstOrDefault();
         }
@@ -57,7 +57,7 @@ namespace api.Repositories
             return _context.UserShares.Where(x => x.Alias == alias && x.UserId == userId).Any();
         }
 
-        public bool InviteCodeExists(int code)
+        public bool InviteCodeExists(string code)
         {
             return _context.UserShares.Where(x => x.InviteCode == code).Any();
         }
