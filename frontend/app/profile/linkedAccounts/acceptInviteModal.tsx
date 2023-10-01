@@ -3,7 +3,10 @@ import materialStyles from "../../styles/material.module.scss";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
-import { useAcceptUserShareMutation } from "@/app/apis/base/user/userService";
+import {
+	useAcceptUserShareMutation,
+	userApi,
+} from "@/app/apis/base/user/userService";
 import { AcceptUserShare } from "@/app/apis/base/user/types";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 
@@ -14,7 +17,7 @@ type Props = {
 
 export default function AcceptInviteModal({ modalOpen, setModalOpen }: Props) {
 	const [formState, setFormState] = useState({
-		code: null,
+		code: "",
 		shareCode: "",
 		name: "",
 	});
@@ -33,7 +36,6 @@ export default function AcceptInviteModal({ modalOpen, setModalOpen }: Props) {
 						name="code"
 						label="Invite Code"
 						variant="standard"
-						type="number"
 						value={formState.code}
 						onChange={handleChange}
 						required
@@ -74,7 +76,7 @@ export default function AcceptInviteModal({ modalOpen, setModalOpen }: Props) {
 
 	function handleClose() {
 		setFormState({
-			code: null,
+			code: "",
 			name: "",
 			shareCode: "",
 		});
@@ -99,8 +101,10 @@ export default function AcceptInviteModal({ modalOpen, setModalOpen }: Props) {
 		model.shareCode = formState.shareCode;
 
 		acceptInvite(model).then((result) => {
+			setLoading(false);
 			if ("data" in result) {
 				dispatch(displaySuccess("Invite accepted"));
+				dispatch(userApi.util.invalidateTags(["UserShare"]));
 				handleClose();
 			} else if ("error" in result) {
 				if ("data" in result.error) {

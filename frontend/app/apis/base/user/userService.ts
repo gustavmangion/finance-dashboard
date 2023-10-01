@@ -84,7 +84,6 @@ export const userApi = createApi({
 				method: "PUT",
 				body: { ...payload },
 			}),
-			invalidatesTags: ["UserShare"],
 		}),
 	}),
 });

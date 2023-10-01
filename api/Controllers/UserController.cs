@@ -116,7 +116,7 @@ namespace api.Controllers
             return Ok(_mapper.Map<UserShareModelShares>(userShare));
         }
 
-        [HttpPut("Share/{shareId}")]
+        [HttpPut("Share")]
         public ActionResult AcceptUserShare([FromBody] UserShareAcceptModel model)
         {
             if (string.IsNullOrEmpty(model.Alias))
