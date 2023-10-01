@@ -70,6 +70,7 @@ try
     builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
     builder.Services.AddHostedService<UploadDirectoryCleanerHostedService>();
+    builder.Services.AddHostedService<UserShareCleanerHostedService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
