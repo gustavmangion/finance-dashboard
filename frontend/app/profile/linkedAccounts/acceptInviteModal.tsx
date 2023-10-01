@@ -1,4 +1,4 @@
-import { Alert, Box, Modal, Paper, TextField } from "@mui/material";
+import { Alert, Box, Button, Modal, Paper, TextField } from "@mui/material";
 import materialStyles from "../../styles/material.module.scss";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { LoadingButton } from "@mui/lab";
@@ -68,6 +68,9 @@ export default function AcceptInviteModal({ modalOpen, setModalOpen }: Props) {
 						<LoadingButton loading={loading} variant="contained" type="submit">
 							Accept
 						</LoadingButton>
+						<Button variant="outlined" onClick={handleClose}>
+							Close
+						</Button>
 					</Box>
 				</form>
 			</Paper>

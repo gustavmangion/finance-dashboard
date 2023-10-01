@@ -13,7 +13,7 @@ export interface UserShareModel {
 export interface UserShare {
 	id: string;
 	alias: string;
-	inviteCode: number;
+	inviteCode: string;
 	revoked: boolean | null;
 }
 

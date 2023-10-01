@@ -18,7 +18,7 @@ type Props = {
 export default function CreateInviteModal({ modalOpen, setModalOpen }: Props) {
 	const [name, setName] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [inviteCode, setInviteCode] = useState(-1);
+	const [inviteCode, setInviteCode] = useState("");
 	const [nameExists, setNameExists] = useState(false);
 
 	const dispatch = useDispatch();
@@ -27,7 +27,7 @@ export default function CreateInviteModal({ modalOpen, setModalOpen }: Props) {
 	return (
 		<Modal open={modalOpen} onClose={handleClose}>
 			<Paper className={materialStyles.modal}>
-				{inviteCode === -1 ? (
+				{inviteCode === "" ? (
 					<>
 						<h3>Create invite</h3>
 						<form onSubmit={handleSubmit}>
@@ -67,7 +67,7 @@ export default function CreateInviteModal({ modalOpen, setModalOpen }: Props) {
 						</p>
 						<p>Link will be valid for 30 days</p>
 						<Box className={materialStyles.buttonsContainer}>
-							<Button variant="outlined" onClick={handleClose}>
+							<Button variant="outlined" onClick={handleSuccessClose}>
 								Close
 							</Button>
 						</Box>
@@ -77,12 +77,16 @@ export default function CreateInviteModal({ modalOpen, setModalOpen }: Props) {
 		</Modal>
 	);
 
+	function handleSuccessClose() {
+		dispatch(userApi.util.invalidateTags(["UserShare"]));
+		handleClose();
+	}
+
 	function handleClose() {
 		setName("");
-		setInviteCode(-1);
+		setInviteCode("");
 		setModalOpen(false);
 		setNameExists(false);
-		dispatch(userApi.util.invalidateTags(["UserShare"]));
 	}
 
 	function handleChange(e: ChangeEvent<HTMLInputElement>) {

@@ -112,7 +112,7 @@ export default function LinkedAccounts() {
 										<TableCell>
 											{share.revoked
 												? "Revoked"
-												: share.inviteCode === -1
+												: share.inviteCode === ""
 												? "Accepted"
 												: `${share.inviteCode} - Pending`}
 										</TableCell>
