@@ -84,6 +84,10 @@ export default function Navbar() {
 			onClose={handleUserMenuToggle}
 			anchorEl={userMenuAnchor}
 		>
+			<Link href="/profile" className={styles.avatarLink}>
+				<MenuItem>Manage Profile</MenuItem>
+			</Link>
+			<Divider />
 			<MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
 		</Menu>
 	);
