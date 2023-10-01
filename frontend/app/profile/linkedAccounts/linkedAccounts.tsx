@@ -1,7 +1,11 @@
 import { Alert, Button, CircularProgress } from "@mui/material";
-import { useGetUserSharesQuery } from "../apis/base/user/userService";
+import { useGetUserSharesQuery } from "../../apis/base/user/userService";
+import CreateOrUpdateShareCodeModal from "./createOrUpdateShareCodeModal";
+import { useState } from "react";
 
 export default function LinkedAccounts() {
+	const [shareCodeModalOpen, setShareCodeModalOpen] = useState(false);
+
 	const { isLoading, isFetching, data } = useGetUserSharesQuery(null);
 
 	if (isFetching || isLoading) return <CircularProgress />;
@@ -9,7 +13,7 @@ export default function LinkedAccounts() {
 	return (
 		<>
 			<div>
-				<Button>
+				<Button onClick={() => setShareCodeModalOpen(true)}>
 					{data?.shareCodeSetup ? "Update code" : "Create new code"}
 				</Button>
 				{data?.shareCodeSetup ? <Button>View code</Button> : null}
@@ -33,6 +37,11 @@ export default function LinkedAccounts() {
 					getLinkedAccounts()
 				)}
 			</div>
+			<CreateOrUpdateShareCodeModal
+				modalOpen={shareCodeModalOpen}
+				newCode={!data!.shareCodeSetup}
+				setModalOpen={setShareCodeModalOpen}
+			/>
 		</>
 	);
 
