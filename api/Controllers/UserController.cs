@@ -1,5 +1,6 @@
 ﻿using api.Contexts;
 using api.Entities;
+using api.Helpers;
 using api.Models;
 using api.Repositories;
 using AutoMapper;
@@ -113,6 +114,43 @@ namespace api.Controllers
             _userRepository.SaveChanges();
 
             return Ok(_mapper.Map<UserShare>(userShare));
+        }
+
+        [HttpGet("ShareCode")]
+        public ActionResult GetShareCode()
+        {
+            UserShareCode? shareCode = _userRepository.GetShareCode(GetUserIdFromToken());
+
+            if (shareCode == null)
+            {
+                ModelState.AddModelError("message", "Share code not set");
+                return BadRequest(ModelState);
+            }
+
+            return Ok(_mapper.Map<UserShareCodeModel>(shareCode));
+        }
+
+        [HttpPost("ShareCode")]
+        public ActionResult AddShareCode([FromBody] UserShareCodeForCreation model)
+        {
+            string userId = GetUserIdFromToken();
+
+            string encryptedCode = EncryptionHelper.EncryptString(model.Code);
+
+            UserShareCode? shareCode = _userRepository.GetShareCode(userId);
+
+            if (shareCode == null)
+            {
+                shareCode = new UserShareCode();
+                shareCode.UserID = userId;
+                _userRepository.AddShareCode(shareCode);
+            }
+
+            shareCode.EncryptedCode = encryptedCode;
+
+            _userRepository.SaveChanges();
+
+            return Ok();
         }
 
         private int GenerateInviteCode()
