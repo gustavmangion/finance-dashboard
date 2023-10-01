@@ -31,5 +31,20 @@ namespace api.Repositories
         {
             return _context.SaveChanges() >= 0;
         }
+
+        public List<UserShare> GetShares(string id)
+        {
+            return _context.UserShares.Where(x => x.UserId == id).ToList();
+        }
+
+        public void AddShare(UserShare share)
+        {
+            _context.UserShares.Add(share);
+        }
+
+        public void DeleteShare(UserShare share)
+        {
+            _context.UserShares.Remove(share);
+        }
     }
 }

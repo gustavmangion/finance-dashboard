@@ -10,6 +10,7 @@ namespace api.Contexts
             : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<UserShare> UserShares { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<UserPortfolio> UserPortfolios { get; set; }
         public DbSet<Account> Accounts { get; set; }
