@@ -31,7 +31,7 @@ export default function CreateOrUpdateShareCodeModal({
 		<Modal open={modalOpen} onClose={handleClose}>
 			<Paper className={materialStyles.modal}>
 				<h3>Set a share code</h3>
-				<h4>This code needs to be shared with account you will be linking</h4>
+				<h4>This code needs to be shared with the invite code</h4>
 				<form onSubmit={handleSubmit}>
 					<TextField
 						name="code"
