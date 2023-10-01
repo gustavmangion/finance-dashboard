@@ -27,12 +27,7 @@ namespace api.Repositories
             _context.Users.Add(user);
         }
 
-        public bool SaveChanges()
-        {
-            return _context.SaveChanges() >= 0;
-        }
-
-        public List<UserShare> GetShares(string id)
+        public List<UserShare> GetShares(string userId)
         {
             return _context.UserShares.Where(x => x.UserId == id).ToList();
         }
@@ -45,6 +40,21 @@ namespace api.Repositories
         public void DeleteShare(UserShare share)
         {
             _context.UserShares.Remove(share);
+        }
+
+        public UserShareCode? GetShareCode(string userId)
+        {
+            return _context.UserShareCodes.Where(x => x.UserID == userId).FirstOrDefault();
+        }
+
+        public void AddShareCode(UserShareCode shareCode)
+        {
+            _context.UserShareCodes.Add(shareCode);
+        }
+
+        public bool SaveChanges()
+        {
+            return _context.SaveChanges() >= 0;
         }
     }
 }

@@ -7,9 +7,11 @@ namespace api.Repositories
         User? GetUser(string id);
         bool UserExists(string id);
         void AddUser(User user);
-        List<UserShare> GetShares(string id);
+        List<UserShare> GetShares(string userId);
         void AddShare(UserShare share);
         void DeleteShare(UserShare share);
+        UserShareCode? GetShareCode(string userId);
+        void AddShareCode(UserShareCode shareCode);
         bool SaveChanges();
     }
 }
