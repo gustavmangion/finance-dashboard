@@ -113,7 +113,7 @@ namespace api.Controllers
             _userRepository.AddShare(userShare);
             _userRepository.SaveChanges();
 
-            return Ok(_mapper.Map<UserShare>(userShare));
+            return Ok(_mapper.Map<UserShareModelShares>(userShare));
         }
 
         [HttpGet("ShareCode")]

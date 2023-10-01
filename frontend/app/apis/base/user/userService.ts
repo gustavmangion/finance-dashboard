@@ -64,7 +64,6 @@ export const userApi = createApi({
 				method: "POST",
 				body: { ...payload },
 			}),
-			invalidatesTags: ["UserShare"],
 		}),
 		getUserShareCode: builder.query<UserShareCode, null>({
 			query: () => `\ShareCode`,

@@ -71,7 +71,7 @@ export default function CreateOrUpdateShareCodeModal({
 		setLoading(true);
 
 		const model: CreateUserShareCode = new CreateUserShareCode();
-		model.code = code;
+		model.code = code.trim();
 
 		createOrUpdateCode(model).then((result) => {
 			if ("data" in result) {

@@ -1,12 +1,14 @@
-import { Alert, Button, CircularProgress } from "@mui/material";
+import { Alert, Button, CircularProgress, Divider } from "@mui/material";
 import { useGetUserSharesQuery } from "../../apis/base/user/userService";
 import CreateOrUpdateShareCodeModal from "./createOrUpdateShareCodeModal";
 import { useState } from "react";
 import ViewShareCodeModal from "./viewShareCodeModal";
+import CreateInviteModal from "./createInviteModal";
 
 export default function LinkedAccounts() {
 	const [shareCodeModalOpen, setShareCodeModalOpen] = useState(false);
 	const [viewCodeModalOpen, setViewCodeModalOpen] = useState(false);
+	const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
 	const { isLoading, isFetching, data } = useGetUserSharesQuery(null);
 
@@ -22,6 +24,15 @@ export default function LinkedAccounts() {
 					<Button onClick={() => setViewCodeModalOpen(true)}>View code</Button>
 				) : null}
 			</div>
+			{data?.shareCodeSetup ? (
+				<div>
+					<Divider />
+					<Button onClick={() => setInviteModalOpen(true)}>
+						Create Invite
+					</Button>
+					<Button>Accept Invite</Button>
+				</div>
+			) : null}
 			<div>
 				{!data?.shareCodeSetup ? (
 					<Alert
@@ -49,6 +60,10 @@ export default function LinkedAccounts() {
 			<ViewShareCodeModal
 				modalOpen={viewCodeModalOpen}
 				setModalOpen={setViewCodeModalOpen}
+			/>
+			<CreateInviteModal
+				modalOpen={inviteModalOpen}
+				setModalOpen={setInviteModalOpen}
 			/>
 		</>
 	);
