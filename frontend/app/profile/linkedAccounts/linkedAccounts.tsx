@@ -25,6 +25,7 @@ import { LoadingButton } from "@mui/lab";
 import AcceptInviteModal from "./acceptInviteModal";
 import { useDispatch } from "react-redux";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
+import { portfolioApi } from "@/app/apis/base/portfolio/portfolioService";
 
 export default function LinkedAccounts() {
 	const [shareCodeModalOpen, setShareCodeModalOpen] = useState(false);
@@ -145,8 +146,16 @@ export default function LinkedAccounts() {
 		setLoading(true);
 		revokeOrDeleteShare(id).then((result) => {
 			setLoading(false);
-			if ("data" in result) dispatch(displaySuccess("Linked account revoked"));
-			else dispatch(displayError(null));
+			if ("data" in result) {
+				dispatch(displaySuccess("Linked account revoked"));
+				dispatch(
+					portfolioApi.util.invalidateTags([
+						"SharedWith",
+						"ShareableWith",
+						"Portfolios",
+					])
+				);
+			} else dispatch(displayError(null));
 		});
 	}
 }

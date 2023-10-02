@@ -9,6 +9,7 @@ import {
 } from "@/app/apis/base/user/userService";
 import { AcceptUserShare } from "@/app/apis/base/user/types";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
+import { portfolioApi } from "@/app/apis/base/portfolio/portfolioService";
 
 type Props = {
 	modalOpen: boolean;
@@ -108,6 +109,9 @@ export default function AcceptInviteModal({ modalOpen, setModalOpen }: Props) {
 			if ("data" in result) {
 				dispatch(displaySuccess("Invite accepted"));
 				dispatch(userApi.util.invalidateTags(["UserShare"]));
+				dispatch(
+					portfolioApi.util.invalidateTags(["Portfolios", "ShareableWith"])
+				);
 				handleClose();
 			} else if ("error" in result) {
 				if ("data" in result.error) {
