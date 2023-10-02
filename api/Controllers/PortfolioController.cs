@@ -14,12 +14,19 @@ namespace api.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IPortfolioRepository _portfolioRepository;
+        private readonly IUserRepository _userRepository;
 
-        public PortfolioController(IMapper mapper, IPortfolioRepository portfolioRepository)
+        public PortfolioController(
+            IMapper mapper,
+            IPortfolioRepository portfolioRepository,
+            IUserRepository userRepository
+        )
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _portfolioRepository =
                 portfolioRepository ?? throw new ArgumentNullException(nameof(portfolioRepository));
+            _userRepository =
+                userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         [HttpGet]
@@ -91,6 +98,33 @@ namespace api.Controllers
             Portfolio portfolio = _portfolioRepository.GetPortfolio(id);
             _portfolioRepository.DeletePortfolio(portfolio);
             _portfolioRepository.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpPut("Share")]
+        public ActionResult SharePortfolio(PortfolioShareModel model)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (!_portfolioRepository.PortfolioExists(userId, model.PortfolioId))
+                ModelState.AddModelError("message", "Portfolio does not exist");
+
+            UserShare? userShare = _userRepository.GetUserShare(model.ShareId);
+            if (userShare == null || userShare.UserId != userId)
+                ModelState.AddModelError("message", "Share does not exist");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            UserPortfolio userPortfolio = new UserPortfolio();
+            userPortfolio.UserShareId = model.ShareId;
+            userPortfolio.PortfolioId = model.PortfolioId;
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            if (userShare.SharedWith != null)
+                userPortfolio.UserId = userShare.SharedWith;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             return Ok();
         }
