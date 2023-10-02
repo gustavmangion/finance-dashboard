@@ -7,7 +7,7 @@
         public virtual User User { get; set; }
         public Guid PortfolioId { get; set; }
         public virtual Portfolio Portfolio { get; set; }
-        public Guid UserShareId { get; set; }
-        public virtual UserShare UserShare { get; set; }
+        public Guid? UserShareId { get; set; }
+        public virtual UserShare? UserShare { get; set; }
     }
 }

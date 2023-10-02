@@ -107,7 +107,7 @@ namespace api.Controllers
         {
             string userId = GetUserIdFromToken();
 
-            if (_portfolioRepository.PortfolioExists(userId, id))
+            if (!_portfolioRepository.PortfolioExists(userId, id))
             {
                 ModelState.AddModelError("message", "Portfolio does not exist");
                 return BadRequest(ModelState);
