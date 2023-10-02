@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
-import navBarReducer from "./navBarSlice";
 import _userReducer from "./userSlice";
 import notificationReducer from "./notificationSlice";
 import { uploadApi } from "../apis/base/upload/uploadService";
@@ -34,7 +33,6 @@ export const store = configureStore({
 		[portfolioApi.reducerPath]: portfolioApi.reducer,
 		[accountApi.reducerPath]: accountApi.reducer,
 		[transactionApi.reducerPath]: transactionApi.reducer,
-		navBarReducer,
 		userReducer,
 		notificationReducer,
 	},
