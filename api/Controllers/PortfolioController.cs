@@ -102,8 +102,28 @@ namespace api.Controllers
             return Ok();
         }
 
+        [HttpGet("Share/{id}")]
+        public ActionResult GetPortfolioShares(Guid id)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (_portfolioRepository.PortfolioExists(userId, id))
+            {
+                ModelState.AddModelError("message", "Portfolio does not exist");
+                return BadRequest(ModelState);
+            }
+
+            Portfolio portfolio = _portfolioRepository.GetPortfolio(id);
+
+            return Ok(
+                _mapper.Map<List<PortfolioShareModel>>(
+                    portfolio.UserPortfolios.Where(x => x.UserId != userId)
+                )
+            );
+        }
+
         [HttpPut("Share")]
-        public ActionResult SharePortfolio(PortfolioShareModel model)
+        public ActionResult SharePortfolio(PortfolioShareForCreateModel model)
         {
             string userId = GetUserIdFromToken();
 
