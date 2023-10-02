@@ -62,6 +62,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
 
             Portfolio portfolio = new Portfolio();
+            portfolio.OwnerId = userId;
             portfolio.UserPortfolios.Add(
                 new UserPortfolio() { UserId = userId, Name = model.Name }
             );
@@ -108,6 +109,10 @@ namespace api.Controllers
                 return BadRequest(ModelState);
 
             Portfolio portfolio = _portfolioRepository.GetPortfolio(id);
+
+            if (portfolio.OwnerId != GetUserIdFromToken())
+                return Unauthorized();
+
             _portfolioRepository.DeletePortfolio(portfolio);
             _portfolioRepository.SaveChanges();
 
@@ -171,9 +176,15 @@ namespace api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            Portfolio portfolio = _portfolioRepository.GetPortfolio(model.PortfolioId);
+
             UserPortfolio userPortfolio = new UserPortfolio();
             userPortfolio.UserShareId = model.ShareId;
             userPortfolio.PortfolioId = model.PortfolioId;
+            userPortfolio.Name = portfolio.UserPortfolios
+                .Where(x => x.UserId == userId)
+                .First()
+                .Name;
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             if (userShare.SharedWith != null)
