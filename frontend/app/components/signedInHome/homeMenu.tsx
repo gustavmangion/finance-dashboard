@@ -13,7 +13,7 @@ export default function HomeMenu() {
 			<Button variant="contained" onClick={() => router.push("/upload")}>
 				Upload Statement
 			</Button>
-			<Button variant="contained" onClick={() => router.push("/account")}>
+			<Button variant="contained" onClick={() => router.push("/accounts")}>
 				Accounts
 			</Button>
 		</Paper>
