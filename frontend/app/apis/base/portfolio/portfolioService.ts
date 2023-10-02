@@ -1,6 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getHeaders from "../headers";
-import Portfolio, { CreatePortfolioModel, EditPortfolioModel } from "./types";
+import Portfolio, {
+	CreatePortfolioModel,
+	EditPortfolioModel,
+	PortfolioShare,
+} from "./types";
 import { setPortfolios } from "@/app/stores/userSlice";
 
 export const portfolioApi = createApi({
@@ -11,7 +15,7 @@ export const portfolioApi = createApi({
 			return getHeaders(headers);
 		},
 	}),
-	tagTypes: ["Portfolios"],
+	tagTypes: ["Portfolios", "SharedWith"],
 	endpoints: (builder) => ({
 		getPortfolios: builder.query<Portfolio[], null>({
 			query: () => "/",
@@ -20,6 +24,10 @@ export const portfolioApi = createApi({
 				dispatch(setPortfolios(data));
 			},
 			providesTags: ["Portfolios"],
+		}),
+		getPortfolioShares: builder.query<PortfolioShare[], string>({
+			query: (id: string) => `/Share/${id}`,
+			providesTags: ["SharedWith"],
 		}),
 		addPortfolio: builder.mutation({
 			query: (payload: CreatePortfolioModel) => ({
@@ -49,6 +57,7 @@ export const portfolioApi = createApi({
 
 export const {
 	useGetPortfoliosQuery,
+	useGetPortfolioSharesQuery,
 	useAddPortfolioMutation,
 	useEditPortfolioMutation,
 	useDeletePortfolioMutation,

@@ -3,6 +3,11 @@ export default interface Portfolio {
 	name: string;
 }
 
+export interface PortfolioShare {
+	id: string;
+	name: string;
+}
+
 export class EditPortfolioModel {
 	id: string = "";
 	body: EditPortfolioModelBody = new EditPortfolioModelBody();

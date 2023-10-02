@@ -1,15 +1,25 @@
 import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
 	Box,
 	Button,
 	CircularProgress,
 	FormControl,
 	InputLabel,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
 	MenuItem,
 	Modal,
 	Select,
 	SelectChangeEvent,
 	TextField,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AddIcon from "@mui/icons-material/Add";
 import { PageView } from "./page";
 import { useAppSelector } from "../hooks/reduxHook";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
@@ -21,6 +31,7 @@ import {
 	useAddPortfolioMutation,
 	useDeletePortfolioMutation,
 	useEditPortfolioMutation,
+	useGetPortfolioSharesQuery,
 	useGetPortfoliosQuery,
 } from "../apis/base/portfolio/portfolioService";
 import Portfolio, {
@@ -49,13 +60,18 @@ export default function PortfolioEdit({ setView }: Props) {
 	const [deletePortfolio] = useDeletePortfolioMutation();
 	const [createPortfolio] = useAddPortfolioMutation();
 	const { isLoading, isFetching } = useGetPortfoliosQuery(null);
+	const {
+		isLoading: isShareLoading,
+		isFetching: isShareFetching,
+		data: shareData,
+	} = useGetPortfolioSharesQuery(selectedPortfolio);
 
 	if (isLoading) return <LoadingSkeleton />;
 
 	return (
 		<div className={styles.portfolioEdit}>
 			<h2>Manage Portfolios</h2>
-			{isFetching ? (
+			{isFetching || isShareFetching || isShareLoading ? (
 				<CircularProgress />
 			) : (
 				<>
@@ -93,6 +109,7 @@ export default function PortfolioEdit({ setView }: Props) {
 							value={portfolioName}
 							required
 						/>
+						{addingNewPortfolio ? null : getSharedWith()}
 						<Box className={materialStyles.buttonsContainer}>
 							<LoadingButton
 								variant="contained"
@@ -233,4 +250,41 @@ export default function PortfolioEdit({ setView }: Props) {
 		setAddingNewPortfolio(false);
 		setPortfolioName(portfolios.find((x) => x.id === selectedPortfolio)!.name);
 	}
+
+	function getSharedWith() {
+		return (
+			<Accordion className={styles.sharedWith}>
+				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+					Shared With
+				</AccordionSummary>
+				<AccordionDetails>
+					<List>
+						<ListItem key={"add"} disablePadding>
+							<ListItemIcon>
+								<Button onClick={handleNewShare}>
+									<AddIcon />
+								</Button>
+							</ListItemIcon>
+							<ListItemText primary="Share with someone" />
+						</ListItem>
+						{shareData?.map((share) => {
+							return (
+								<ListItem key={share.id} disablePadding>
+									<ListItemIcon>
+										<Button onClick={() => handleRevokeShare(share.id)}>
+											<CancelIcon />
+										</Button>
+									</ListItemIcon>
+									<ListItemText primary={share.name} />
+								</ListItem>
+							);
+						})}
+					</List>
+				</AccordionDetails>
+			</Accordion>
+		);
+	}
+
+	function handleNewShare() {}
+	function handleRevokeShare(id: string) {}
 }
