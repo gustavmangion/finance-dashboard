@@ -56,23 +56,23 @@ export const userApi = createApi({
 			},
 		}),
 		getUserShares: builder.query<UserShareModel, null>({
-			query: () => `\Share`,
+			query: () => `/Share`,
 			providesTags: ["UserShare"],
 		}),
 		addUserShare: builder.mutation({
 			query: (payload: CreateUserShare) => ({
-				url: `\Share`,
+				url: `/Share`,
 				method: "POST",
 				body: { ...payload },
 			}),
 		}),
 		getUserShareCode: builder.query<UserShareCode, null>({
-			query: () => `\ShareCode`,
+			query: () => `/ShareCode`,
 			providesTags: ["UserShareCode"],
 		}),
 		addOrUpdateUserShareCode: builder.mutation({
 			query: (payload: CreateUserShareCode) => ({
-				url: `\ShareCode`,
+				url: `/ShareCode`,
 				method: "POST",
 				body: { ...payload },
 			}),
@@ -80,10 +80,17 @@ export const userApi = createApi({
 		}),
 		acceptUserShare: builder.mutation({
 			query: (payload: AcceptUserShare) => ({
-				url: `\Share`,
+				url: `/Share`,
 				method: "PUT",
 				body: { ...payload },
 			}),
+		}),
+		deleteOrRevokeUserShare: builder.mutation({
+			query: (payload: string) => ({
+				url: `/Share/${payload}`,
+				method: "DELETE",
+			}),
+			invalidatesTags: ["UserShare"],
 		}),
 	}),
 });
@@ -96,4 +103,5 @@ export const {
 	useGetUserShareCodeQuery,
 	useAddOrUpdateUserShareCodeMutation,
 	useAcceptUserShareMutation,
+	useDeleteOrRevokeUserShareMutation,
 } = userApi;

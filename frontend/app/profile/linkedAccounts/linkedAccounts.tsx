@@ -12,7 +12,10 @@ import {
 	TableHead,
 	TableRow,
 } from "@mui/material";
-import { useGetUserSharesQuery } from "../../apis/base/user/userService";
+import {
+	useDeleteOrRevokeUserShareMutation,
+	useGetUserSharesQuery,
+} from "../../apis/base/user/userService";
 import CreateOrUpdateShareCodeModal from "./createOrUpdateShareCodeModal";
 import { useState } from "react";
 import ViewShareCodeModal from "./viewShareCodeModal";
@@ -20,6 +23,8 @@ import CreateInviteModal from "./createInviteModal";
 import { UserShare } from "@/app/apis/base/user/types";
 import { LoadingButton } from "@mui/lab";
 import AcceptInviteModal from "./acceptInviteModal";
+import { useDispatch } from "react-redux";
+import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 
 export default function LinkedAccounts() {
 	const [shareCodeModalOpen, setShareCodeModalOpen] = useState(false);
@@ -28,7 +33,9 @@ export default function LinkedAccounts() {
 	const [acceptInviteModalOpen, setAcceptInviteModalOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 
+	const dispatch = useDispatch();
 	const { isLoading, isFetching, data } = useGetUserSharesQuery(null);
+	const [revokeOrDeleteShare] = useDeleteOrRevokeUserShareMutation();
 
 	if (isFetching || isLoading) return <CircularProgress />;
 
@@ -134,5 +141,12 @@ export default function LinkedAccounts() {
 		);
 	}
 
-	function handleRemoveOrRevoke(id: string) {}
+	function handleRemoveOrRevoke(id: string) {
+		setLoading(true);
+		revokeOrDeleteShare(id).then((result) => {
+			setLoading(false);
+			if ("data" in result) dispatch(displaySuccess("Linked account revoked"));
+			else dispatch(displayError(null));
+		});
+	}
 }
