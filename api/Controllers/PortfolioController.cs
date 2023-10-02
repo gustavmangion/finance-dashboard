@@ -173,5 +173,21 @@ namespace api.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("Share/{id}")]
+        public ActionResult DeletePortfolioShare(Guid id)
+        {
+            if (!_portfolioRepository.UserPortfolioExists(GetUserIdFromToken(), id))
+            {
+                ModelState.AddModelError("message", "Portfolio share does not exist");
+                return BadRequest(ModelState);
+            }
+
+            UserPortfolio userPortfolio = _portfolioRepository.GetUserPortfolio(id);
+            _portfolioRepository.DeleteUserPortfolio(userPortfolio);
+            _portfolioRepository.SaveChanges();
+
+            return Ok();
+        }
     }
 }

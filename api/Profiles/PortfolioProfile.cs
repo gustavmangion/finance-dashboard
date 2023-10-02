@@ -10,7 +10,6 @@ namespace api.Profiles
         {
             CreateMap<Portfolio, PortfolioModel>();
             CreateMap<UserPortfolio, PortfolioShareModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserShare.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.UserShare.Alias));
         }
     }

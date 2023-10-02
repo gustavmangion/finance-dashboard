@@ -26,6 +26,11 @@ namespace api.Repositories
             return _context.Portfolios.Where(x => x.Id == id).First();
         }
 
+        public UserPortfolio GetUserPortfolio(Guid id)
+        {
+            return _context.UserPortfolios.Where(x => x.Id == id).First();
+        }
+
         public void AddPortfolio(Portfolio portfolio)
         {
             _context.Add(portfolio);
@@ -42,6 +47,11 @@ namespace api.Repositories
             _context.Portfolios.Remove(portfolio);
         }
 
+        public void DeleteUserPortfolio(UserPortfolio userPortfolio)
+        {
+            _context.UserPortfolios.Remove(userPortfolio);
+        }
+
         public void DeleteUserPortfolios(List<UserPortfolio> userPortfolios)
         {
             _context.UserPortfolios.RemoveRange(userPortfolios);
@@ -51,6 +61,13 @@ namespace api.Repositories
         {
             return _context.UserPortfolios
                 .Where(x => x.UserId == userId && x.PortfolioId == id)
+                .Any();
+        }
+
+        public bool UserPortfolioExists(string userId, Guid id)
+        {
+            return _context.UserPortfolios
+                .Where(x => x.Id == id && x.Portfolio.OwnerId == userId)
                 .Any();
         }
 

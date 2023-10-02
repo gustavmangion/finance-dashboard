@@ -49,7 +49,7 @@ export const portfolioApi = createApi({
 				method: "POST",
 				body: { ...payload },
 			}),
-			invalidatesTags: ["SharedWith"],
+			invalidatesTags: ["SharedWith", "ShareableWith"],
 		}),
 		editPortfolio: builder.mutation({
 			query: (payload: EditPortfolioModel) => ({
@@ -66,6 +66,13 @@ export const portfolioApi = createApi({
 			}),
 			invalidatesTags: ["Portfolios"],
 		}),
+		deleteUserPortfolio: builder.mutation({
+			query: (id: string) => ({
+				url: `/Share/${id}`,
+				method: "DELETE",
+			}),
+			invalidatesTags: ["ShareableWith", "SharedWith"],
+		}),
 	}),
 });
 
@@ -77,4 +84,5 @@ export const {
 	useAddPortfolioShareMutation,
 	useEditPortfolioMutation,
 	useDeletePortfolioMutation,
+	useDeleteUserPortfolioMutation,
 } = portfolioApi;

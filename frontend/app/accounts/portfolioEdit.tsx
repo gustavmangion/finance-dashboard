@@ -37,10 +37,12 @@ import {
 import Portfolio, {
 	CreatePortfolioModel,
 	EditPortfolioModel,
+	PortfolioShare,
 } from "../apis/base/portfolio/types";
 import { displayError, displaySuccess } from "../stores/notificationSlice";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import SharePortfolioModal from "./sharePortfolioModal";
+import DeleteSharePortfolioModal from "./deleteSharePortfolioModal";
 
 type Props = {
 	setView: (val: PageView) => void;
@@ -56,6 +58,8 @@ export default function PortfolioEdit({ setView }: Props) {
 	const [showNameExistsModal, setShowNameExistsModal] = useState(false);
 	const [addingNewPortfolio, setAddingNewPortfolio] = useState(false);
 	const [showShareModal, setShowShareModal] = useState(false);
+	const [portfolioShareToDelete, setPortfolioShareToDelete] =
+		useState<PortfolioShare>();
 
 	const dispatch = useDispatch();
 	const [editPortfolio] = useEditPortfolioMutation();
@@ -179,6 +183,10 @@ export default function PortfolioEdit({ setView }: Props) {
 				portfolioId={selectedPortfolio}
 				setModalOpen={setShowShareModal}
 			/>
+			<DeleteSharePortfolioModal
+				sharedWith={portfolioShareToDelete}
+				setSharedWith={setPortfolioShareToDelete}
+			/>
 		</div>
 	);
 
@@ -273,7 +281,7 @@ export default function PortfolioEdit({ setView }: Props) {
 							return (
 								<ListItem key={share.id} disablePadding>
 									<ListItemIcon>
-										<Button onClick={() => handleRevokeShare(share.id)}>
+										<Button onClick={() => setPortfolioShareToDelete(share)}>
 											<CancelIcon />
 										</Button>
 									</ListItemIcon>
@@ -286,6 +294,4 @@ export default function PortfolioEdit({ setView }: Props) {
 			</Accordion>
 		);
 	}
-
-	function handleRevokeShare(id: string) {}
 }
