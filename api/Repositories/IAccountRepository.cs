@@ -4,6 +4,8 @@ namespace api.Repositories
 {
     public interface IAccountRepository
     {
+        Account? GetAccount(Guid id);
+        bool UserCanAccessAccount(Guid id, string userId);
         List<Account> GetAccounts(string userId);
         void AddAccount(Account account);
         bool AccountNameExists(string name, Guid portfolioId);

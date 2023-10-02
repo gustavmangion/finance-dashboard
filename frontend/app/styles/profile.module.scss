@@ -1,0 +1,13 @@
+@import "./variables";
+
+.profileAccordion {
+	width: 100%;
+
+	@media (min-width: $mobile-screen-width) {
+		width: 80%;
+	}
+
+	@media (min-width: $very-wide-screen-width) {
+		width: 80em;
+	}
+}

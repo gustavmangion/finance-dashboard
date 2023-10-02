@@ -1,4 +1,5 @@
 ﻿using api.Entities;
+using api.Helpers;
 using api.Models;
 using AutoMapper;
 
@@ -8,10 +9,14 @@ namespace api.Profiles
     {
         public UserProfile()
         {
-            CreateMap<User, BasicUserModel>();
-            CreateMap<User, UserModel>()
-                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src))
-                .ForMember(dest => dest.Portfolios, opt => opt.MapFrom( src => src.UserPortfolios.Select(x => x.Portfolio)));
+            CreateMap<User, UserModel>();
+            CreateMap<UserShare, UserShareModelShares>();
+            CreateMap<UserShareCode, UserShareCodeModel>()
+                .ForMember(
+                    dest => dest.Code,
+                    opt => opt.MapFrom(src => EncryptionHelper.DecryptString(src.EncryptedCode))
+                );
+            CreateMap<UserShare, UserShareBasicModel>();
         }
     }
 }

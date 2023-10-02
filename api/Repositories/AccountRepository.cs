@@ -12,6 +12,21 @@ namespace api.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        public Account? GetAccount(Guid id)
+        {
+            return _context.Accounts.Find(id);
+        }
+
+        public bool UserCanAccessAccount(Guid id, string userID)
+        {
+            Account? account = _context.Accounts.Find(id);
+
+            if (account != null)
+                return account.Portfolio.UserPortfolios.Any(x => x.UserId == userID);
+
+            return false;
+        }
+
         public List<Account> GetAccounts(string userId)
         {
             return _context.UserPortfolios
