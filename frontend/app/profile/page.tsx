@@ -1,6 +1,12 @@
 "use client";
 
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	IconButton,
+	Tooltip,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import styles from "../styles/profile.module.scss";
 import LinkedAccounts from "./linkedAccounts/linkedAccounts";
@@ -9,10 +15,13 @@ import { useRouter } from "next/navigation";
 import { AuthStatus } from "../enums/authStatusEnum";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import { useEffect } from "react";
+import InfoIcon from "@mui/icons-material/Info";
 
 export default function ProfilePage() {
 	const authStatus = useSecurePage();
 	const router = useRouter();
+	const linkedAccountsToolTipText =
+		"Link accounts with other users to share portfolios";
 
 	useEffect(() => {
 		if (authStatus == AuthStatus.NotAuthorized) return router.push("/");
@@ -25,7 +34,14 @@ export default function ProfilePage() {
 			<div className="container">
 				<Accordion className={styles.profileAccordion}>
 					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-						Linked Accounts
+						<div>
+							Linked Accounts
+							<Tooltip title={linkedAccountsToolTipText}>
+								<IconButton>
+									<InfoIcon />
+								</IconButton>
+							</Tooltip>
+						</div>
 					</AccordionSummary>
 					<AccordionDetails>
 						<LinkedAccounts />
