@@ -73,7 +73,11 @@ export default function Navbar() {
 			onClose={handleUserMenuToggle}
 			anchorEl={userMenuAnchor}
 		>
-			<Link href="/profile" className={styles.avatarLink}>
+			<Link
+				href="/profile"
+				className={styles.avatarLink}
+				onClick={() => setUserMenuOpen(false)}
+			>
 				<MenuItem>Manage Profile</MenuItem>
 			</Link>
 			<Divider />
