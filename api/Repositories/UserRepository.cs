@@ -27,9 +27,21 @@ namespace api.Repositories
             _context.Users.Add(user);
         }
 
+        public UserShare? GetUserShare(Guid id)
+        {
+            return _context.UserShares.Where(x => x.Id == id).FirstOrDefault();
+        }
+
         public UserShare? GetUserShare(string inviteCode)
         {
             return _context.UserShares.Where(x => x.InviteCode == inviteCode).FirstOrDefault();
+        }
+
+        public UserShare? GetCorrespondingUserShare(string currentUserId, string sharedWithUserId)
+        {
+            return _context.UserShares
+                .Where(x => x.UserId == sharedWithUserId && x.SharedWith == currentUserId)
+                .FirstOrDefault();
         }
 
         public List<UserShare> GetShares(string userId)
@@ -44,6 +56,17 @@ namespace api.Repositories
 
         public void DeleteShare(UserShare share)
         {
+            List<UserPortfolio> portfolioShares;
+            if (share.SharedWith != null)
+                portfolioShares = _context.UserPortfolios
+                    .Where(x => x.UserId != share.UserId && x.Portfolio.OwnerId == share.SharedWith)
+                    .ToList();
+            else
+                portfolioShares = _context.UserPortfolios
+                    .Where(x => x.UserId == $"invite-{share.InviteCode}")
+                    .ToList();
+
+            _context.UserPortfolios.RemoveRange(portfolioShares);
             _context.UserShares.Remove(share);
         }
 

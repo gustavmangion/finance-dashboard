@@ -10,6 +10,10 @@ namespace api.Entities
 
         [MaxLength(40)]
         public string Name { get; set; }
+        public string OwnerId { get; set; }
+
+        [ForeignKey("OwnerId")]
+        public User User { get; set; }
 
         public virtual List<UserPortfolio> UserPortfolios { get; set; } = new List<UserPortfolio>();
         public virtual List<Account> Accounts { get; set; } = new List<Account>();

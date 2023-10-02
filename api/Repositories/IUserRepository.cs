@@ -8,6 +8,8 @@ namespace api.Repositories
         bool UserExists(string id);
         void AddUser(User user);
         UserShare? GetUserShare(string inviteCode);
+        UserShare? GetUserShare(Guid id);
+        UserShare? GetCorrespondingUserShare(string currentUserId, string sharedWithUserId);
         List<UserShare> GetShares(string userId);
         void AddShare(UserShare share);
         void DeleteShare(UserShare share);

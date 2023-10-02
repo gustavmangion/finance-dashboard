@@ -162,6 +162,36 @@ namespace api.Controllers
             return Ok();
         }
 
+        [HttpDelete("Share/{id}")]
+        public ActionResult RevokeOrDeleteUserShare(Guid id)
+        {
+            UserShare? userShare = _userRepository.GetUserShare(id);
+            string userId = GetUserIdFromToken();
+
+            if (userShare == null || userShare.UserId != userId)
+            {
+                ModelState.AddModelError("message", "Invalid Share Id");
+                return BadRequest(ModelState);
+            }
+
+            if (userShare.SharedWith != null)
+            {
+                UserShare? correspondingShare = _userRepository.GetCorrespondingUserShare(
+                    userId,
+                    userShare.SharedWith
+                );
+                if (correspondingShare != null)
+                {
+                    _userRepository.DeleteShare(correspondingShare);
+                }
+            }
+
+            _userRepository.DeleteShare(userShare);
+            _userRepository.SaveChanges();
+
+            return Ok();
+        }
+
         [HttpGet("ShareCode")]
         public ActionResult GetShareCode()
         {
