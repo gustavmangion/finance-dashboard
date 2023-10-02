@@ -2,6 +2,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Alert,
 	Box,
 	Button,
 	CircularProgress,
@@ -52,6 +53,9 @@ export default function PortfolioEdit({ setView }: Props) {
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 	const [selectedPortfolio, setSelectedPortfolio] = useState(portfolios[0].id);
 	const [portfolioName, setPortfolioName] = useState(portfolios[0].name);
+	const [isPortfolioOwner, setIsPortfolioOwner] = useState(
+		portfolios[0].isOwner
+	);
 	const [submitLoading, setSubmitLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -106,46 +110,53 @@ export default function PortfolioEdit({ setView }: Props) {
 							</FormControl>
 						</>
 					)}
-					<form onSubmit={handleSubmit}>
-						<TextField
-							name="name"
-							label="Portfolio Name"
-							variant="standard"
-							onChange={handleChange}
-							value={portfolioName}
-							required
-						/>
-						{addingNewPortfolio ? null : getSharedWith()}
-						<Box className={materialStyles.buttonsContainer}>
-							<LoadingButton
-								variant="contained"
-								type="submit"
-								loading={submitLoading}
-								disabled={deleteLoading}
-							>
-								Save
-							</LoadingButton>
-							{addingNewPortfolio ? (
-								<Button
-									variant="contained"
-									color="secondary"
-									onClick={handleCancelAddNew}
-								>
-									Cancel
-								</Button>
-							) : (
+					{isPortfolioOwner ? (
+						<form onSubmit={handleSubmit}>
+							<TextField
+								name="name"
+								label="Portfolio Name"
+								variant="standard"
+								onChange={handleChange}
+								value={portfolioName}
+								required
+							/>
+							{addingNewPortfolio ? null : getSharedWith()}
+							<Box className={materialStyles.buttonsContainer}>
 								<LoadingButton
 									variant="contained"
-									color="secondary"
-									loading={deleteLoading}
-									disabled={submitLoading}
-									onClick={handleDelete}
+									type="submit"
+									loading={submitLoading}
+									disabled={deleteLoading}
 								>
-									Delete
+									Save
 								</LoadingButton>
-							)}
-						</Box>
-					</form>
+								{addingNewPortfolio ? (
+									<Button
+										variant="contained"
+										color="secondary"
+										onClick={handleCancelAddNew}
+									>
+										Cancel
+									</Button>
+								) : (
+									<LoadingButton
+										variant="contained"
+										color="secondary"
+										loading={deleteLoading}
+										disabled={submitLoading}
+										onClick={handleDelete}
+									>
+										Delete
+									</LoadingButton>
+								)}
+							</Box>
+						</form>
+					) : (
+						<Alert severity="warning">
+							You are not the owner of this portfolio, therefore you cannot edit
+							it
+						</Alert>
+					)}
 					<Button
 						className={materialStyles.backButton}
 						onClick={() => setView(PageView.Accounts)}
@@ -194,6 +205,9 @@ export default function PortfolioEdit({ setView }: Props) {
 		setSelectedPortfolio(e.target.value);
 		setPortfolioName(
 			portfolios.find((x) => x.id === e.target.value)?.name as string
+		);
+		setIsPortfolioOwner(
+			portfolios.find((x) => x.id === e.target.value)?.isOwner as boolean
 		);
 	}
 

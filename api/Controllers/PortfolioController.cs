@@ -32,6 +32,14 @@ namespace api.Controllers
         [HttpGet]
         public ActionResult GetPortfolios()
         {
+            string userId = GetUserIdFromToken();
+
+            List<Portfolio> portfolios = _portfolioRepository.GetPortfolios(userId);
+
+            foreach (Portfolio portfolio in portfolios)
+                if (portfolio.OwnerId == userId)
+                    portfolio.IsOwner = true;
+
             return Ok(
                 _mapper.Map<List<PortfolioModel>>(
                     _portfolioRepository.GetPortfolios(GetUserIdFromToken())

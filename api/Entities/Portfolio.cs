@@ -15,6 +15,9 @@ namespace api.Entities
         [ForeignKey("OwnerId")]
         public virtual User User { get; set; }
 
+        [NotMapped]
+        public bool? IsOwner { get; set; }
+
         public virtual List<UserPortfolio> UserPortfolios { get; set; } = new List<UserPortfolio>();
         public virtual List<Account> Accounts { get; set; } = new List<Account>();
     }

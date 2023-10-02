@@ -1,6 +1,7 @@
 export default interface Portfolio {
 	id: string;
 	name: string;
+	isOwner: boolean;
 }
 
 export interface PortfolioShare {
