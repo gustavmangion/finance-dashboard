@@ -178,6 +178,9 @@ namespace api.Controllers
 
             Portfolio portfolio = _portfolioRepository.GetPortfolio(model.PortfolioId);
 
+            if (portfolio.OwnerId != userId)
+                return Unauthorized();
+
             UserPortfolio userPortfolio = new UserPortfolio();
             userPortfolio.UserShareId = model.ShareId;
             userPortfolio.PortfolioId = model.PortfolioId;
@@ -207,6 +210,9 @@ namespace api.Controllers
             }
 
             UserPortfolio userPortfolio = _portfolioRepository.GetUserPortfolio(id);
+            if (userPortfolio.Portfolio.OwnerId != GetUserIdFromToken())
+                return Unauthorized();
+
             _portfolioRepository.DeleteUserPortfolio(userPortfolio);
             _portfolioRepository.SaveChanges();
 
