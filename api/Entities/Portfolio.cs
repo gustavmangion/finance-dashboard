@@ -13,7 +13,7 @@ namespace api.Entities
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
         public virtual List<UserPortfolio> UserPortfolios { get; set; } = new List<UserPortfolio>();
         public virtual List<Account> Accounts { get; set; } = new List<Account>();
