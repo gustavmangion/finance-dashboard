@@ -20,43 +20,33 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Image from "next/image";
-import { useAppDispatch, useAppSelector } from "../hooks/reduxHook";
-import {
-	closeDrawer,
-	openDrawer,
-	closeUserMenu,
-	openUserMenu,
-} from "../stores/navBarSlice";
+import { resetUser } from "../stores/userSlice";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export default function Navbar() {
 	const { data: session } = useSession();
-	const [userMenuAnchor, setUserMenuAnchor] =
-		React.useState<null | HTMLElement>(null);
-	const drawerOpen: boolean = useAppSelector(
-		(state) => state.navBarReducer.drawerOpen
+	const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(
+		null
 	);
-	const userMenuOpen: boolean = useAppSelector(
-		(state) => state.navBarReducer.userMenuOpen
-	);
-	const dispatch = useAppDispatch();
+
+	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+	const dispatch = useDispatch();
 
 	const handleDrawerToggle = () => {
-		drawerOpen ? dispatch(closeDrawer()) : dispatch(openDrawer());
+		setDrawerOpen(!drawerOpen);
 	};
 
 	const handleUserMenuToggle = (e: any) => {
-		if (userMenuOpen) {
-			setUserMenuAnchor(null);
-			dispatch(closeUserMenu());
-		} else {
-			setUserMenuAnchor(e.currentTarget);
-			dispatch(openUserMenu());
-		}
+		if (userMenuOpen) setUserMenuAnchor(null);
+		else setUserMenuAnchor(e.currentTarget);
+		setUserMenuOpen(!userMenuOpen);
 	};
 
-	const navItems = ["Dashboard", "Upload"];
+	const navItems = ["Dashboard", "Upload", "Accounts"];
 
 	const drawer = (
 		<Box onClick={handleDrawerToggle} className={styles.drawer}>
@@ -83,7 +73,15 @@ export default function Navbar() {
 			onClose={handleUserMenuToggle}
 			anchorEl={userMenuAnchor}
 		>
-			<MenuItem onClick={() => signOut()}>Sign Out</MenuItem>
+			<Link
+				href="/profile"
+				className={styles.avatarLink}
+				onClick={() => setUserMenuOpen(false)}
+			>
+				<MenuItem>Manage Profile</MenuItem>
+			</Link>
+			<Divider />
+			<MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
 		</Menu>
 	);
 
@@ -162,4 +160,9 @@ export default function Navbar() {
 			</Drawer>
 		</>
 	);
+
+	function handleSignOut() {
+		dispatch(resetUser());
+		signOut();
+	}
 }

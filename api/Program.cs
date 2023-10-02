@@ -67,8 +67,10 @@ try
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IAccountRepository, AccountRepository>();
     builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+    builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
     builder.Services.AddHostedService<UploadDirectoryCleanerHostedService>();
+    builder.Services.AddHostedService<UserShareCleanerHostedService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -84,7 +86,7 @@ try
         app.UseHttpsRedirection();
     }
 
-    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader());
+    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
     if (app.Environment.IsProduction())
     {

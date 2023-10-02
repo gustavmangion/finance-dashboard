@@ -1,0 +1,102 @@
+@import "./variables";
+
+.accountList {
+	h2 {
+		margin-bottom: 0.5em;
+	}
+
+	.portfolioPicker {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 1em;
+		padding: 0.5em;
+		background-color: $paper-background;
+	}
+
+	.accountListHeader {
+		background-color: $secondary;
+		color: $white;
+
+		svg {
+			color: $white;
+		}
+
+		.negativeBalance {
+			color: #edbbbb;
+		}
+	}
+	.accountListDetails {
+		text-align: left;
+
+		.buttons {
+			display: flex;
+			justify-content: center;
+			margin-top: 0.5em;
+		}
+	}
+}
+
+.accountEditForm {
+	margin-top: 1em;
+}
+
+.portfolioEdit {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	form {
+		margin-top: 1em;
+
+		.sharedWith {
+			margin-top: 1em;
+		}
+	}
+}
+
+.transactionsTable {
+	width: 100%;
+	max-height: 80%;
+
+	.tableContainer {
+		max-height: 100%;
+
+		.credit {
+			background-color: #f2fbec;
+		}
+
+		.debit {
+			background-color: $white;
+		}
+
+		.normalColumn {
+			width: 8rem;
+		}
+		.wideColumn {
+			width: 12rem;
+		}
+	}
+}
+
+.tablePagination {
+	width: 100%;
+}
+
+.transactionsListTitle {
+	margin-bottom: 0.5em;
+}
+
+.transactionsListFilter {
+	border-radius: 0.5em;
+	margin-bottom: 0.5em;
+	width: 100%;
+	form {
+		display: flex;
+		flex-direction: row;
+
+		> div:not(:last-child) {
+			margin-right: 1em;
+		}
+	}
+}

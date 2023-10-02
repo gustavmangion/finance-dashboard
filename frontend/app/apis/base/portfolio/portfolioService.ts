@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getHeaders from "../headers";
-import Portfolio from "./types";
+import Portfolio, {
+	CreatePortfolioModel,
+	CreatePortfolioShareModel,
+	EditPortfolioModel,
+	PortfolioShare,
+	PortfolioShareWith,
+} from "./types";
 import { setPortfolios } from "@/app/stores/userSlice";
 
 export const portfolioApi = createApi({
@@ -11,6 +17,7 @@ export const portfolioApi = createApi({
 			return getHeaders(headers);
 		},
 	}),
+	tagTypes: ["Portfolios", "SharedWith", "ShareableWith"],
 	endpoints: (builder) => ({
 		getPortfolios: builder.query<Portfolio[], null>({
 			query: () => "/",
@@ -18,8 +25,64 @@ export const portfolioApi = createApi({
 				const { data } = await queryFulfilled;
 				dispatch(setPortfolios(data));
 			},
+			providesTags: ["Portfolios"],
+		}),
+		getPortfolioShares: builder.query<PortfolioShare[], string>({
+			query: (id: string) => `/Share/${id}`,
+			providesTags: ["SharedWith"],
+		}),
+		getPortfolioSharableWith: builder.query<PortfolioShareWith[], string>({
+			query: (id: string) => `/ShareableWith/${id}`,
+			providesTags: ["ShareableWith"],
+		}),
+		addPortfolio: builder.mutation({
+			query: (payload: CreatePortfolioModel) => ({
+				url: "/",
+				method: "POST",
+				body: { ...payload },
+			}),
+			invalidatesTags: ["Portfolios"],
+		}),
+		addPortfolioShare: builder.mutation({
+			query: (payload: CreatePortfolioShareModel) => ({
+				url: "/Share",
+				method: "POST",
+				body: { ...payload },
+			}),
+			invalidatesTags: ["SharedWith", "ShareableWith"],
+		}),
+		editPortfolio: builder.mutation({
+			query: (payload: EditPortfolioModel) => ({
+				url: `/${payload.id}`,
+				method: "PUT",
+				body: { ...payload.body },
+			}),
+			invalidatesTags: ["Portfolios"],
+		}),
+		deletePortfolio: builder.mutation({
+			query: (payload: string) => ({
+				url: `/${payload}`,
+				method: "DELETE",
+			}),
+			invalidatesTags: ["Portfolios"],
+		}),
+		deleteUserPortfolio: builder.mutation({
+			query: (id: string) => ({
+				url: `/Share/${id}`,
+				method: "DELETE",
+			}),
+			invalidatesTags: ["ShareableWith", "SharedWith"],
 		}),
 	}),
 });
 
-export const { useGetPortfoliosQuery } = portfolioApi;
+export const {
+	useGetPortfoliosQuery,
+	useGetPortfolioSharesQuery,
+	useGetPortfolioSharableWithQuery,
+	useAddPortfolioMutation,
+	useAddPortfolioShareMutation,
+	useEditPortfolioMutation,
+	useDeletePortfolioMutation,
+	useDeleteUserPortfolioMutation,
+} = portfolioApi;

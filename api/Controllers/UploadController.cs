@@ -106,7 +106,7 @@ namespace api.Controllers
             }
 
             string content = string.Empty;
-            string code = StatementHelper.EncryptPasscode(model.Password);
+            string code = EncryptionHelper.EncryptString(model.Password);
 
             using (Stream stream = new FileStream(path, FileMode.Open))
             {

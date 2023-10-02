@@ -1,4 +1,4 @@
-import { Button, Modal } from "@mui/material";
+import { Box, Button, Modal, Paper } from "@mui/material";
 import materialStyles from "../styles/material.module.scss";
 import { useRouter } from "next/navigation";
 
@@ -21,26 +21,25 @@ export default function UploadSuccessModal({
 
 	return (
 		<Modal open={modalOpen} onClose={handleModalClose}>
-			<div className={materialStyles.modal}>
+			<Paper className={materialStyles.modal}>
 				{uploadError
 					? getUploadErrorText()
 					: statementAlreadyUploaded
 					? getAlreadyUploadedText()
 					: getUploadedText()}
-
-				<Button
-					className={materialStyles.primaryButton}
-					onClick={handleModalClose}
-				>
-					Continue
-				</Button>
-				<Button
-					className={materialStyles.primaryButton}
-					onClick={handleUploadAnotherStatement}
-				>
-					Upload more
-				</Button>
-			</div>
+				<Box className={materialStyles.buttonsContainer}>
+					<Button variant="contained" onClick={handleModalClose}>
+						Continue
+					</Button>
+					<Button
+						variant="contained"
+						color="secondary"
+						onClick={handleUploadAnotherStatement}
+					>
+						Upload more
+					</Button>
+				</Box>
+			</Paper>
 		</Modal>
 	);
 
