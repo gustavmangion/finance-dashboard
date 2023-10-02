@@ -8,6 +8,11 @@ export interface PortfolioShare {
 	name: string;
 }
 
+export interface PortfolioShareWith {
+	id: string;
+	alias: string;
+}
+
 export class EditPortfolioModel {
 	id: string = "";
 	body: EditPortfolioModelBody = new EditPortfolioModelBody();
@@ -19,4 +24,9 @@ class EditPortfolioModelBody {
 
 export class CreatePortfolioModel {
 	name: string = "";
+}
+
+export class CreatePortfolioShareModel {
+	portfolioId: string = "";
+	shareId: string = "";
 }

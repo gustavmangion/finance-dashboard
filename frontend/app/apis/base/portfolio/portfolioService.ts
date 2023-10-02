@@ -2,8 +2,10 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getHeaders from "../headers";
 import Portfolio, {
 	CreatePortfolioModel,
+	CreatePortfolioShareModel,
 	EditPortfolioModel,
 	PortfolioShare,
+	PortfolioShareWith,
 } from "./types";
 import { setPortfolios } from "@/app/stores/userSlice";
 
@@ -15,7 +17,7 @@ export const portfolioApi = createApi({
 			return getHeaders(headers);
 		},
 	}),
-	tagTypes: ["Portfolios", "SharedWith"],
+	tagTypes: ["Portfolios", "SharedWith", "ShareableWith"],
 	endpoints: (builder) => ({
 		getPortfolios: builder.query<Portfolio[], null>({
 			query: () => "/",
@@ -29,6 +31,10 @@ export const portfolioApi = createApi({
 			query: (id: string) => `/Share/${id}`,
 			providesTags: ["SharedWith"],
 		}),
+		getPortfolioSharableWith: builder.query<PortfolioShareWith[], string>({
+			query: (id: string) => `/ShareableWith/${id}`,
+			providesTags: ["ShareableWith"],
+		}),
 		addPortfolio: builder.mutation({
 			query: (payload: CreatePortfolioModel) => ({
 				url: "/",
@@ -36,6 +42,14 @@ export const portfolioApi = createApi({
 				body: { ...payload },
 			}),
 			invalidatesTags: ["Portfolios"],
+		}),
+		addPortfolioShare: builder.mutation({
+			query: (payload: CreatePortfolioShareModel) => ({
+				url: "/Share",
+				method: "POST",
+				body: { ...payload },
+			}),
+			invalidatesTags: ["SharedWith"],
 		}),
 		editPortfolio: builder.mutation({
 			query: (payload: EditPortfolioModel) => ({
@@ -58,7 +72,9 @@ export const portfolioApi = createApi({
 export const {
 	useGetPortfoliosQuery,
 	useGetPortfolioSharesQuery,
+	useGetPortfolioSharableWithQuery,
 	useAddPortfolioMutation,
+	useAddPortfolioShareMutation,
 	useEditPortfolioMutation,
 	useDeletePortfolioMutation,
 } = portfolioApi;

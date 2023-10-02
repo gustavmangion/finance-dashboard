@@ -16,6 +16,7 @@ namespace api.Profiles
                     dest => dest.Code,
                     opt => opt.MapFrom(src => EncryptionHelper.DecryptString(src.EncryptedCode))
                 );
+            CreateMap<UserShare, UserShareBasicModel>();
         }
     }
 }

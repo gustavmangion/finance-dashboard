@@ -31,6 +31,11 @@ namespace api.Repositories
             _context.Add(portfolio);
         }
 
+        public void AddUserPortfolio(UserPortfolio userPortfolio)
+        {
+            _context.UserPortfolios.Add(userPortfolio);
+        }
+
         public void DeletePortfolio(Portfolio portfolio)
         {
             _context.UserPortfolios.RemoveRange(portfolio.UserPortfolios);

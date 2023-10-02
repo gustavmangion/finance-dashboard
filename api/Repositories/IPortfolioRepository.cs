@@ -7,6 +7,7 @@ namespace api.Repositories
         List<Portfolio> GetPortfolios(string userId);
         Portfolio GetPortfolio(Guid id);
         void AddPortfolio(Portfolio portfolio);
+        void AddUserPortfolio(UserPortfolio userPortfolio);
         void DeletePortfolio(Portfolio portfolio);
         void DeleteUserPortfolios(List<UserPortfolio> userPortfolios);
         bool PortfolioExists(string userId, Guid id);

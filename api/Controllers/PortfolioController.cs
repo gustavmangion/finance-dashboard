@@ -122,8 +122,30 @@ namespace api.Controllers
             );
         }
 
-        [HttpPut("Share")]
-        public ActionResult SharePortfolio(PortfolioShareForCreateModel model)
+        [HttpGet("ShareableWith/{id}")]
+        public ActionResult GetPortfolioShareableWith(Guid id)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (!_portfolioRepository.PortfolioExists(userId, id))
+            {
+                ModelState.AddModelError("message", "Portfolio does not exist");
+                return BadRequest(ModelState);
+            }
+
+            List<UserPortfolio> portfolioShares = _portfolioRepository
+                .GetPortfolio(id)
+                .UserPortfolios;
+            List<UserShare> notLinkeduserShares = _userRepository
+                .GetShares(userId)
+                .Where(x => !x.UserPortfolios.Any(y => portfolioShares.Contains(y)))
+                .ToList();
+
+            return Ok(_mapper.Map<List<UserShareBasicModel>>(notLinkeduserShares));
+        }
+
+        [HttpPost("Share")]
+        public ActionResult CreatePortfolioShare(PortfolioShareForCreateModel model)
         {
             string userId = GetUserIdFromToken();
 
@@ -145,6 +167,9 @@ namespace api.Controllers
             if (userShare.SharedWith != null)
                 userPortfolio.UserId = userShare.SharedWith;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+            _portfolioRepository.AddUserPortfolio(userPortfolio);
+            _portfolioRepository.SaveChanges();
 
             return Ok();
         }

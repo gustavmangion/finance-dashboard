@@ -40,6 +40,7 @@ import Portfolio, {
 } from "../apis/base/portfolio/types";
 import { displayError, displaySuccess } from "../stores/notificationSlice";
 import LoadingSkeleton from "../components/loadingSkeleton";
+import SharePortfolioModal from "./sharePortfolioModal";
 
 type Props = {
 	setView: (val: PageView) => void;
@@ -54,6 +55,7 @@ export default function PortfolioEdit({ setView }: Props) {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showNameExistsModal, setShowNameExistsModal] = useState(false);
 	const [addingNewPortfolio, setAddingNewPortfolio] = useState(false);
+	const [showShareModal, setShowShareModal] = useState(false);
 
 	const dispatch = useDispatch();
 	const [editPortfolio] = useEditPortfolioMutation();
@@ -172,6 +174,11 @@ export default function PortfolioEdit({ setView }: Props) {
 					</Button>
 				</div>
 			</Modal>
+			<SharePortfolioModal
+				modalOpen={showShareModal}
+				portfolioId={selectedPortfolio}
+				setModalOpen={setShowShareModal}
+			/>
 		</div>
 	);
 
@@ -258,15 +265,10 @@ export default function PortfolioEdit({ setView }: Props) {
 					Shared With
 				</AccordionSummary>
 				<AccordionDetails>
+					<Button onClick={() => setShowShareModal(true)} variant="outlined">
+						Share with someone
+					</Button>
 					<List>
-						<ListItem key={"add"} disablePadding>
-							<ListItemIcon>
-								<Button onClick={handleNewShare}>
-									<AddIcon />
-								</Button>
-							</ListItemIcon>
-							<ListItemText primary="Share with someone" />
-						</ListItem>
 						{shareData?.map((share) => {
 							return (
 								<ListItem key={share.id} disablePadding>
@@ -285,6 +287,5 @@ export default function PortfolioEdit({ setView }: Props) {
 		);
 	}
 
-	function handleNewShare() {}
 	function handleRevokeShare(id: string) {}
 }
