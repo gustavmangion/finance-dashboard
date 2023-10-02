@@ -2,6 +2,7 @@
 {
     public class UserPortfolio
     {
+        public Guid Id { get; set; }
         public string UserId { get; set; }
         public virtual User User { get; set; }
         public Guid PortfolioId { get; set; }

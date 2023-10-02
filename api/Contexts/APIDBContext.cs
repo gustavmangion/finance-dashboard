@@ -22,7 +22,6 @@ namespace api.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserPortfolio>().HasKey(x => new { x.UserId, x.PortfolioId });
             modelBuilder.Entity<StatementAccount>().HasKey(x => new { x.StatementId, x.AccountId });
         }
     }
