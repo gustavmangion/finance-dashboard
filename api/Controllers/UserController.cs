@@ -187,7 +187,8 @@ namespace api.Controllers
                 );
                 if (correspondingShare != null)
                 {
-                    _userRepository.DeleteShare(correspondingShare);
+                    correspondingShare.Revoked = true;
+                    correspondingShare.SharedWith = null;
                 }
             }
 
