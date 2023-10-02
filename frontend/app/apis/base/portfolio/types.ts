@@ -1,6 +1,17 @@
 export default interface Portfolio {
 	id: string;
 	name: string;
+	isOwner: boolean;
+}
+
+export interface PortfolioShare {
+	id: string;
+	name: string;
+}
+
+export interface PortfolioShareWith {
+	id: string;
+	alias: string;
 }
 
 export class EditPortfolioModel {
@@ -14,4 +25,9 @@ class EditPortfolioModelBody {
 
 export class CreatePortfolioModel {
 	name: string = "";
+}
+
+export class CreatePortfolioShareModel {
+	portfolioId: string = "";
+	shareId: string = "";
 }

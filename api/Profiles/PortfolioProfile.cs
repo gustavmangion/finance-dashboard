@@ -8,7 +8,17 @@ namespace api.Profiles
     {
         public PortfolioProfile()
         {
-            CreateMap<Portfolio, PortfolioModel>();
+            CreateMap<Portfolio, PortfolioModel>()
+                .ForMember(
+                    dest => dest.Name,
+                    opt =>
+                        opt.MapFrom(
+                            src =>
+                                src.UserPortfolios.Where(x => x.PortfolioId == src.Id).First().Name
+                        )
+                );
+            CreateMap<UserPortfolio, PortfolioShareModel>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.UserShare.Alias));
         }
     }
 }

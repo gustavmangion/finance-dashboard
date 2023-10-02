@@ -1,15 +1,26 @@
 import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Alert,
 	Box,
 	Button,
 	CircularProgress,
 	FormControl,
 	InputLabel,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
 	MenuItem,
 	Modal,
 	Select,
 	SelectChangeEvent,
 	TextField,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AddIcon from "@mui/icons-material/Add";
 import { PageView } from "./page";
 import { useAppSelector } from "../hooks/reduxHook";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
@@ -21,14 +32,18 @@ import {
 	useAddPortfolioMutation,
 	useDeletePortfolioMutation,
 	useEditPortfolioMutation,
+	useGetPortfolioSharesQuery,
 	useGetPortfoliosQuery,
 } from "../apis/base/portfolio/portfolioService";
 import Portfolio, {
 	CreatePortfolioModel,
 	EditPortfolioModel,
+	PortfolioShare,
 } from "../apis/base/portfolio/types";
 import { displayError, displaySuccess } from "../stores/notificationSlice";
 import LoadingSkeleton from "../components/loadingSkeleton";
+import SharePortfolioModal from "./sharePortfolioModal";
+import DeleteSharePortfolioModal from "./deleteSharePortfolioModal";
 
 type Props = {
 	setView: (val: PageView) => void;
@@ -38,24 +53,35 @@ export default function PortfolioEdit({ setView }: Props) {
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 	const [selectedPortfolio, setSelectedPortfolio] = useState(portfolios[0].id);
 	const [portfolioName, setPortfolioName] = useState(portfolios[0].name);
+	const [isPortfolioOwner, setIsPortfolioOwner] = useState(
+		portfolios[0].isOwner
+	);
 	const [submitLoading, setSubmitLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showNameExistsModal, setShowNameExistsModal] = useState(false);
 	const [addingNewPortfolio, setAddingNewPortfolio] = useState(false);
+	const [showShareModal, setShowShareModal] = useState(false);
+	const [portfolioShareToDelete, setPortfolioShareToDelete] =
+		useState<PortfolioShare>();
 
 	const dispatch = useDispatch();
 	const [editPortfolio] = useEditPortfolioMutation();
 	const [deletePortfolio] = useDeletePortfolioMutation();
 	const [createPortfolio] = useAddPortfolioMutation();
 	const { isLoading, isFetching } = useGetPortfoliosQuery(null);
+	const {
+		isLoading: isShareLoading,
+		isFetching: isShareFetching,
+		data: shareData,
+	} = useGetPortfolioSharesQuery(selectedPortfolio);
 
 	if (isLoading) return <LoadingSkeleton />;
 
 	return (
 		<div className={styles.portfolioEdit}>
 			<h2>Manage Portfolios</h2>
-			{isFetching ? (
+			{isFetching || isShareFetching || isShareLoading ? (
 				<CircularProgress />
 			) : (
 				<>
@@ -93,6 +119,8 @@ export default function PortfolioEdit({ setView }: Props) {
 							value={portfolioName}
 							required
 						/>
+
+						{addingNewPortfolio ? null : getSharedWith()}
 						<Box className={materialStyles.buttonsContainer}>
 							<LoadingButton
 								variant="contained"
@@ -155,6 +183,15 @@ export default function PortfolioEdit({ setView }: Props) {
 					</Button>
 				</div>
 			</Modal>
+			<SharePortfolioModal
+				modalOpen={showShareModal}
+				portfolioId={selectedPortfolio}
+				setModalOpen={setShowShareModal}
+			/>
+			<DeleteSharePortfolioModal
+				sharedWith={portfolioShareToDelete}
+				setSharedWith={setPortfolioShareToDelete}
+			/>
 		</div>
 	);
 
@@ -162,6 +199,9 @@ export default function PortfolioEdit({ setView }: Props) {
 		setSelectedPortfolio(e.target.value);
 		setPortfolioName(
 			portfolios.find((x) => x.id === e.target.value)?.name as string
+		);
+		setIsPortfolioOwner(
+			portfolios.find((x) => x.id === e.target.value)?.isOwner as boolean
 		);
 	}
 
@@ -232,5 +272,42 @@ export default function PortfolioEdit({ setView }: Props) {
 	function handleCancelAddNew() {
 		setAddingNewPortfolio(false);
 		setPortfolioName(portfolios.find((x) => x.id === selectedPortfolio)!.name);
+	}
+
+	function getSharedWith() {
+		if (!isPortfolioOwner) {
+			return (
+				<Alert severity="warning" style={{ marginTop: "1em" }}>
+					You are not the owner of this portfolio, therefore you cannot edit
+					sharing
+				</Alert>
+			);
+		}
+		return (
+			<Accordion className={styles.sharedWith}>
+				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+					Shared With
+				</AccordionSummary>
+				<AccordionDetails>
+					<Button onClick={() => setShowShareModal(true)} variant="outlined">
+						Share with someone
+					</Button>
+					<List>
+						{shareData?.map((share) => {
+							return (
+								<ListItem key={share.id} disablePadding>
+									<ListItemIcon>
+										<Button onClick={() => setPortfolioShareToDelete(share)}>
+											<CancelIcon />
+										</Button>
+									</ListItemIcon>
+									<ListItemText primary={share.name} />
+								</ListItem>
+							);
+						})}
+					</List>
+				</AccordionDetails>
+			</Accordion>
+		);
 	}
 }
