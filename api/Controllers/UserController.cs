@@ -15,17 +15,21 @@ namespace api.Controllers
     public class UserController : BaseController
     {
         private readonly IUserRepository _userRepository;
+        private readonly IPortfolioRepository _portfolioRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
 
         public UserController(
             IUserRepository userRepository,
+            IPortfolioRepository portfolioRepository,
             IMapper mapper,
             ILogger<UserController> logger
         )
         {
             _userRepository =
                 userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _portfolioRepository =
+                portfolioRepository ?? throw new ArgumentNullException(nameof(portfolioRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -148,6 +152,7 @@ namespace api.Controllers
 
             userShare.InviteCode = "";
             userShare.SharedWith = userId;
+            userShare.UserPortfolios.ForEach(x => x.UserId = userId);
 
             UserShare correspondingShare = new UserShare();
             correspondingShare.UserId = userId;

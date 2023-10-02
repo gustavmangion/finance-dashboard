@@ -56,17 +56,7 @@ namespace api.Repositories
 
         public void DeleteShare(UserShare share)
         {
-            List<UserPortfolio> portfolioShares;
-            if (share.SharedWith != null)
-                portfolioShares = _context.UserPortfolios
-                    .Where(x => x.UserId != share.UserId && x.Portfolio.OwnerId == share.SharedWith)
-                    .ToList();
-            else
-                portfolioShares = _context.UserPortfolios
-                    .Where(x => x.UserId == $"invite-{share.InviteCode}")
-                    .ToList();
-
-            _context.UserPortfolios.RemoveRange(portfolioShares);
+            _context.UserPortfolios.RemoveRange(share.UserPortfolios);
             _context.UserShares.Remove(share);
         }
 

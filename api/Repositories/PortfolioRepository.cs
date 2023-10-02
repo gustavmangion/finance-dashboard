@@ -37,6 +37,11 @@ namespace api.Repositories
             _context.Portfolios.Remove(portfolio);
         }
 
+        public void DeleteUserPortfolios(List<UserPortfolio> userPortfolios)
+        {
+            _context.UserPortfolios.RemoveRange(userPortfolios);
+        }
+
         public bool PortfolioExists(string userId, Guid id)
         {
             return _context.UserPortfolios

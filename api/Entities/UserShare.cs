@@ -9,5 +9,7 @@
         public string InviteCode { get; set; }
         public DateOnly SharedOn { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public bool Revoked { get; set; }
+
+        public virtual List<UserPortfolio> UserPortfolios { get; set; } = new List<UserPortfolio>();
     }
 }
