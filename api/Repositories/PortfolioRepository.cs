@@ -77,7 +77,7 @@ namespace api.Repositories
                 .Where(
                     x =>
                         x.UserId == userId
-                        && x.Portfolio.Name == name
+                        && x.Name == name
                         && x.PortfolioId != currentPortfolio
                 )
                 .Any();

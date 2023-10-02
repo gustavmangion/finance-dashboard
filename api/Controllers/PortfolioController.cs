@@ -62,8 +62,9 @@ namespace api.Controllers
                 return BadRequest(ModelState);
 
             Portfolio portfolio = new Portfolio();
-            portfolio.Name = model.Name;
-            portfolio.UserPortfolios.Add(new UserPortfolio() { UserId = userId });
+            portfolio.UserPortfolios.Add(
+                new UserPortfolio() { UserId = userId, Name = model.Name }
+            );
 
             _portfolioRepository.AddPortfolio(portfolio);
             _portfolioRepository.SaveChanges();
@@ -85,8 +86,11 @@ namespace api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Portfolio portfolio = _portfolioRepository.GetPortfolio(id);
-            portfolio.Name = model.Name;
+            UserPortfolio userPortfolio = _portfolioRepository
+                .GetPortfolio(id)
+                .UserPortfolios.Where(x => x.UserId == userId)
+                .First();
+            userPortfolio.Name = model.Name;
             _portfolioRepository.SaveChanges();
 
             return Ok();

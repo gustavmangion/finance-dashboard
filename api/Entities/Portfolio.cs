@@ -8,8 +8,6 @@ namespace api.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [MaxLength(40)]
-        public string Name { get; set; }
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]

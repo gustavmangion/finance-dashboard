@@ -64,7 +64,7 @@ namespace api.Controllers
             User newUser = new User();
             newUser.Id = GetUserIdFromToken();
             newUser.UserPortfolios.Add(
-                new UserPortfolio { Portfolio = new Portfolio { Name = model.PortfolioName }, }
+                new UserPortfolio { Portfolio = new Portfolio (), Name = model.PortfolioName }
             );
 
             _userRepository.AddUser(newUser);
