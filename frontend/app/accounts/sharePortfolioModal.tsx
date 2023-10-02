@@ -51,6 +51,11 @@ export default function SharePortfolioModal({
 						<p>
 							You link more users with your account from the profile section
 						</p>
+						<Box className={materialStyles.buttonsContainer}>
+							<Button variant="contained" onClick={handleClose}>
+								Close
+							</Button>
+						</Box>
 					</>
 				) : (
 					<>
