@@ -21,7 +21,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddIcon from "@mui/icons-material/Add";
-import { PageView } from "./page";
+import { PageView } from "./pageViewEnum";
 import { useAppSelector } from "../hooks/reduxHook";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import styles from "../styles/account.module.scss";

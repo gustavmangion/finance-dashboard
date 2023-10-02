@@ -15,7 +15,7 @@ import materialStyles from "../styles/material.module.scss";
 import { useEditAccountMutation } from "../apis/base/account/accountService";
 import { useDispatch } from "react-redux";
 import { displayError, displaySuccess } from "../stores/notificationSlice";
-import { PageView } from "./page";
+import { PageView } from "./pageViewEnum";
 import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/account.module.scss";
 
