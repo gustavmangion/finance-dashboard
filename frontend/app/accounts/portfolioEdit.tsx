@@ -110,53 +110,47 @@ export default function PortfolioEdit({ setView }: Props) {
 							</FormControl>
 						</>
 					)}
-					{isPortfolioOwner ? (
-						<form onSubmit={handleSubmit}>
-							<TextField
-								name="name"
-								label="Portfolio Name"
-								variant="standard"
-								onChange={handleChange}
-								value={portfolioName}
-								required
-							/>
-							{addingNewPortfolio ? null : getSharedWith()}
-							<Box className={materialStyles.buttonsContainer}>
+					<form onSubmit={handleSubmit}>
+						<TextField
+							name="name"
+							label="Portfolio Name"
+							variant="standard"
+							onChange={handleChange}
+							value={portfolioName}
+							required
+						/>
+
+						{addingNewPortfolio ? null : getSharedWith()}
+						<Box className={materialStyles.buttonsContainer}>
+							<LoadingButton
+								variant="contained"
+								type="submit"
+								loading={submitLoading}
+								disabled={deleteLoading}
+							>
+								Save
+							</LoadingButton>
+							{addingNewPortfolio ? (
+								<Button
+									variant="contained"
+									color="secondary"
+									onClick={handleCancelAddNew}
+								>
+									Cancel
+								</Button>
+							) : (
 								<LoadingButton
 									variant="contained"
-									type="submit"
-									loading={submitLoading}
-									disabled={deleteLoading}
+									color="secondary"
+									loading={deleteLoading}
+									disabled={submitLoading}
+									onClick={handleDelete}
 								>
-									Save
+									Delete
 								</LoadingButton>
-								{addingNewPortfolio ? (
-									<Button
-										variant="contained"
-										color="secondary"
-										onClick={handleCancelAddNew}
-									>
-										Cancel
-									</Button>
-								) : (
-									<LoadingButton
-										variant="contained"
-										color="secondary"
-										loading={deleteLoading}
-										disabled={submitLoading}
-										onClick={handleDelete}
-									>
-										Delete
-									</LoadingButton>
-								)}
-							</Box>
-						</form>
-					) : (
-						<Alert severity="warning">
-							You are not the owner of this portfolio, therefore you cannot edit
-							it
-						</Alert>
-					)}
+							)}
+						</Box>
+					</form>
 					<Button
 						className={materialStyles.backButton}
 						onClick={() => setView(PageView.Accounts)}
@@ -281,6 +275,14 @@ export default function PortfolioEdit({ setView }: Props) {
 	}
 
 	function getSharedWith() {
+		if (!isPortfolioOwner) {
+			return (
+				<Alert severity="warning" style={{ marginTop: "1em" }}>
+					You are not the owner of this portfolio, therefore you cannot edit
+					sharing
+				</Alert>
+			);
+		}
 		return (
 			<Accordion className={styles.sharedWith}>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
