@@ -42,7 +42,16 @@ namespace api.Controllers
             User? user = _userRepository.GetUser(userId);
 
             if (user == null)
-                user = new User { Id = "Not Found", SetupNeeded = true };
+                return Ok(new UserModel { Id = "Not Found", UserStatus = UserStatus.NotCreated });
+
+            if (
+                !user.UserPortfolios.Select(x => x.Portfolio).Where(y => y.Accounts.Count > 0).Any()
+            )
+            {
+                UserModel model = _mapper.Map<UserModel>(user);
+                model.UserStatus = UserStatus.NeedStatement;
+                return Ok(model);
+            }
 
             return Ok(_mapper.Map<UserModel>(user));
         }
@@ -64,13 +73,20 @@ namespace api.Controllers
             User newUser = new User();
             newUser.Id = GetUserIdFromToken();
             newUser.UserPortfolios.Add(
-                new UserPortfolio { Portfolio = new Portfolio (), Name = model.PortfolioName }
+                new UserPortfolio
+                {
+                    Portfolio = new Portfolio() { OwnerId = userId },
+                    Name = model.PortfolioName
+                }
             );
 
             _userRepository.AddUser(newUser);
             _userRepository.SaveChanges();
 
-            return Ok(_mapper.Map<UserModel>(newUser));
+            UserModel newModel = _mapper.Map<UserModel>(newUser);
+            newModel.UserStatus = UserStatus.NeedStatement;
+
+            return Ok(newModel);
         }
 
         [HttpGet("Share")]

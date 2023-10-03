@@ -80,6 +80,16 @@ namespace api.Repositories
             _context.UserShareCodes.Add(shareCode);
         }
 
+        public bool GetUserHasUploadedStatement(string userId)
+        {
+            User? user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
+
+            if (user == null)
+                return false;
+
+            return user.UserPortfolios.Select(x => x.Portfolio).Select(x => x.Accounts).Any();
+        }
+
         public bool SaveChanges()
         {
             return _context.SaveChanges() >= 0;

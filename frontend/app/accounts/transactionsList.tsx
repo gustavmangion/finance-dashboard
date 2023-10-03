@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import Account from "../apis/base/account/types";
 import { useGetTransactionsQuery } from "../apis/base/transaction/transactionService";
-import { PageView } from "./page";
+import { PageView } from "./pageViewEnum";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import { useState } from "react";
 import styles from "../styles/account.module.scss";

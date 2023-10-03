@@ -14,7 +14,7 @@ import Account from "../apis/base/account/types";
 import styles from "../styles/account.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import { getMoneyFormat } from "../helpers/moneyHelper";
-import { PageView } from "./page";
+import { PageView } from "./pageViewEnum";
 import React, { useState } from "react";
 import { useAppSelector } from "../hooks/reduxHook";
 

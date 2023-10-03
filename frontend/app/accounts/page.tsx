@@ -11,6 +11,7 @@ import EditAccount from "./editAccount";
 import Account from "../apis/base/account/types";
 import PortfolioEdit from "./portfolioEdit";
 import TransactionsList from "./transactionsList";
+import { PageView } from "./pageViewEnum";
 
 export default function AccountPage() {
 	const authStatus = useSecurePage();
@@ -54,11 +55,4 @@ export default function AccountPage() {
 				return <TransactionsList account={accountForView!} setView={setView} />;
 		}
 	}
-}
-
-export enum PageView {
-	Accounts,
-	Edit,
-	Transactions,
-	Portfolios,
 }

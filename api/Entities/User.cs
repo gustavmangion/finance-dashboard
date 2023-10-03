@@ -7,10 +7,6 @@ namespace api.Entities
         public string Id { get; set; }
         public DateOnly Joined { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
-        [NotMapped]
-        public bool SetupNeeded { get; set; }
-
-        public virtual List<UserPortfolio> UserPortfolios { get; set; } =
-            new List<UserPortfolio>();
+        public virtual List<UserPortfolio> UserPortfolios { get; set; } = new List<UserPortfolio>();
     }
 }

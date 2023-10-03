@@ -1,8 +1,6 @@
-import Portfolio from "../portfolio/types";
-
 export default interface User {
 	id: string;
-	setupNeeded: boolean;
+	userStatus: number;
 }
 
 export interface UserShareModel {

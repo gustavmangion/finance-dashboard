@@ -5,13 +5,11 @@ import Portfolio from "../apis/base/portfolio/types";
 type UserState = {
 	user: User | undefined;
 	portfolios: Portfolio[];
-	needUploadStatement: boolean;
 };
 
 const initialState = {
 	user: undefined,
 	portfolios: [],
-	needUploadStatement: false,
 } as UserState;
 
 export const user = createSlice({
@@ -21,17 +19,17 @@ export const user = createSlice({
 		setUser: (state: any, action: PayloadAction<User | undefined>) => {
 			state.user = action.payload;
 		},
-		setNeedUploadStatement: (state: any, action: PayloadAction<boolean>) => {
-			state.needUploadStatement = action.payload;
-		},
 		setPortfolios: (state: any, action: PayloadAction<Portfolio[]>) => {
 			state.portfolios = action.payload;
+		},
+		setFirstUploadDone: (state: any) => {
+			state.user.userStatus = 0;
 		},
 		resetUser: () => initialState,
 	},
 });
 
-export const { setUser, setNeedUploadStatement, setPortfolios, resetUser } =
+export const { setUser, setPortfolios, setFirstUploadDone, resetUser } =
 	user.actions;
 
 export default user.reducer;

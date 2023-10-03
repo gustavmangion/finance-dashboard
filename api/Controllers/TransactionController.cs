@@ -78,47 +78,5 @@ namespace api.Controllers
 
             return Ok(paginationModel);
         }
-
-        private string CreateTransactionsResourceUri(
-            TransactionResourceParameters resourceParameters,
-            ResourceUriType type
-        )
-        {
-            switch (type)
-            {
-                case ResourceUriType.PreviousPage:
-#pragma warning disable CS8603 // Possible null reference return.
-                    return Url.Link(
-                        "Transactions",
-                        new
-                        {
-                            pageNumber = resourceParameters.PageNumber - 1,
-                            pageSize = resourceParameters.PageSize,
-                            accountId = resourceParameters.AccountId
-                        }
-                    );
-                case ResourceUriType.NextPage:
-                    return Url.Link(
-                        "Transactions",
-                        new
-                        {
-                            pageNumber = resourceParameters.PageNumber + 1,
-                            pageSize = resourceParameters.PageSize,
-                            accountId = resourceParameters.AccountId
-                        }
-                    );
-                default:
-                    return Url.Link(
-                        "Transactions",
-                        new
-                        {
-                            pageNumber = resourceParameters.PageNumber,
-                            pageSize = resourceParameters.PageSize,
-                            accountId = resourceParameters.AccountId
-                        }
-                    );
-#pragma warning restore CS8603 // Possible null reference return.
-            }
-        }
     }
 }
