@@ -10,7 +10,7 @@ import HomeMenu from "./homeMenu";
 import { useGetPortfoliosQuery } from "@/app/apis/base/portfolio/portfolioService";
 
 export default function SignedInHome() {
-	const state = useAppSelector((state) => state.userReducer);
+	const user = useAppSelector((state) => state.userReducer.user);
 
 	const { isLoading: userIsLoading, isFetching: userIsFetching } =
 		useGetUserQuery(null);
@@ -41,11 +41,7 @@ export default function SignedInHome() {
 				</h1>
 				<h2>Your smart piggy bank assistant</h2>
 			</div>
-			{state.user?.setupNeeded || state.needUploadStatement ? (
-				<SetupUser />
-			) : (
-				<HomeMenu />
-			)}
+			{user?.userStatus !== 0 ? <SetupUser /> : <HomeMenu />}
 		</div>
 	);
 }
