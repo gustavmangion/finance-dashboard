@@ -21,7 +21,8 @@ export default function SignedInHome() {
 		userIsLoading ||
 		userIsFetching ||
 		portfoliosIsLoading ||
-		portfoliosIsFetching
+		portfoliosIsFetching ||
+		user === undefined
 	)
 		return <LoadingSkeleton />;
 
