@@ -1,5 +1,9 @@
 export function getMoneyFormat(value: number, code: string = ""): string {
-	const valueFormatted = (Math.round(value * 100) / 100).toFixed(2);
+	let valueFormatted = (Math.round(value * 100) / 100).toLocaleString(
+		undefined,
+		{ minimumFractionDigits: 2 }
+	);
+
 	if (code === "") return valueFormatted;
 
 	const symbol = getCurrencySymbol(code);
