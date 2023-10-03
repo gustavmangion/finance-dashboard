@@ -3,7 +3,7 @@
 import User, { CreateUserModel } from "@/app/apis/base/user/types";
 import { useAddUserMutation } from "@/app/apis/base/user/userService";
 import { useAppSelector } from "@/app/hooks/reduxHook";
-import { setNeedUploadStatement, setUser } from "@/app/stores/userSlice";
+import { setUser } from "@/app/stores/userSlice";
 import { Box, Button, Modal, Paper, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,7 @@ import materialStyles from "../../styles/material.module.scss";
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import { displayError, displaySuccess } from "@/app/stores/notificationSlice";
 import { useRouter } from "next/navigation";
-import Portfolio from "@/app/apis/base/portfolio/types";
+import { portfolioApi } from "@/app/apis/base/portfolio/portfolioService";
 
 export default function SetupUser() {
 	const [loading, setLoading] = useState(false);
@@ -25,16 +25,8 @@ export default function SetupUser() {
 	const user: User | undefined = useAppSelector(
 		(state) => state.userReducer.user
 	);
-	const portfolios: Portfolio[] = useAppSelector(
-		(state) => state.userReducer.portfolios
-	);
-	const needUploadStatement: boolean = useAppSelector(
-		(state) => state.userReducer.needUploadStatement
-	);
-	const [modalOpen, setModalOpen] = useState(
-		needUploadStatement && portfolios.length > 0
-	);
 
+	const [modalOpen, setModalOpen] = useState(user!.userStatus > 1);
 	const [addUser] = useAddUserMutation();
 
 	return (
@@ -88,8 +80,8 @@ export default function SetupUser() {
 			await addUser(newUser).then((result) => {
 				setLoading(false);
 				if ("data" in result) {
-					dispatch(setNeedUploadStatement(true));
 					dispatch(setUser(result.data));
+					dispatch(portfolioApi.util.invalidateTags(["Portfolios"]));
 					dispatch(displaySuccess("Account created!"));
 					setModalOpen(true);
 				} else dispatch(displayError(null));

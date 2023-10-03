@@ -17,6 +17,7 @@ namespace api.Repositories
         bool AliasExists(string alias, string userId);
         bool InviteCodeExists(string code);
         void AddShareCode(UserShareCode shareCode);
+        bool GetUserHasUploadedStatement(string userId);
         bool SaveChanges();
     }
 }
