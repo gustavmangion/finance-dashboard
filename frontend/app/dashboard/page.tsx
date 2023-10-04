@@ -18,8 +18,8 @@ export default function DashboardPage(): React.ReactNode {
 
 	if (authStatus == AuthStatus.Authorized)
 		return (
-			<>
+			<div className="container">
 				<h2>This is your secure dashboard</h2>
-			</>
+			</div>
 		);
 }
