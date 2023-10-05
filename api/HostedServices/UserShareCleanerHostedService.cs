@@ -5,12 +5,12 @@ namespace api.HostedServices
 {
     public class UserShareCleanerHostedService : IHostedService
     {
-        private readonly ILogger<UploadDirectoryCleanerHostedService> _logger;
+        private readonly ILogger<UserShareCleanerHostedService> _logger;
         private readonly IServiceScopeFactory _serviceScope;
         private Timer _timer;
 
         public UserShareCleanerHostedService(
-            ILogger<UploadDirectoryCleanerHostedService> logger,
+            ILogger<UserShareCleanerHostedService> logger,
             IServiceScopeFactory serviceScope
         )
         {
