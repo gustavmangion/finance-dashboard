@@ -75,7 +75,7 @@ namespace api.HostedServices
             )
                 throw new Exception("Currency API key or URL are not setup");
 
-            bool mostRecent = DateOnly.FromDateTime(DateTime.Now).AddDays(-1) == day
+            bool mostRecent = DateOnly.FromDateTime(DateTime.Now).AddDays(-1) == day;
 
             RestClient client = new RestClient(AppSettingHelper.Currency.APIURL);
             RestRequest request;
