@@ -23,18 +23,16 @@ export default function NumberCard({
 			<CardContent>
 				<h4>{title}</h4>
 				{loading ? (
-					<CircularProgress />
+					<CircularProgress className={styles.spinner} />
 				) : (
 					<>
 						<p>
 							<strong>{getMoneyFormat(current!)}</strong>
 						</p>
-						<div className={styles.bottom}>
-							{getTrendIcon()}
-							<small>
-								<strong>{getMoneyFormat(previous!)}</strong>
-							</small>
-						</div>
+						{getTrendIcon()}
+						<small>
+							<strong>{getMoneyFormat(previous!)}</strong>
+						</small>
 					</>
 				)}
 			</CardContent>
