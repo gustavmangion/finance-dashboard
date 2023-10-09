@@ -1,1 +1,44 @@
+@import "./variables";
 
+.trendUp {
+	color: $trend-up;
+}
+
+.trendDown {
+	color: $trend-down;
+}
+
+.trendFlat {
+	color: $trend-flat;
+}
+
+.card {
+	border-radius: 1em !important;
+	width: 12em;
+
+	div:nth-child(1) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	h4 {
+		font-size: 1.2em;
+	}
+	p {
+		color: $primary;
+		padding: 0.1em;
+	}
+	small {
+		color: $secondary;
+	}
+
+	.bottom {
+		display: flex;
+		align-items: center;
+
+		svg {
+			margin-right: 0.2em;
+		}
+	}
+}
