@@ -25,6 +25,7 @@ export default function DashboardPage(): React.ReactNode {
 				<h2>My Dashboard</h2>
 				<NumberCard
 					title="Total"
+					loading={isLoading || isFetching}
 					current={data?.current}
 					previous={data?.previous}
 				/>

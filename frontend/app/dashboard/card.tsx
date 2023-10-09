@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, CircularProgress } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -7,24 +7,36 @@ import { getMoneyFormat } from "../helpers/moneyHelper";
 
 type Props = {
 	title: string;
+	loading: boolean;
 	current: number | undefined;
 	previous: number | undefined;
 };
 
-export default function NumberCard({ title, current, previous }: Props) {
+export default function NumberCard({
+	title,
+	loading,
+	current,
+	previous,
+}: Props) {
 	return (
 		<Card className={styles.card}>
 			<CardContent>
 				<h4>{title}</h4>
-				<p>
-					<strong>{getMoneyFormat(current!)}</strong>
-				</p>
-				<div className={styles.bottom}>
-					{getTrendIcon()}
-					<small>
-						<strong>{getMoneyFormat(previous!)}</strong>
-					</small>
-				</div>
+				{loading ? (
+					<CircularProgress />
+				) : (
+					<>
+						<p>
+							<strong>{getMoneyFormat(current!)}</strong>
+						</p>
+						<div className={styles.bottom}>
+							{getTrendIcon()}
+							<small>
+								<strong>{getMoneyFormat(previous!)}</strong>
+							</small>
+						</div>
+					</>
+				)}
 			</CardContent>
 		</Card>
 	);
