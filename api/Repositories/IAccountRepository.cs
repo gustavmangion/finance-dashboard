@@ -9,7 +9,8 @@ namespace api.Repositories
         List<Account> GetAccounts(string userId);
         void AddAccount(Account account);
         bool AccountNameExists(string name, Guid portfolioId);
-        Statement GetStatement(Guid id);
+        Statement? GetStatement(Guid id);
+        Statement GetLatestStatement(string userId);
         Statement? GetPreviousStatement(DateOnly statementStartDate);
         Statement? GetNextStatement(DateOnly statementEndDate);
         void AddStatement(Statement statement);

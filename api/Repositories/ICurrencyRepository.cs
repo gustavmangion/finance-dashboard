@@ -5,7 +5,9 @@ namespace api.Repositories
 {
     public interface ICurrencyRepository
     {
-        Currency? GetRate(string currency);
-        CurrencyTrendModel GetCurrenyTrend(string currency);
+        bool CurrencyExists(string currency);
+        Currency? GetRate(string baseCurrency, string toCurrency);
+        List<Currency> GetRates(string baseCurrency, List<string> currencies, DateOnly date);
+        CurrencyTrendModel GetCurrenyTrend(string baseCurrency, string toCurrency);
     }
 }

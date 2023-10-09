@@ -53,6 +53,18 @@ namespace api.Repositories
             return _context.Statements.Where(x => x.Id == id).FirstOrDefault();
         }
 
+        public Statement GetLatestStatement(string userId)
+        {
+            return _context.UserPortfolios
+                .Where(x => x.UserId == userId)
+                .Select(x => x.Portfolio)
+                .SelectMany(y => y.Accounts)
+                .SelectMany(z => z.AccountStatements)
+                .Select(a => a.Statement)
+                .OrderByDescending(a => a.From)
+                .First();
+        }
+
         public Statement? GetPreviousStatement(DateOnly statementStartDate)
         {
             return _context.Statements
