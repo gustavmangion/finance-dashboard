@@ -7,8 +7,8 @@ import { getMoneyFormat } from "../helpers/moneyHelper";
 
 type Props = {
 	title: string;
-	current: number;
-	previous: number;
+	current: number | undefined;
+	previous: number | undefined;
 };
 
 export default function NumberCard({ title, current, previous }: Props) {
@@ -17,12 +17,12 @@ export default function NumberCard({ title, current, previous }: Props) {
 			<CardContent>
 				<h4>{title}</h4>
 				<p>
-					<strong>{getMoneyFormat(current)}</strong>
+					<strong>{getMoneyFormat(current!)}</strong>
 				</p>
 				<div className={styles.bottom}>
 					{getTrendIcon()}
 					<small>
-						<strong>{getMoneyFormat(previous)}</strong>
+						<strong>{getMoneyFormat(previous!)}</strong>
 					</small>
 				</div>
 			</CardContent>
@@ -30,9 +30,9 @@ export default function NumberCard({ title, current, previous }: Props) {
 	);
 
 	function getTrendIcon() {
-		if (current > previous)
+		if (current! > previous!)
 			return <TrendingUpIcon className={styles.trendUp} />;
-		if (current < previous)
+		if (current! < previous!)
 			return <TrendingDownIcon className={styles.trendDown} />;
 
 		return <TrendingFlatIcon className={styles.trendFlat} />;
