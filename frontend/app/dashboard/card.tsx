@@ -4,6 +4,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import { getMoneyFormat } from "../helpers/moneyHelper";
+import LoadError from "./loadError";
 
 type Props = {
 	title: string;
@@ -24,6 +25,8 @@ export default function NumberCard({
 				<h4>{title}</h4>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />
+				) : isNaN(current!) ? (
+					<LoadError />
 				) : (
 					<>
 						<p>
