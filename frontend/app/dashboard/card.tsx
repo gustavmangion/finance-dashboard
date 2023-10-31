@@ -11,6 +11,7 @@ type Props = {
 	loading: boolean;
 	current: number | undefined;
 	previous: number | undefined;
+	inverseTrend?: boolean;
 };
 
 export default function NumberCard({
@@ -18,6 +19,7 @@ export default function NumberCard({
 	loading,
 	current,
 	previous,
+	inverseTrend = false,
 }: Props) {
 	return (
 		<Card className={styles.card}>
@@ -44,9 +46,17 @@ export default function NumberCard({
 
 	function getTrendIcon() {
 		if (current! > previous!)
-			return <TrendingUpIcon className={styles.trendUp} />;
+			return (
+				<TrendingUpIcon
+					className={!inverseTrend ? styles.trendUp : styles.trendDown}
+				/>
+			);
 		if (current! < previous!)
-			return <TrendingDownIcon className={styles.trendDown} />;
+			return (
+				<TrendingDownIcon
+					className={!inverseTrend ? styles.trendDown : styles.trendUp}
+				/>
+			);
 
 		return <TrendingFlatIcon className={styles.trendFlat} />;
 	}

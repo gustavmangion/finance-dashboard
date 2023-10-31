@@ -46,6 +46,7 @@ export default function DashboardPage(): React.ReactNode {
 					loading={isLoading || isFetching}
 					current={data === undefined ? NaN : data![2].current}
 					previous={data === undefined ? NaN : data![2].previous}
+					inverseTrend
 				/>
 			</div>
 		);
