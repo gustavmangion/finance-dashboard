@@ -26,10 +26,22 @@ namespace api.Repositories
                 .First();
         }
 
-        public List<Currency> GetRates(string baseCurrency, List<string> currencies, DateOnly date)
+        public List<Currency> GetRates(
+            string baseCurrency,
+            List<string> currencies,
+            DateOnly date = new DateOnly()
+        )
         {
+            DateOnly dateToQuery =
+                date == new DateOnly()
+                    ? _context.Currencies.Where(x => x.From == baseCurrency).Max(x => x.Date)
+                    : date;
+
             return _context.Currencies
-                .Where(x => x.From == baseCurrency && currencies.Contains(x.To) && x.Date == date)
+                .Where(
+                    x =>
+                        x.From == baseCurrency && currencies.Contains(x.To) && x.Date == dateToQuery
+                )
                 .ToList();
         }
 

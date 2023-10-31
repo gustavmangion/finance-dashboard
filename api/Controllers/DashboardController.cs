@@ -43,8 +43,7 @@ namespace api.Controllers
             List<Account> accounts = _accountRepository.GetAccounts(userId);
             List<Currency> rates = _currencyRepository.GetRates(
                 currency,
-                accounts.Select(x => x.Currency).ToList(),
-                DateOnly.FromDateTime(DateTime.Now).AddDays(-1)
+                accounts.Select(x => x.Currency).ToList()
             );
             DateOnly latestStatementDate = _accountRepository.GetLatestStatement(userId).From.Value;
             Statement? previousStatement = _accountRepository.GetPreviousStatement(

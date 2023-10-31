@@ -7,7 +7,11 @@ namespace api.Repositories
     {
         bool CurrencyExists(string currency);
         Currency? GetRate(string baseCurrency, string toCurrency);
-        List<Currency> GetRates(string baseCurrency, List<string> currencies, DateOnly date);
+        List<Currency> GetRates(
+            string baseCurrency,
+            List<string> currencies,
+            DateOnly date = new DateOnly()
+        );
         CurrencyTrendModel GetCurrenyTrend(string baseCurrency, string toCurrency);
     }
 }
