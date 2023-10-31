@@ -30,6 +30,7 @@ export default function DashboardPage(): React.ReactNode {
 		return (
 			<div className="container">
 				<h2>My Dashboard</h2>
+				<h4>All values in base currency {baseCurrency}</h4>
 
 				<div className={styles.mainCardLayout}>
 					<NumberCard
@@ -50,6 +51,21 @@ export default function DashboardPage(): React.ReactNode {
 						current={data === undefined ? NaN : data![2].current}
 						previous={data === undefined ? NaN : data![2].previous}
 						inverseTrend
+					/>
+					<NumberCard
+						title="Savings"
+						loading={isLoading || isFetching}
+						current={
+							data === undefined
+								? NaN
+								: (data![1].current - data[2].current) / data[2].current
+						}
+						previous={
+							data === undefined
+								? NaN
+								: (data![1].previous - data[2].previous) / data[2].previous
+						}
+						percentage
 					/>
 				</div>
 			</div>

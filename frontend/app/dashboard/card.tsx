@@ -12,6 +12,7 @@ type Props = {
 	current: number | undefined;
 	previous: number | undefined;
 	inverseTrend?: boolean;
+	percentage?: boolean;
 };
 
 export default function NumberCard({
@@ -20,6 +21,7 @@ export default function NumberCard({
 	current,
 	previous,
 	inverseTrend = false,
+	percentage = false,
 }: Props) {
 	return (
 		<Card className={styles.card}>
@@ -32,11 +34,19 @@ export default function NumberCard({
 				) : (
 					<>
 						<p>
-							<strong>{getMoneyFormat(current!)}</strong>
+							<strong>
+								{percentage
+									? `${(current! * 100).toFixed(0)} %`
+									: getMoneyFormat(current!)}
+							</strong>
 						</p>
 						{getTrendIcon()}
 						<small>
-							<strong>{getMoneyFormat(previous!)}</strong>
+							<strong>
+								{percentage
+									? `${(previous! * 100).toFixed(0)} %`
+									: getMoneyFormat(previous!)}
+							</strong>
 						</small>
 					</>
 				)}
