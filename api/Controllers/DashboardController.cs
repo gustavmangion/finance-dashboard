@@ -27,8 +27,8 @@ namespace api.Controllers
                 currencyRepository ?? throw new ArgumentNullException(nameof(currencyRepository));
         }
 
-        [HttpGet("OverviewTotal/{currency}")]
-        public ActionResult GetOverviewTotal(string currency)
+        [HttpGet("OverviewCards/{currency}")]
+        public ActionResult GetOverviewCards(string currency)
         {
             currency = currency.ToUpper();
 
@@ -45,12 +45,14 @@ namespace api.Controllers
                 currency,
                 accounts.Select(x => x.Currency).ToList()
             );
-            DateOnly latestStatementDate = _accountRepository.GetLatestStatement(userId).From.Value;
+            Statement latestStatement = _accountRepository.GetLatestStatement(userId);
             Statement? previousStatement = _accountRepository.GetPreviousStatement(
-                latestStatementDate
+                latestStatement.From.Value
             );
 
-            DashboardNumberCardModel model = new DashboardNumberCardModel();
+            DashboardNumberCardModel all = new DashboardNumberCardModel();
+            DashboardNumberCardModel credit = new DashboardNumberCardModel();
+            DashboardNumberCardModel debit = new DashboardNumberCardModel();
 
             foreach (Account account in accounts)
             {
@@ -61,19 +63,46 @@ namespace api.Controllers
                 else
                     rate = rates.Where(x => x.To == account.Currency).First().Value;
 
-                decimal total = account.Transactions.Sum(x => x.Amount);
-                model.Current += total * (1 / rate);
+                all.Current += account.Transactions.Sum(x => x.Amount) * (1 / rate);
+                credit.Current +=
+                    account.Transactions
+                        .Where(
+                            x => x.Type == TranType.Credit && x.StatementId == latestStatement.Id
+                        )
+                        .Sum(x => x.Amount) * (1 / rate);
+                debit.Current += Math.Abs(
+                    account.Transactions
+                        .Where(x => x.Type == TranType.Debit && x.StatementId == latestStatement.Id)
+                        .Sum(x => x.Amount) * (1 / rate)
+                );
 
                 if (previousStatement != null)
                 {
-                    total = account.Transactions
-                        .Where(x => x.Date < previousStatement.To)
-                        .Sum(x => x.Amount);
-                    model.Previous += total * (1 / rate);
+                    all.Previous +=
+                        account.Transactions
+                            .Where(x => x.Date < previousStatement.To)
+                            .Sum(x => x.Amount) * (1 / rate);
+                    credit.Previous +=
+                        account.Transactions
+                            .Where(
+                                x =>
+                                    x.StatementId == previousStatement.Id
+                                    && x.Type == TranType.Credit
+                            )
+                            .Sum(x => x.Amount) * (1 / rate);
+                    debit.Previous += Math.Abs(
+                        account.Transactions
+                            .Where(
+                                x =>
+                                    x.StatementId == previousStatement.Id
+                                    && x.Type == TranType.Debit
+                            )
+                            .Sum(x => x.Amount) * (1 / rate)
+                    );
                 }
             }
 
-            return Ok(model);
+            return Ok(new List<DashboardNumberCardModel> { all, credit, debit });
         }
     }
 }

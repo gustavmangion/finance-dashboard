@@ -20,7 +20,8 @@
     public enum TranType
     {
         Debit = 0,
-        Credit = 1
+        Credit = 1,
+        Adjustment = 2
     }
 
     public enum TranCategory

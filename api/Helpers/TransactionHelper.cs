@@ -109,6 +109,7 @@ namespace api.Helpers
             return new Transaction()
             {
                 Category = TranCategory.BalanceBroughtForward,
+                Type = TranType.Adjustment,
                 Amount = decimal.Parse(p1.Substring(index + 18, p1.Length - 17))
             };
         }

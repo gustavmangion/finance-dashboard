@@ -11,10 +11,10 @@ export const dashboardApi = createApi({
 		},
 	}),
 	endpoints: (builder) => ({
-		getOverviewTotal: builder.query<NumberCard, string>({
-			query: (currency: string) => `/overviewTotal/${currency}`,
+		getOverviewCards: builder.query<NumberCard[], string>({
+			query: (currency: string) => `/overviewCards/${currency}`,
 		}),
 	}),
 });
 
-export const { useGetOverviewTotalQuery } = dashboardApi;
+export const { useGetOverviewCardsQuery } = dashboardApi;
