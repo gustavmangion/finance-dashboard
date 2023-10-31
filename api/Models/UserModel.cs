@@ -6,6 +6,7 @@ namespace api.Models
     {
         public string Id { get; set; }
         public UserStatus UserStatus { get; set; }
+        public string BaseCurrency { get; set; }
     }
 
     public enum UserStatus

@@ -1,6 +1,7 @@
 export default interface User {
 	id: string;
 	userStatus: number;
+	baseCurrency: string;
 }
 
 export interface UserShareModel {

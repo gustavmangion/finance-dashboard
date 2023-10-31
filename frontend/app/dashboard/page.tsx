@@ -3,13 +3,17 @@
 import { useRouter } from "next/navigation";
 import { AuthStatus } from "../enums/authStatusEnum";
 import { useSecurePage } from "../hooks/authHook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import NumberCard from "./card";
 import { useGetOverviewTotalQuery } from "../apis/base/dashboard/dashboardService";
+import { useAppSelector } from "../hooks/reduxHook";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
+	const baseCurrency = useAppSelector(
+		(state) => state.userReducer.user?.baseCurrency
+	);
 
 	const { isLoading, isFetching, data } = useGetOverviewTotalQuery("EUR");
 	const authStatus = useSecurePage();
