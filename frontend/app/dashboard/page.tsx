@@ -8,6 +8,7 @@ import LoadingSkeleton from "../components/loadingSkeleton";
 import NumberCard from "./card";
 import { useGetOverviewCardsQuery } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
+import styles from "../styles/dashboard.module.scss";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -29,25 +30,28 @@ export default function DashboardPage(): React.ReactNode {
 		return (
 			<div className="container">
 				<h2>My Dashboard</h2>
-				<NumberCard
-					title="Total"
-					loading={isLoading || isFetching}
-					current={data === undefined ? NaN : data[0].current}
-					previous={data === undefined ? NaN : data![0].previous}
-				/>
-				<NumberCard
-					title="Credit"
-					loading={isLoading || isFetching}
-					current={data === undefined ? NaN : data![1].current}
-					previous={data === undefined ? NaN : data![1].previous}
-				/>
-				<NumberCard
-					title="Debit"
-					loading={isLoading || isFetching}
-					current={data === undefined ? NaN : data![2].current}
-					previous={data === undefined ? NaN : data![2].previous}
-					inverseTrend
-				/>
+
+				<div className={styles.mainCardLayout}>
+					<NumberCard
+						title="Total"
+						loading={isLoading || isFetching}
+						current={data === undefined ? NaN : data[0].current}
+						previous={data === undefined ? NaN : data![0].previous}
+					/>
+					<NumberCard
+						title="Credit"
+						loading={isLoading || isFetching}
+						current={data === undefined ? NaN : data![1].current}
+						previous={data === undefined ? NaN : data![1].previous}
+					/>
+					<NumberCard
+						title="Debit"
+						loading={isLoading || isFetching}
+						current={data === undefined ? NaN : data![2].current}
+						previous={data === undefined ? NaN : data![2].previous}
+						inverseTrend
+					/>
+				</div>
 			</div>
 		);
 }

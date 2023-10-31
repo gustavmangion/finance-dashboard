@@ -24,6 +24,7 @@
 	border-radius: 1em !important;
 	width: 12em;
 	height: 6.5em;
+	margin: 1em;
 
 	div:nth-child(1) {
 		display: grid;
@@ -57,4 +58,10 @@
 		grid-row: 2;
 		justify-self: center;
 	}
+}
+
+.mainCardLayout {
+	display: flex;
+	justify-content: center;
+	width: 100%;
 }
