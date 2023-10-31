@@ -15,7 +15,9 @@ export default function DashboardPage(): React.ReactNode {
 		(state) => state.userReducer.user?.baseCurrency
 	);
 
-	const { isLoading, isFetching, data } = useGetOverviewTotalQuery("EUR");
+	const { isLoading, isFetching, data } = useGetOverviewTotalQuery(
+		baseCurrency!
+	);
 	const authStatus = useSecurePage();
 	useEffect(() => {
 		if (authStatus === AuthStatus.NotAuthorized) router.push("/");
