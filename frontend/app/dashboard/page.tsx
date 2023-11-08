@@ -9,12 +9,18 @@ import NumberCard from "./card";
 import { useGetOverviewCardsQuery } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/dashboard.module.scss";
+import FilterPanel from "./filterPanel";
+import dayjs from "dayjs";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
 	const baseCurrency: string | undefined = useAppSelector(
 		(state) => state.userReducer.user?.baseCurrency
 	);
+	const [filterState, setFilterState] = useState({
+		from: dayjs(firstDayInPreviousMonth()),
+		to: dayjs(lastDayInPreviousMonth()),
+	});
 
 	const { isLoading, isFetching, data } = useGetOverviewCardsQuery(
 		baseCurrency!
@@ -31,7 +37,10 @@ export default function DashboardPage(): React.ReactNode {
 			<div className="container">
 				<h2>My Dashboard</h2>
 				<h4>All values in base currency {baseCurrency}</h4>
-
+				<FilterPanel
+					filterState={filterState}
+					setFilterState={setFilterState}
+				/>
 				<div className={styles.mainCardLayout}>
 					<NumberCard
 						title="Total"
@@ -70,4 +79,18 @@ export default function DashboardPage(): React.ReactNode {
 				</div>
 			</div>
 		);
+
+	function firstDayInPreviousMonth() {
+		var date = new Date(),
+			y = date.getFullYear(),
+			m = date.getMonth();
+		return new Date(y, m - 1, 1);
+	}
+
+	function lastDayInPreviousMonth() {
+		var date = new Date(),
+			y = date.getFullYear(),
+			m = date.getMonth();
+		return new Date(y, m, 0);
+	}
 }
