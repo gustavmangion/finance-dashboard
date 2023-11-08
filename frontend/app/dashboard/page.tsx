@@ -11,6 +11,7 @@ import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/dashboard.module.scss";
 import FilterPanel from "./filterPanel";
 import dayjs from "dayjs";
+import { FilterModel } from "../apis/base/dashboard/types";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -21,10 +22,15 @@ export default function DashboardPage(): React.ReactNode {
 		from: dayjs(firstDayInPreviousMonth()),
 		to: dayjs(lastDayInPreviousMonth()),
 	});
-
-	const { isLoading, isFetching, data } = useGetOverviewCardsQuery(
-		baseCurrency!
+	const filterModel = new FilterModel(
+		baseCurrency!,
+		filterState.from,
+		filterState.to
 	);
+
+	const { isLoading, isFetching, data } = useGetOverviewCardsQuery({
+		...filterModel,
+	});
 	const authStatus = useSecurePage();
 	useEffect(() => {
 		if (authStatus === AuthStatus.NotAuthorized) router.push("/");

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import getHeaders from "../headers";
-import NumberCard from "./types";
+import NumberCard, { FilterModel } from "./types";
 
 export const dashboardApi = createApi({
 	reducerPath: "dashboardApi",
@@ -11,8 +11,12 @@ export const dashboardApi = createApi({
 		},
 	}),
 	endpoints: (builder) => ({
-		getOverviewCards: builder.query<NumberCard[], string>({
-			query: (currency: string) => `/overviewCards/${currency}`,
+		getOverviewCards: builder.query<NumberCard[], FilterModel>({
+			query: (filter: FilterModel) => ({
+				url: "/overviewCards",
+				method: "GET",
+				params: { ...filter },
+			}),
 		}),
 	}),
 });

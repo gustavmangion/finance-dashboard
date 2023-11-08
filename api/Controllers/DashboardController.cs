@@ -27,12 +27,10 @@ namespace api.Controllers
                 currencyRepository ?? throw new ArgumentNullException(nameof(currencyRepository));
         }
 
-        [HttpGet("OverviewCards/{currency}")]
-        public ActionResult GetOverviewCards(string currency)
+        [HttpGet("OverviewCards")]
+        public ActionResult GetOverviewCards([FromQuery] DashboardFilterModel filter)
         {
-            currency = currency.ToUpper();
-
-            if (!_currencyRepository.CurrencyExists(currency))
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
                 ModelState.AddModelError("message", "Currency does not exist");
 
             if (!ModelState.IsValid)
@@ -42,7 +40,7 @@ namespace api.Controllers
 
             List<Account> accounts = _accountRepository.GetAccounts(userId);
             List<Currency> rates = _currencyRepository.GetRates(
-                currency,
+                filter.BaseCurrency,
                 accounts.Select(x => x.Currency).ToList()
             );
             Statement latestStatement = _accountRepository.GetLatestStatement(userId);
@@ -58,7 +56,7 @@ namespace api.Controllers
             {
                 decimal rate;
 
-                if (account.Currency == currency)
+                if (account.Currency == filter.BaseCurrency)
                     rate = 1;
                 else
                     rate = rates.Where(x => x.To == account.Currency).First().Value;
