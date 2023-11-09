@@ -26,7 +26,7 @@
                     return new DateOnly(correctedYearMonth.Item1, correctedYearMonth.Item2, 1);
                 }
 
-                return From.AddDays(From.Day - To.Day - 1);
+                return From.AddDays(From.DayNumber - To.DayNumber - 1);
             }
         }
         internal DateOnly ToPreviousPeriod
@@ -44,7 +44,7 @@
                     );
                 }
 
-                return From.AddDays(From.Day - To.Day - 1);
+                return To.AddDays(From.DayNumber - To.DayNumber - 1);
             }
         }
 
