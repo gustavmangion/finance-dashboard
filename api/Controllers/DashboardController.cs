@@ -13,11 +13,13 @@ namespace api.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly ICurrencyRepository _currencyRepository;
+        private readonly IPortfolioRepository _portfolioRepository;
 
         public DashboardController(
             IUserRepository userRepository,
             IAccountRepository accountRepository,
-            ICurrencyRepository currencyRepository
+            ICurrencyRepository currencyRepository,
+            IPortfolioRepository portfolioRepository
         )
         {
             _userRepository =
@@ -26,20 +28,30 @@ namespace api.Controllers
                 accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
             _currencyRepository =
                 currencyRepository ?? throw new ArgumentNullException(nameof(currencyRepository));
+            _portfolioRepository =
+                portfolioRepository ?? throw new ArgumentNullException(nameof(portfolioRepository));
         }
 
         [HttpGet("OverviewCards")]
         public ActionResult GetOverviewCards([FromQuery] DashboardFilterModel filter)
         {
+            string userId = GetUserIdFromToken();
+
             if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
                 ModelState.AddModelError("message", "Currency does not exist");
+            if (
+                !filter.PortfolioId.Equals("All")
+                && !_portfolioRepository.PortfolioExists(userId, filter.PortfolioId)
+            )
+                ModelState.AddModelError("message", "Portfolio does not exist");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string userId = GetUserIdFromToken();
-
             List<Account> accounts = _accountRepository.GetAccounts(userId);
+            if (!filter.PortfolioId.Equals("All"))
+                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId).ToList();
+
             List<Currency> rates = _currencyRepository.GetRates(
                 filter.BaseCurrency,
                 accounts.Select(x => x.Currency).ToList()
