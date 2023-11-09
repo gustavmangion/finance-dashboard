@@ -2,6 +2,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Button,
 	MenuItem,
 	Select,
 	SelectChangeEvent,
@@ -9,8 +10,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import styles from "../styles/dashboard.module.scss";
 import { DatePicker } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
-import { ChangeEvent } from "react";
+import { Dayjs } from "dayjs";
 import Portfolio from "../apis/base/portfolio/types";
 
 type Props = {
@@ -25,12 +25,14 @@ type Props = {
 		to: Dayjs;
 		portfolioId: string;
 	}) => void;
+	resetFilterState: () => void;
 };
 
 export default function FilterPanel({
 	filterState,
 	portfolios,
 	setFilterState,
+	resetFilterState,
 }: Props) {
 	return (
 		<Accordion className={styles.filter} expanded>
@@ -64,6 +66,13 @@ export default function FilterPanel({
 						>
 							{mapPortfolioOptions()}
 						</Select>
+						<Button
+							variant="contained"
+							color="secondary"
+							onClick={resetFilterState}
+						>
+							Reset Filter
+						</Button>
 					</div>
 				</div>
 			</AccordionDetails>
@@ -101,6 +110,7 @@ export default function FilterPanel({
 	}
 
 	function handleSelectChange(e: SelectChangeEvent) {
+		console.log("here");
 		setFilterState({
 			...filterState,
 			[e.target.name]: e.target.value,

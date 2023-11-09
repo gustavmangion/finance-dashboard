@@ -20,11 +20,13 @@ export default function DashboardPage(): React.ReactNode {
 	);
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
-	const [filterState, setFilterState] = useState({
+	const initialFilterState = {
 		from: dayjs(firstDayInPreviousMonth()),
 		to: dayjs(lastDayInPreviousMonth()),
 		portfolioId: "All",
-	});
+	};
+	const [filterState, setFilterState] = useState(initialFilterState);
+
 	const filterModel = new FilterModel(
 		baseCurrency!,
 		filterState.from,
@@ -51,6 +53,7 @@ export default function DashboardPage(): React.ReactNode {
 					filterState={filterState}
 					portfolios={portfolios}
 					setFilterState={setFilterState}
+					resetFilterState={resetFilterState}
 				/>
 				<div className={styles.mainCardLayout}>
 					<NumberCard
@@ -119,5 +122,9 @@ export default function DashboardPage(): React.ReactNode {
 			y = date.getFullYear(),
 			m = date.getMonth();
 		return new Date(y, m, 0);
+	}
+
+	function resetFilterState() {
+		setFilterState(initialFilterState);
 	}
 }
