@@ -90,8 +90,9 @@
 			transition: font-size 450ms ease-out;
 		}
 		small {
+			font-size: 0;
 			opacity: 0;
-			transition: opacity 450ms ease-out;
+			transition: opacity 450ms ease-out, font-size 300ms ease-out;
 		}
 	}
 	.collapsed {
@@ -100,7 +101,7 @@
 		}
 		small {
 			opacity: 1;
-			transition: opacity 450ms ease-in;
+			transition: opacity 450ms ease-in, font-size 150ms ease-in;
 		}
 	}
 
