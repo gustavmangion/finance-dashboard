@@ -12,6 +12,7 @@ import styles from "../styles/dashboard.module.scss";
 import { DatePicker } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import Portfolio from "../apis/base/portfolio/types";
+import { useState } from "react";
 
 type Props = {
 	filterState: {
@@ -34,10 +35,24 @@ export default function FilterPanel({
 	setFilterState,
 	resetFilterState,
 }: Props) {
+	const [expanded, setExpanded] = useState(false);
 	return (
-		<Accordion className={styles.filter} expanded>
+		<Accordion
+			className={styles.filter}
+			onChange={() => setExpanded(!expanded)}
+		>
 			<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-				<p>Filter</p>
+				<div
+					className={[
+						styles.header,
+						expanded ? styles.expanded : styles.collapsed,
+					].join(" ")}
+				>
+					<h4>Filter</h4>
+					<small>{`${filterState.from.format(
+						"DD/MM/YY"
+					)} to ${filterState.to.format("DD/MM/YY")}`}</small>
+				</div>
 			</AccordionSummary>
 			<AccordionDetails>
 				<div className={styles.fields}>
