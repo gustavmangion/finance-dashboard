@@ -40,7 +40,7 @@
                     return new DateOnly(
                         correctedYearMonth.Item1,
                         correctedYearMonth.Item2,
-                        DateTime.DaysInMonth(To.Year, month)
+                        DateTime.DaysInMonth(correctedYearMonth.Item1, correctedYearMonth.Item2)
                     );
                 }
 
@@ -50,7 +50,7 @@
 
         private (int, int) GetCorrectedYearMonth(int year, int month)
         {
-            if (month < 0)
+            if (month <= 0)
             {
                 month += 12;
                 year -= 1;
