@@ -74,10 +74,12 @@
 
 .filter {
 	margin: 0.5em;
-	width: 30em;
+	// width: 30em;
 
 	.fields {
 		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
 
 		& > div {
 			display: flex;

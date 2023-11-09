@@ -67,6 +67,7 @@ export default function FilterPanel({
 							{mapPortfolioOptions()}
 						</Select>
 						<Button
+							className={styles.marginTop}
 							variant="contained"
 							color="secondary"
 							onClick={resetFilterState}
