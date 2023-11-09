@@ -18,14 +18,18 @@ export default function DashboardPage(): React.ReactNode {
 	const baseCurrency: string | undefined = useAppSelector(
 		(state) => state.userReducer.user?.baseCurrency
 	);
+	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
+
 	const [filterState, setFilterState] = useState({
 		from: dayjs(firstDayInPreviousMonth()),
 		to: dayjs(lastDayInPreviousMonth()),
+		portfolioId: "All",
 	});
 	const filterModel = new FilterModel(
 		baseCurrency!,
 		filterState.from,
-		filterState.to
+		filterState.to,
+		filterState.portfolioId
 	);
 
 	const { isLoading, isFetching, data } = useGetOverviewCardsQuery({
@@ -45,6 +49,7 @@ export default function DashboardPage(): React.ReactNode {
 				<h4>All values in base currency {baseCurrency}</h4>
 				<FilterPanel
 					filterState={filterState}
+					portfolios={portfolios}
 					setFilterState={setFilterState}
 				/>
 				<div className={styles.mainCardLayout}>

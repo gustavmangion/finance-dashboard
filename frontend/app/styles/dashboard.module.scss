@@ -75,6 +75,22 @@
 .filter {
 	margin: 0.5em;
 	width: 30em;
+
+	.fields {
+		display: flex;
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			padding: 0.5em;
+			justify-content: center;
+			align-items: center;
+
+			.marginTop {
+				margin-top: 1em;
+			}
+		}
+	}
 }
 
 .mainCardLayout {
