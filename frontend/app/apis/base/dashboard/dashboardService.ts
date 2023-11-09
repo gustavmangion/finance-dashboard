@@ -10,6 +10,7 @@ export const dashboardApi = createApi({
 			return getHeaders(headers);
 		},
 	}),
+	tagTypes: ["dashboard"],
 	endpoints: (builder) => ({
 		getOverviewCards: builder.query<NumberCard[], FilterModel>({
 			query: (filter: FilterModel) => ({
@@ -17,6 +18,7 @@ export const dashboardApi = createApi({
 				method: "GET",
 				params: { ...filter },
 			}),
+			providesTags: ["dashboard"],
 		}),
 	}),
 });

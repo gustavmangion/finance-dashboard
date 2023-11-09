@@ -11,6 +11,7 @@ export const transactionApi = createApi({
 			return getHeaders(headers);
 		},
 	}),
+	tagTypes: ["transactions"],
 	endpoints: (builder) => ({
 		getTransactions: builder.query<
 			ListResponse<Transaction>,
@@ -34,6 +35,7 @@ export const transactionApi = createApi({
 						`&PageNumber=${parameters.currentPage}&PageSize=${parameters.pageSize}`,
 				};
 			},
+			providesTags: ["transactions"],
 		}),
 	}),
 });
