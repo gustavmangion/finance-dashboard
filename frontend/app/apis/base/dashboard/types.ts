@@ -9,7 +9,13 @@ export class FilterModel {
 	baseCurrency: string;
 	from: string;
 	to: string;
-	portfolioId: string;
+	private _portfolioId = "";
+	get portfolioId(): string | null {
+		return this._portfolioId == "All" ? null : this._portfolioId;
+	}
+	set portfolioId(value: string) {
+		this._portfolioId = value;
+	}
 
 	constructor(
 		baseCurrency: string,

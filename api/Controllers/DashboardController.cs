@@ -40,8 +40,8 @@ namespace api.Controllers
             if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
                 ModelState.AddModelError("message", "Currency does not exist");
             if (
-                !filter.PortfolioId.Equals("All")
-                && !_portfolioRepository.PortfolioExists(userId, filter.PortfolioId)
+                filter.PortfolioId.HasValue
+                && !_portfolioRepository.PortfolioExists(userId, filter.PortfolioId.Value)
             )
                 ModelState.AddModelError("message", "Portfolio does not exist");
 
@@ -49,8 +49,8 @@ namespace api.Controllers
                 return BadRequest(ModelState);
 
             List<Account> accounts = _accountRepository.GetAccounts(userId);
-            if (!filter.PortfolioId.Equals("All"))
-                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId).ToList();
+            if (filter.PortfolioId.HasValue)
+                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
 
             List<Currency> rates = _currencyRepository.GetRates(
                 filter.BaseCurrency,
