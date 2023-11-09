@@ -5,7 +5,7 @@ import { AuthStatus } from "../enums/authStatusEnum";
 import { useSecurePage } from "../hooks/authHook";
 import { useEffect, useState } from "react";
 import LoadingSkeleton from "../components/loadingSkeleton";
-import NumberCard from "./card";
+import NumberCard from "./numberCard";
 import { useGetOverviewCardsQuery } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/dashboard.module.scss";
@@ -38,7 +38,9 @@ export default function DashboardPage(): React.ReactNode {
 
 	if (authStatus == AuthStatus.Loading) return <LoadingSkeleton />;
 
-	if (authStatus == AuthStatus.Authorized)
+	if (authStatus == AuthStatus.Authorized) {
+		console.log("HERE");
+		console.log(data);
 		return (
 			<div className="container">
 				<h2>My Dashboard</h2>
@@ -85,6 +87,7 @@ export default function DashboardPage(): React.ReactNode {
 				</div>
 			</div>
 		);
+	}
 
 	function firstDayInPreviousMonth() {
 		var date = new Date(),
