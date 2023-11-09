@@ -9,13 +9,7 @@ export class FilterModel {
 	baseCurrency: string;
 	from: string;
 	to: string;
-	private _portfolioId = "";
-	get portfolioId(): string | null {
-		return this._portfolioId == "All" ? null : this._portfolioId;
-	}
-	set portfolioId(value: string) {
-		this._portfolioId = value;
-	}
+	portfolioId: string | undefined;
 
 	constructor(
 		baseCurrency: string,
@@ -26,6 +20,6 @@ export class FilterModel {
 		this.baseCurrency = baseCurrency;
 		this.from = from.toDate().toDateString();
 		this.to = to.toDate().toDateString();
-		this.portfolioId = portfolioId;
+		this.portfolioId = portfolioId === "All" ? undefined : portfolioId;
 	}
 }
