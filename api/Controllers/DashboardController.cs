@@ -2,6 +2,7 @@
 using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using NLog.Filters;
 
 namespace api.Controllers
 {
@@ -43,10 +44,6 @@ namespace api.Controllers
                 filter.BaseCurrency,
                 accounts.Select(x => x.Currency).ToList()
             );
-            Statement latestStatement = _accountRepository.GetLatestStatement(userId);
-            Statement? previousStatement = _accountRepository.GetPreviousStatement(
-                latestStatement.From.Value
-            );
 
             DashboardNumberCardModel all = new DashboardNumberCardModel();
             DashboardNumberCardModel credit = new DashboardNumberCardModel();
@@ -62,45 +59,53 @@ namespace api.Controllers
                     rate = rates.Where(x => x.To == account.Currency).First().Value;
 
                 all.Current += account.Transactions.Sum(x => x.Amount) * (1 / rate);
-                credit.Current +=
-                    account.Transactions
-                        .Where(
-                            x => x.Type == TranType.Credit && x.StatementId == latestStatement.Id
-                        )
-                        .Sum(x => x.Amount) * (1 / rate);
-                debit.Current += Math.Abs(
-                    account.Transactions
-                        .Where(x => x.Type == TranType.Debit && x.StatementId == latestStatement.Id)
-                        .Sum(x => x.Amount) * (1 / rate)
+                all.Previous +=
+                    account.Transactions.Where(x => x.Date < filter.From).Sum(x => x.Amount)
+                    * (1 / rate);
+                credit.Current += GetAccountTransactionTotal(
+                    account,
+                    filter.From,
+                    filter.To,
+                    TranType.Credit,
+                    rate
                 );
-
-                if (previousStatement != null)
-                {
-                    all.Previous +=
-                        account.Transactions
-                            .Where(x => x.Date < previousStatement.To)
-                            .Sum(x => x.Amount) * (1 / rate);
-                    credit.Previous +=
-                        account.Transactions
-                            .Where(
-                                x =>
-                                    x.StatementId == previousStatement.Id
-                                    && x.Type == TranType.Credit
-                            )
-                            .Sum(x => x.Amount) * (1 / rate);
-                    debit.Previous += Math.Abs(
-                        account.Transactions
-                            .Where(
-                                x =>
-                                    x.StatementId == previousStatement.Id
-                                    && x.Type == TranType.Debit
-                            )
-                            .Sum(x => x.Amount) * (1 / rate)
-                    );
-                }
+                credit.Previous += GetAccountTransactionTotal(
+                    account,
+                    filter.FromPreviousPeriod,
+                    filter.ToPreviousPeriod,
+                    TranType.Credit,
+                    rate
+                );
+                debit.Current += GetAccountTransactionTotal(
+                    account,
+                    filter.From,
+                    filter.To,
+                    TranType.Debit,
+                    rate
+                );
+                debit.Previous += GetAccountTransactionTotal(
+                    account,
+                    filter.FromPreviousPeriod,
+                    filter.ToPreviousPeriod,
+                    TranType.Debit,
+                    rate
+                );
             }
 
             return Ok(new List<DashboardNumberCardModel> { all, credit, debit });
+        }
+
+        private decimal GetAccountTransactionTotal(
+            Account account,
+            DateOnly from,
+            DateOnly to,
+            TranType tranType,
+            decimal rate
+        )
+        {
+            return account.Transactions
+                    .Where(x => x.Type == tranType && x.Date >= from && x.Date <= to)
+                    .Sum(x => x.Amount) * (1 / rate);
         }
     }
 }
