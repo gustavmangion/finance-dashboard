@@ -3,6 +3,8 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Button,
+	FormControl,
+	InputLabel,
 	MenuItem,
 	Select,
 	SelectChangeEvent,
@@ -70,17 +72,20 @@ export default function FilterPanel({
 						/>
 					</div>
 					<div>
-						<Select
-							name="portfolioId"
-							label="Portfolio"
-							variant="standard"
-							onChange={handleSelectChange}
-							value={filterState.portfolioId}
-							required
-							placeholder="Portfolio"
-						>
-							{mapPortfolioOptions()}
-						</Select>
+						<FormControl>
+							<InputLabel>Portfolio</InputLabel>
+							<Select
+								name="portfolioId"
+								label="Portfolio"
+								variant="standard"
+								onChange={handleSelectChange}
+								value={filterState.portfolioId}
+								required
+								placeholder="Portfolio"
+							>
+								{mapPortfolioOptions()}
+							</Select>
+						</FormControl>
 						<Button
 							className={styles.marginTop}
 							variant="contained"
