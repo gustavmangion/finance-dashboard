@@ -39,8 +39,6 @@ export default function DashboardPage(): React.ReactNode {
 	if (authStatus == AuthStatus.Loading) return <LoadingSkeleton />;
 
 	if (authStatus == AuthStatus.Authorized) {
-		console.log("HERE");
-		console.log(data);
 		return (
 			<div className="container">
 				<h2>My Dashboard</h2>
@@ -61,6 +59,11 @@ export default function DashboardPage(): React.ReactNode {
 						loading={isLoading || isFetching}
 						current={data === undefined ? NaN : data![1].current}
 						previous={data === undefined ? NaN : data![1].previous}
+						noData={
+							data !== undefined &&
+							data[1].current === 0 &&
+							data[2].current === 0
+						}
 					/>
 					<NumberCard
 						title="Debit"
@@ -68,6 +71,11 @@ export default function DashboardPage(): React.ReactNode {
 						current={data === undefined ? NaN : data![2].current}
 						previous={data === undefined ? NaN : data![2].previous}
 						inverseTrend
+						noData={
+							data !== undefined &&
+							data[1].current === 0 &&
+							data[2].current === 0
+						}
 					/>
 					<NumberCard
 						title="Savings"
@@ -83,6 +91,11 @@ export default function DashboardPage(): React.ReactNode {
 								: (data![1].previous - data[2].previous) / data[2].previous
 						}
 						percentage
+						noData={
+							data !== undefined &&
+							data[1].current === 0 &&
+							data[2].current === 0
+						}
 					/>
 				</div>
 			</div>

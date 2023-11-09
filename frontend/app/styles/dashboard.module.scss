@@ -20,6 +20,18 @@
 	align-items: center;
 }
 
+.noData {
+	grid-row: 2;
+	grid-column: 2;
+	color: $warning-red;
+	display: flex;
+	align-items: center;
+
+	small {
+		margin-left: 0.3em;
+	}
+}
+
 .card {
 	border-radius: 1em !important;
 	width: 12em;

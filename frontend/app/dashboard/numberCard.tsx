@@ -5,6 +5,7 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import { getMoneyFormat } from "../helpers/moneyHelper";
 import LoadError from "./loadError";
+import NoData from "./noData";
 
 type Props = {
 	title: string;
@@ -13,6 +14,7 @@ type Props = {
 	previous: number | undefined;
 	inverseTrend?: boolean;
 	percentage?: boolean;
+	noData?: boolean;
 };
 
 export default function NumberCard({
@@ -22,6 +24,7 @@ export default function NumberCard({
 	previous,
 	inverseTrend = false,
 	percentage = false,
+	noData = false,
 }: Props) {
 	return (
 		<Card className={styles.card}>
@@ -29,6 +32,8 @@ export default function NumberCard({
 				<h4>{title}</h4>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />
+				) : noData ? (
+					<NoData />
 				) : isNaN(current!) ? (
 					<LoadError />
 				) : (
