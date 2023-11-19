@@ -37,7 +37,6 @@ export default function NameValueListCard({ title, loading, data }: Props) {
 	);
 
 	function getList() {
-		console.log(data);
 		return (
 			<List
 				sx={{
