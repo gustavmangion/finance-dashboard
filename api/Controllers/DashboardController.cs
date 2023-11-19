@@ -3,6 +3,8 @@ using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using NLog.Filters;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.Principal;
 
 namespace api.Controllers
 {
@@ -52,10 +54,7 @@ namespace api.Controllers
             if (filter.PortfolioId.HasValue)
                 accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
 
-            List<Currency> rates = _currencyRepository.GetRates(
-                filter.BaseCurrency,
-                accounts.Select(x => x.Currency).ToList()
-            );
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
 
             DashboardNumberCardModel all = new DashboardNumberCardModel();
             DashboardNumberCardModel credit = new DashboardNumberCardModel();
@@ -63,12 +62,7 @@ namespace api.Controllers
 
             foreach (Account account in accounts)
             {
-                decimal rate;
-
-                if (account.Currency == filter.BaseCurrency)
-                    rate = 1;
-                else
-                    rate = rates.Where(x => x.To == account.Currency).First().Value;
+                decimal rate = GetRate(rates, account.Currency, filter.BaseCurrency);
 
                 all.Current += account.Transactions.Sum(x => x.Amount) * (1 / rate);
                 all.Previous +=
@@ -133,20 +127,12 @@ namespace api.Controllers
             if (filter.PortfolioId.HasValue)
                 accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
 
-            List<Currency> rates = _currencyRepository.GetRates(
-                filter.BaseCurrency,
-                accounts.Select(x => x.Currency).ToList()
-            );
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
 
             List<DashboarNameValueCardModel> data = new List<DashboarNameValueCardModel>();
             foreach (Account account in accounts)
             {
-                decimal rate;
-
-                if (account.Currency == filter.BaseCurrency)
-                    rate = 1;
-                else
-                    rate = rates.Where(x => x.To == account.Currency).First().Value;
+                decimal rate = GetRate(rates, account.Currency, filter.BaseCurrency);
 
                 data.AddRange(
                     account.Transactions
@@ -170,6 +156,14 @@ namespace api.Controllers
             }
 
             return Ok(data.OrderByDescending(x => x.Value));
+        }
+
+        private decimal GetRate(List<Currency> rates, string accountCurrency, string filterCurrency)
+        {
+            if (accountCurrency == filterCurrency)
+                return 1;
+            else
+                return rates.Where(x => x.To == accountCurrency).First().Value;
         }
     }
 }

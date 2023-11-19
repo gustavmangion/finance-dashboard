@@ -45,6 +45,15 @@ namespace api.Repositories
                 .ToList();
         }
 
+        public List<Currency> GetRates(
+            string baseCurrency,
+            List<Account> accounts,
+            DateOnly date = default
+        )
+        {
+            return GetRates(baseCurrency, accounts.Select(x => x.Currency).ToList(), date);
+        }
+
         public CurrencyTrendModel GetCurrenyTrend(string baseCurrency, string toCurrency)
         {
             CurrencyTrendModel model = new CurrencyTrendModel();

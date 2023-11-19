@@ -12,6 +12,11 @@ namespace api.Repositories
             List<string> currencies,
             DateOnly date = new DateOnly()
         );
+        List<Currency> GetRates(
+            string baseCurrency,
+            List<Account> accounts,
+            DateOnly date = new DateOnly()
+        );
         CurrencyTrendModel GetCurrenyTrend(string baseCurrency, string toCurrency);
     }
 }
