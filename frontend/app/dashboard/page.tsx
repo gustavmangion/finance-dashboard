@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import NumberCard from "./numberCard";
 import {
+	useGetHighestSpendByVendorQuery,
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
 } from "../apis/base/dashboard/dashboardService";
@@ -52,6 +53,12 @@ export default function DashboardPage(): React.ReactNode {
 	} = useGetTotalByCardQuery({
 		...filterModel,
 	});
+	const {
+		isLoading: highVenSpendIsLoading,
+		isFetching: highVenSpendIsFetching,
+		data: highVenSpendData,
+	} = useGetHighestSpendByVendorQuery({ ...filterModel });
+
 	const authStatus = useSecurePage();
 	useEffect(() => {
 		if (authStatus === AuthStatus.NotAuthorized) router.push("/");
@@ -133,11 +140,19 @@ export default function DashboardPage(): React.ReactNode {
 						}
 					/>
 				</div>
-				<NameValueListCard
-					title="Spend by Card"
-					loading={cardTotalIsFetching || cardTotalIsLoading}
-					data={cardTotalData}
-				/>
+				<div className={styles.cardLayout}>
+					<NameValueListCard
+						title="Spend by Card"
+						loading={cardTotalIsLoading || cardTotalIsFetching}
+						data={cardTotalData}
+					/>
+					<NameValueListCard
+						title="Spend by Top Vendors"
+						loading={highVenSpendIsLoading || highVenSpendIsFetching}
+						data={highVenSpendData}
+						width={2}
+					/>
+				</div>
 			</div>
 		);
 	}

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using NLog.Filters;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Principal;
+using System.Linq;
 
 namespace api.Controllers
 {
@@ -156,6 +157,62 @@ namespace api.Controllers
             }
 
             return Ok(data.OrderByDescending(x => x.Value));
+        }
+
+        [HttpGet("HighestSpendByVendor")]
+        public IActionResult GetHighestSpend([FromQuery] DashboardFilterModel filter)
+        {
+            string userId = GetUserIdFromToken();
+
+            List<Account> accounts = _accountRepository.GetAccounts(userId);
+            if (filter.PortfolioId.HasValue)
+                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
+
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
+            List<DashboarNameValueCardModel> data = new List<DashboarNameValueCardModel>();
+
+            List<string> accountCurrencies = accounts.Select(x => x.Currency).Distinct().ToList();
+            foreach (string currency in accountCurrencies)
+            {
+                decimal rate = GetRate(rates, currency, filter.BaseCurrency);
+
+                data.AddRange(
+                    accounts
+                        .Where(x => x.Currency == currency)
+                        .SelectMany(y => y.Transactions)
+                        .Where(
+                            z =>
+                                z.Date >= filter.From
+                                && z.Date <= filter.To
+                                && z.Type == TranType.Debit
+                        )
+                        .GroupBy(z => z.Description)
+                        .Select(
+                            a =>
+                                new DashboarNameValueCardModel
+                                {
+                                    Name = a.First().Description,
+                                    Value = Math.Abs(a.Sum(b => b.Amount * (1 / rate))),
+                                }
+                        )
+                        .ToList()
+                );
+            }
+
+            return Ok(
+                data.GroupBy(x => x.Name)
+                    .Select(
+                        y =>
+                            new DashboarNameValueCardModel
+                            {
+                                Name = y.First().Name,
+                                Value = y.Sum(z => z.Value)
+                            }
+                    )
+                    .OrderByDescending(a => a.Value)
+                    .Take(30)
+                    .ToList()
+            );
         }
 
         private decimal GetRate(List<Currency> rates, string accountCurrency, string filterCurrency)

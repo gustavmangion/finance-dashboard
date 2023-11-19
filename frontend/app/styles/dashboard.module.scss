@@ -34,7 +34,6 @@
 
 .card {
 	border-radius: 1em !important;
-	width: 12em;
 	margin: 1em;
 	overflow: visible !important;
 
@@ -55,6 +54,14 @@
 
 	.medium {
 		height: 11em;
+	}
+
+	.normalWide {
+		width: 12em;
+	}
+
+	.doubleWide {
+		width: 26em;
 	}
 }
 
@@ -159,4 +166,8 @@
 	justify-content: center;
 	flex-wrap: wrap;
 	width: 100%;
+}
+
+.cardLayout {
+	display: flex;
 }

@@ -28,7 +28,7 @@ export default function NumberCard({
 }: Props) {
 	return (
 		<Card className={[styles.card, styles.numberCard].join(" ")}>
-			<CardContent className={styles.short}>
+			<CardContent className={[styles.short, styles.normalWide].join(" ")}>
 				<h4>{title}</h4>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />

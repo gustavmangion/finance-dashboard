@@ -28,8 +28,19 @@ export const dashboardApi = createApi({
 			}),
 			providesTags: ["dashboard"],
 		}),
+		getHighestSpendByVendor: builder.query<NameValueModel[], FilterModel>({
+			query: (filter: FilterModel) => ({
+				url: "/highestspendbyvendor",
+				method: "GET",
+				params: { ...filter },
+			}),
+			providesTags: ["dashboard"],
+		}),
 	}),
 });
 
-export const { useGetOverviewCardsQuery, useGetTotalByCardQuery } =
-	dashboardApi;
+export const {
+	useGetOverviewCardsQuery,
+	useGetTotalByCardQuery,
+	useGetHighestSpendByVendorQuery,
+} = dashboardApi;
