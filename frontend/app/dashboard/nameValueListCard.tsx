@@ -43,6 +43,7 @@ export default function NameValueListCard({ title, loading, data }: Props) {
 				sx={{
 					overflow: "auto",
 				}}
+				dense
 			>
 				{data!.map((row) => (
 					<ListItem key={row.name}>
