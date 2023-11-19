@@ -97,15 +97,13 @@
 }
 
 .nameValueCard {
+	color: $primary;
+
 	ul {
 		grid-column: 2;
 		overflow: scroll;
 		max-height: 90%;
 		color: $secondary;
-	}
-
-	.name {
-		color: $primary;
 	}
 }
 

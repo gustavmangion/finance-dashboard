@@ -147,7 +147,7 @@ export default function DashboardPage(): React.ReactNode {
 						data={cardTotalData}
 					/>
 					<NameValueListCard
-						title="Spend by Top Vendors"
+						title="Top Spend"
 						loading={highVenSpendIsLoading || highVenSpendIsFetching}
 						data={highVenSpendData}
 						width={2}

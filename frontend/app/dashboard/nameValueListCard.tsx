@@ -30,7 +30,7 @@ export default function NameValueListCard({
 
 	return (
 		<Card className={[styles.card, styles.nameValueCard].join(" ")}>
-			<CardContent className={[styles.medium, widthClass].join(" ")}>
+			<CardContent className={[styles.medium, styles.normalWide].join(" ")}>
 				<h4>{title}</h4>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />
@@ -55,8 +55,10 @@ export default function NameValueListCard({
 			>
 				{data!.map((row) => (
 					<ListItem key={row.name}>
-						<ListItemText className={styles.name} primary={row.name} />
-						<ListItemText primary={getMoneyFormat(row.value)} />
+						<ListItemText
+							primary={row.name}
+							secondary={getMoneyFormat(row.value)}
+						/>
 					</ListItem>
 				))}
 			</List>
