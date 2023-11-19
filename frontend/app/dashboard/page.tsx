@@ -91,12 +91,12 @@ export default function DashboardPage(): React.ReactNode {
 						current={
 							data === undefined
 								? NaN
-								: (data![1].current - data[2].current) / data[2].current
+								: (data![1].current - data[2].current) / data[1].current
 						}
 						previous={
 							data === undefined
 								? NaN
-								: (data![1].previous - data[2].previous) / data[2].previous
+								: (data![1].previous - data[2].previous) / data[1].previous
 						}
 						percentage
 						noData={

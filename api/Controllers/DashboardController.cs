@@ -88,19 +88,23 @@ namespace api.Controllers
                     TranType.Credit,
                     rate
                 );
-                debit.Current += GetAccountTransactionTotal(
-                    account,
-                    filter.From,
-                    filter.To,
-                    TranType.Debit,
-                    rate
+                debit.Current += Math.Abs(
+                    GetAccountTransactionTotal(
+                        account,
+                        filter.From,
+                        filter.To,
+                        TranType.Debit,
+                        rate
+                    )
                 );
-                debit.Previous += GetAccountTransactionTotal(
-                    account,
-                    filter.FromPreviousPeriod,
-                    filter.ToPreviousPeriod,
-                    TranType.Debit,
-                    rate
+                debit.Previous += Math.Abs(
+                    GetAccountTransactionTotal(
+                        account,
+                        filter.FromPreviousPeriod,
+                        filter.ToPreviousPeriod,
+                        TranType.Debit,
+                        rate
+                    )
                 );
             }
 
