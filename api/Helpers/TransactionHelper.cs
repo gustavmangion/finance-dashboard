@@ -88,18 +88,18 @@ namespace api.Helpers
         public static void getPurchase(string p1, Transaction transaction)
         {
             transaction.EnteredBank = getEnteredBank(p1);
-            if (Char.IsNumber(p1[p1.Length - 1]))
+
+            int cardRefStart = p1.Trim().LastIndexOf(" ") + 1;
+            string lastPiece = p1.Substring(cardRefStart);
+            while (!Char.IsNumber(lastPiece[0]))
             {
-                transaction.Description = RemoveExtraSpaces(p1.Substring(20, p1.Length - 31));
-                transaction.CardNo = p1.Substring(p1.Length - 10, 4);
-                transaction.Reference = p1.Substring(p1.Length - 6, 6);
+                cardRefStart++;
+                lastPiece = p1.Substring(cardRefStart);
             }
-            else
-            {
-                transaction.Description = RemoveExtraSpaces(p1.Substring(20, p1.Length - 32));
-                transaction.CardNo = p1.Substring(p1.Length - 12, 4);
-                transaction.Reference = p1.Substring(p1.Length - 8, 8);
-            }
+
+            transaction.Description = RemoveExtraSpaces(p1.Substring(20, cardRefStart - 20));
+            transaction.CardNo = lastPiece.Substring(0, 4);
+            transaction.Reference = lastPiece.Substring(4);
             transaction.Category = TranCategory.Purchase;
         }
 
