@@ -23,3 +23,8 @@ export class FilterModel {
 		this.portfolioId = portfolioId === "All" ? undefined : portfolioId;
 	}
 }
+
+export interface NameValueModel {
+	name: string;
+	value: number;
+}

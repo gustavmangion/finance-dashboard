@@ -123,5 +123,53 @@ namespace api.Controllers
                     .Where(x => x.Type == tranType && x.Date >= from && x.Date <= to)
                     .Sum(x => x.Amount) * (1 / rate);
         }
+
+        [HttpGet("TotalByCard")]
+        public ActionResult GetTotalByCard([FromQuery] DashboardFilterModel filter)
+        {
+            string userId = GetUserIdFromToken();
+
+            List<Account> accounts = _accountRepository.GetAccounts(userId);
+            if (filter.PortfolioId.HasValue)
+                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
+
+            List<Currency> rates = _currencyRepository.GetRates(
+                filter.BaseCurrency,
+                accounts.Select(x => x.Currency).ToList()
+            );
+
+            List<DashboarNameValueCardModel> data = new List<DashboarNameValueCardModel>();
+            foreach (Account account in accounts)
+            {
+                decimal rate;
+
+                if (account.Currency == filter.BaseCurrency)
+                    rate = 1;
+                else
+                    rate = rates.Where(x => x.To == account.Currency).First().Value;
+
+                data.AddRange(
+                    account.Transactions
+                        .Where(
+                            x =>
+                                x.Date >= filter.From
+                                && x.Date <= filter.To
+                                && !string.IsNullOrEmpty(x.CardNo)
+                        )
+                        .GroupBy(x => x.CardNo)
+                        .Select(
+                            y =>
+                                new DashboarNameValueCardModel
+                                {
+                                    Name = y.First().CardNo,
+                                    Value = y.Sum(z => z.Amount) * -1 * (1 / rate)
+                                }
+                        )
+                        .ToList()
+                );
+            }
+
+            return Ok(data.OrderByDescending(x => x.Value));
+        }
     }
 }

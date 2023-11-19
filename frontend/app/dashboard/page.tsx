@@ -6,12 +6,16 @@ import { useSecurePage } from "../hooks/authHook";
 import { useEffect, useState } from "react";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import NumberCard from "./numberCard";
-import { useGetOverviewCardsQuery } from "../apis/base/dashboard/dashboardService";
+import {
+	useGetOverviewCardsQuery,
+	useGetTotalByCardQuery,
+} from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/dashboard.module.scss";
 import FilterPanel from "./filterPanel";
 import dayjs from "dayjs";
 import { FilterModel } from "../apis/base/dashboard/types";
+import NameValueListCard from "./nameValueListCard";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -34,7 +38,18 @@ export default function DashboardPage(): React.ReactNode {
 		filterState.portfolioId
 	);
 
-	const { isLoading, isFetching, data } = useGetOverviewCardsQuery({
+	const {
+		isLoading: overviewIsLoading,
+		isFetching: overviewIsFetching,
+		data: overviewData,
+	} = useGetOverviewCardsQuery({
+		...filterModel,
+	});
+	const {
+		isLoading: cardTotalIsLoading,
+		isFetching: cardTotalIsFetching,
+		data: cardTotalData,
+	} = useGetTotalByCardQuery({
 		...filterModel,
 	});
 	const authStatus = useSecurePage();
@@ -58,54 +73,71 @@ export default function DashboardPage(): React.ReactNode {
 				<div className={styles.mainCardLayout}>
 					<NumberCard
 						title="Total"
-						loading={isLoading || isFetching}
-						current={data === undefined ? NaN : data[0].current}
-						previous={data === undefined ? NaN : data![0].previous}
+						loading={overviewIsLoading || overviewIsFetching}
+						current={overviewData === undefined ? NaN : overviewData[0].current}
+						previous={
+							overviewData === undefined ? NaN : overviewData![0].previous
+						}
 					/>
 					<NumberCard
 						title="Credit"
-						loading={isLoading || isFetching}
-						current={data === undefined ? NaN : data![1].current}
-						previous={data === undefined ? NaN : data![1].previous}
+						loading={overviewIsLoading || overviewIsFetching}
+						current={
+							overviewData === undefined ? NaN : overviewData![1].current
+						}
+						previous={
+							overviewData === undefined ? NaN : overviewData![1].previous
+						}
 						noData={
-							data !== undefined &&
-							data[1].current === 0 &&
-							data[2].current === 0
+							overviewData !== undefined &&
+							overviewData[1].current === 0 &&
+							overviewData[2].current === 0
 						}
 					/>
 					<NumberCard
 						title="Debit"
-						loading={isLoading || isFetching}
-						current={data === undefined ? NaN : data![2].current}
-						previous={data === undefined ? NaN : data![2].previous}
+						loading={overviewIsLoading || overviewIsFetching}
+						current={
+							overviewData === undefined ? NaN : overviewData![2].current
+						}
+						previous={
+							overviewData === undefined ? NaN : overviewData![2].previous
+						}
 						inverseTrend
 						noData={
-							data !== undefined &&
-							data[1].current === 0 &&
-							data[2].current === 0
+							overviewData !== undefined &&
+							overviewData[1].current === 0 &&
+							overviewData[2].current === 0
 						}
 					/>
 					<NumberCard
 						title="Savings"
-						loading={isLoading || isFetching}
+						loading={overviewIsLoading || overviewIsFetching}
 						current={
-							data === undefined
+							overviewData === undefined
 								? NaN
-								: (data![1].current - data[2].current) / data[1].current
+								: (overviewData![1].current - overviewData[2].current) /
+								  overviewData[1].current
 						}
 						previous={
-							data === undefined
+							overviewData === undefined
 								? NaN
-								: (data![1].previous - data[2].previous) / data[1].previous
+								: (overviewData![1].previous - overviewData[2].previous) /
+								  overviewData[1].previous
 						}
 						percentage
 						noData={
-							data !== undefined &&
-							data[1].current === 0 &&
-							data[2].current === 0
+							overviewData !== undefined &&
+							overviewData[1].current === 0 &&
+							overviewData[2].current === 0
 						}
 					/>
 				</div>
+				<NameValueListCard
+					title="Spend by Card"
+					loading={cardTotalIsFetching || cardTotalIsLoading}
+					data={cardTotalData}
+				/>
 			</div>
 		);
 	}
