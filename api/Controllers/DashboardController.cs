@@ -198,6 +198,59 @@ namespace api.Controllers
             );
         }
 
+        [HttpGet("ExpenseBreakdown")]
+        public ActionResult GetExpenseBreakdown([FromQuery] DashboardFilterModel filter)
+        {
+            if (IsFilterInvalid(filter))
+                return BadRequest(ModelState);
+
+            List<Account> accounts = GetAccounts(filter);
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
+            List<DashboarNameValueCardModel> data = new List<DashboarNameValueCardModel>();
+
+            List<string> accountCurrencies = accounts.Select(x => x.Currency).Distinct().ToList();
+            foreach (string currency in accountCurrencies)
+            {
+                decimal rate = GetRate(rates, currency, filter.BaseCurrency);
+
+                data.AddRange(
+                    accounts
+                        .Where(x => x.Currency == currency)
+                        .SelectMany(y => y.Transactions)
+                        .Where(
+                            z =>
+                                z.Date >= filter.From
+                                && z.Date <= filter.To
+                                && z.Type == TranType.Debit
+                        )
+                        .GroupBy(z => z.Category)
+                        .Select(
+                            a =>
+                                new DashboarNameValueCardModel
+                                {
+                                    Name = a.First().Category.ToString(),
+                                    Value = Math.Abs(a.Sum(b => b.Amount * (1 / rate))),
+                                }
+                        )
+                        .ToList()
+                );
+            }
+
+            return Ok(
+                data.GroupBy(x => x.Name)
+                    .Select(
+                        y =>
+                            new DashboarNameValueCardModel
+                            {
+                                Name = y.First().Name,
+                                Value = y.Sum(z => z.Value)
+                            }
+                    )
+                    .OrderByDescending(a => a.Value)
+                    .ToList()
+            );
+        }
+
         private bool IsFilterInvalid(DashboardFilterModel filter)
         {
             string userId = GetUserIdFromToken();

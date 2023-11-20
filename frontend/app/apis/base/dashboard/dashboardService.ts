@@ -36,6 +36,14 @@ export const dashboardApi = createApi({
 			}),
 			providesTags: ["dashboard"],
 		}),
+		getExpenseBreakdown: builder.query<NameValueModel[], FilterModel>({
+			query: (filter: FilterModel) => ({
+				url: "/expensebreakdown",
+				method: "GET",
+				params: { ...filter },
+			}),
+			providesTags: ["dashboard"],
+		}),
 	}),
 });
 
@@ -43,4 +51,5 @@ export const {
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
 	useGetHighestSpendByVendorQuery,
+	useGetExpenseBreakdownQuery,
 } = dashboardApi;

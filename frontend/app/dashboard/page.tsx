@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import LoadingSkeleton from "../components/loadingSkeleton";
 import NumberCard from "./numberCard";
 import {
+	useGetExpenseBreakdownQuery,
 	useGetHighestSpendByVendorQuery,
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
@@ -17,6 +18,7 @@ import FilterPanel from "./filterPanel";
 import dayjs from "dayjs";
 import { FilterModel } from "../apis/base/dashboard/types";
 import NameValueListCard from "./nameValueListCard";
+import DonutCard from "./donutCard";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -58,6 +60,11 @@ export default function DashboardPage(): React.ReactNode {
 		isFetching: highVenSpendIsFetching,
 		data: highVenSpendData,
 	} = useGetHighestSpendByVendorQuery({ ...filterModel });
+	const {
+		isLoading: expBrkIsLoading,
+		isFetching: expBrkIsFetching,
+		data: expBrkData,
+	} = useGetExpenseBreakdownQuery({ ...filterModel });
 
 	const authStatus = useSecurePage();
 	useEffect(() => {
@@ -151,6 +158,13 @@ export default function DashboardPage(): React.ReactNode {
 						loading={highVenSpendIsLoading || highVenSpendIsFetching}
 						data={highVenSpendData}
 						width={2}
+					/>
+				</div>
+				<div className={styles.cardLayout}>
+					<DonutCard
+						title="Expenses"
+						loading={expBrkIsLoading || expBrkIsFetching}
+						data={expBrkData}
 					/>
 				</div>
 			</div>
