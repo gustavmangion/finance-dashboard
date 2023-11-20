@@ -74,7 +74,7 @@ export default function NameValueListCard({
 							</Button>
 						</div>
 					</div>
-					{getModalList()}
+					{data !== undefined ? getModalList() : null}
 				</Paper>
 			</Modal>
 		</Card>
