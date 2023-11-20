@@ -33,7 +33,7 @@ export default function DonutCard({ title, loading, data }: Props) {
 			? []
 			: data.map((row) => {
 					return [
-						row.name,
+						row.name.replace(/([A-Z])/g, " $1").trim(),
 						parseFloat((Math.round(row.value * 100) / 100).toString()),
 					];
 			  });
