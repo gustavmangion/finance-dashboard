@@ -8,13 +8,13 @@ import {
 } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import materialStyles from "../styles/material.module.scss";
-import Chart from "react-google-charts";
-import { NameValueModel } from "../apis/base/dashboard/types";
-import LoadError from "./loadError";
-import NoData from "./noData";
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { useState } from "react";
+import { NameValueModel } from "../apis/base/dashboard/types";
+import LoadError from "./loadError";
+import NoData from "./noData";
+import Chart from "react-google-charts";
 import { useMeasure } from "@uidotdev/usehooks";
 
 type Props = {
@@ -23,20 +23,27 @@ type Props = {
 	data: NameValueModel[] | undefined;
 };
 
-export default function DonutCard({ title, loading, data }: Props) {
+export default function BarCard({ title, loading, data }: Props) {
 	const [expanded, setExpanded] = useState(false);
 	const [ref, { width, height }] = useMeasure();
 
-	const chartHeader = [["Expense", "Amount"]];
+	const chartHeader = [
+		[
+			{ type: "date", id: "Date" },
+			{ type: "number", id: "Debit" },
+		],
+	];
+
 	const chartData =
 		data === undefined
 			? []
 			: data.map((row) => {
 					return [
-						row.name.replace(/([A-Z])/g, " $1").trim(),
+						new Date(row.name.split("/").reverse().join("/")),
 						parseFloat((Math.round(row.value * 100) / 100).toString()),
 					];
 			  });
+
 	return (
 		<Card className={styles.card}>
 			<CardContent
@@ -56,11 +63,11 @@ export default function DonutCard({ title, loading, data }: Props) {
 					<NoData />
 				) : (
 					<Chart
-						chartType="PieChart"
+						chartLanguage="en-GB"
+						chartType="Bar"
 						data={[...chartHeader, ...chartData]}
 						options={{
-							chartArea: { width: "100%", height: "90%" },
-							pieHole: 0.4,
+							legend: { position: "none" },
 						}}
 					/>
 				)}
@@ -79,12 +86,11 @@ export default function DonutCard({ title, loading, data }: Props) {
 						<div ref={ref} style={{ height: "100%", paddingBottom: "1em" }}>
 							{data !== undefined ? (
 								<Chart
-									chartType="PieChart"
+									chartLanguage="en-GB"
+									chartType="Bar"
 									data={[...chartHeader, ...chartData]}
 									options={{
-										chartArea: { width: "100%", height: "90%" },
-										pieHole: 0.4,
-										legend: { position: "labeled" },
+										legend: { position: "none" },
 										height: height! / 1.1,
 										width: width!,
 									}}

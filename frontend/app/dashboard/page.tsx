@@ -8,6 +8,7 @@ import LoadingSkeleton from "../components/loadingSkeleton";
 import NumberCard from "./numberCard";
 import {
 	useGetExpenseBreakdownQuery,
+	useGetExpenseByDateQuery,
 	useGetHighestSpendByVendorQuery,
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
@@ -19,6 +20,7 @@ import dayjs from "dayjs";
 import { FilterModel } from "../apis/base/dashboard/types";
 import NameValueListCard from "./nameValueListCard";
 import DonutCard from "./donutCard";
+import BarCard from "./barCard";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -65,6 +67,11 @@ export default function DashboardPage(): React.ReactNode {
 		isFetching: expBrkIsFetching,
 		data: expBrkData,
 	} = useGetExpenseBreakdownQuery({ ...filterModel });
+	const {
+		isLoading: expDateIsLoading,
+		isFetching: expDateIsFetching,
+		data: expDateData,
+	} = useGetExpenseByDateQuery({ ...filterModel });
 
 	const authStatus = useSecurePage();
 	useEffect(() => {
@@ -165,6 +172,11 @@ export default function DashboardPage(): React.ReactNode {
 						title="Expenses"
 						loading={expBrkIsLoading || expBrkIsFetching}
 						data={expBrkData}
+					/>
+					<BarCard
+						title="Expenses by Date"
+						loading={expDateIsLoading || expDateIsFetching}
+						data={expDateData}
 					/>
 				</div>
 			</div>
