@@ -38,23 +38,10 @@ namespace api.Controllers
         [HttpGet("OverviewCards")]
         public ActionResult GetOverviewCards([FromQuery] DashboardFilterModel filter)
         {
-            string userId = GetUserIdFromToken();
-
-            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
-                ModelState.AddModelError("message", "Currency does not exist");
-            if (
-                filter.PortfolioId.HasValue
-                && !_portfolioRepository.PortfolioExists(userId, filter.PortfolioId.Value)
-            )
-                ModelState.AddModelError("message", "Portfolio does not exist");
-
-            if (!ModelState.IsValid)
+            if (IsFilterInvalid(filter))
                 return BadRequest(ModelState);
 
-            List<Account> accounts = _accountRepository.GetAccounts(userId);
-            if (filter.PortfolioId.HasValue)
-                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
-
+            List<Account> accounts = GetAccounts(filter);
             List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
 
             DashboardNumberCardModel all = new DashboardNumberCardModel();
@@ -122,12 +109,10 @@ namespace api.Controllers
         [HttpGet("TotalByCard")]
         public ActionResult GetTotalByCard([FromQuery] DashboardFilterModel filter)
         {
-            string userId = GetUserIdFromToken();
+            if (IsFilterInvalid(filter))
+                return BadRequest(ModelState);
 
-            List<Account> accounts = _accountRepository.GetAccounts(userId);
-            if (filter.PortfolioId.HasValue)
-                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
-
+            List<Account> accounts = GetAccounts(filter);
             List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
 
             List<DashboarNameValueCardModel> data = new List<DashboarNameValueCardModel>();
@@ -162,12 +147,10 @@ namespace api.Controllers
         [HttpGet("HighestSpendByVendor")]
         public IActionResult GetHighestSpend([FromQuery] DashboardFilterModel filter)
         {
-            string userId = GetUserIdFromToken();
+            if (IsFilterInvalid(filter))
+                return BadRequest(ModelState);
 
-            List<Account> accounts = _accountRepository.GetAccounts(userId);
-            if (filter.PortfolioId.HasValue)
-                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
-
+            List<Account> accounts = GetAccounts(filter);
             List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
             List<DashboarNameValueCardModel> data = new List<DashboarNameValueCardModel>();
 
@@ -213,6 +196,32 @@ namespace api.Controllers
                     .Take(30)
                     .ToList()
             );
+        }
+
+        private bool IsFilterInvalid(DashboardFilterModel filter)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
+            if (
+                filter.PortfolioId.HasValue
+                && !_portfolioRepository.PortfolioExists(userId, filter.PortfolioId.Value)
+            )
+                ModelState.AddModelError("message", "Portfolio does not exist");
+
+            return !ModelState.IsValid;
+        }
+
+        private List<Account> GetAccounts(DashboardFilterModel filter)
+        {
+            string userId = GetUserIdFromToken();
+
+            List<Account> accounts = _accountRepository.GetAccounts(userId);
+            if (filter.PortfolioId.HasValue)
+                accounts = accounts.Where(x => x.PortfolioId == filter.PortfolioId.Value).ToList();
+
+            return accounts;
         }
 
         private decimal GetRate(List<Currency> rates, string accountCurrency, string filterCurrency)
