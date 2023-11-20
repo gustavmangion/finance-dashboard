@@ -15,6 +15,7 @@ import NoData from "./noData";
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { useState } from "react";
+import { useMeasure } from "@uidotdev/usehooks";
 
 type Props = {
 	title: string;
@@ -24,6 +25,7 @@ type Props = {
 
 export default function DonutCard({ title, loading, data }: Props) {
 	const [expanded, setExpanded] = useState(false);
+	const [ref, { width, height }] = useMeasure();
 
 	const chartHeader = [["Expense", "Amount"]];
 	const chartData =
@@ -49,37 +51,47 @@ export default function DonutCard({ title, loading, data }: Props) {
 				) : data.length === 0 ? (
 					<NoData />
 				) : (
-					GetChart()
+					<Chart
+						chartType="PieChart"
+						data={[...chartHeader, ...chartData]}
+						options={{
+							chartArea: { width: "100%", height: "90%" },
+							pieHole: 0.4,
+						}}
+					/>
 				)}
 			</CardContent>
 			<Modal open={expanded} onClose={() => setExpanded(false)}>
 				<Paper className={[materialStyles.modal, styles.expandList].join(" ")}>
-					<div className={styles.header}>
-						<h3>{title}</h3>
-						<div>
-							<Button size="small" onClick={() => setExpanded(false)}>
-								<CloseIcon />
-							</Button>
+					<div className={materialStyles.wide}>
+						<div className={styles.header}>
+							<h3>{title}</h3>
+							<div>
+								<Button size="small" onClick={() => setExpanded(false)}>
+									<CloseIcon />
+								</Button>
+							</div>
+						</div>
+						<div ref={ref} style={{ height: "100%", paddingBottom: "1em" }}>
+							{data !== undefined ? (
+								<Chart
+									chartType="PieChart"
+									data={[...chartHeader, ...chartData]}
+									options={{
+										chartArea: { width: "100%", height: "90%" },
+										pieHole: 0.4,
+										legend: { position: "labeled" },
+										height: height! / 1.1,
+										width: width!,
+									}}
+								/>
+							) : null}
 						</div>
 					</div>
-					{data !== undefined ? GetChart() : null}
 				</Paper>
 			</Modal>
 		</Card>
 	);
-
-	function GetChart() {
-		return (
-			<Chart
-				chartType="PieChart"
-				data={[...chartHeader, ...chartData]}
-				options={{
-					chartArea: { width: "100%", height: "90%" },
-					pieHole: 0.4,
-				}}
-			/>
-		);
-	}
 
 	function handleExpandClick() {
 		if (!loading) setExpanded(true);
