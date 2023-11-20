@@ -65,6 +65,31 @@
 	}
 }
 
+.expandIcon {
+	width: 0.5em !important;
+	margin-left: 0.2em;
+	cursor: pointer;
+}
+
+.expandList {
+	max-height: 70vh;
+
+	.header {
+		display: grid;
+		grid-template-columns: 1fr 2fr 1fr;
+		width: 100%;
+
+		h3 {
+			grid-column: 2;
+			text-align: center;
+		}
+
+		div {
+			justify-self: end;
+		}
+	}
+}
+
 .numberCard {
 	div:nth-child(1) {
 		display: grid;
