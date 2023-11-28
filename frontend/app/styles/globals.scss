@@ -146,3 +146,9 @@ input {
 .MuiLinearProgress-root {
 	color: $primary;
 }
+
+// /--------------Google Chart----------------------/
+
+svg > g > g.google-visualization-tooltip {
+	pointer-events: none;
+}

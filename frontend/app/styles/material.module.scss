@@ -14,6 +14,14 @@
 	transform: translate(-50%, -50%);
 	padding: 2em;
 	outline: none;
+
+	.wide {
+		width: 90vw;
+		height: 80vh;
+		// @media (min-width: $mobile-screen-width) {
+		// 	width: 60em;
+		// }
+	}
 }
 
 .buttonsContainer {

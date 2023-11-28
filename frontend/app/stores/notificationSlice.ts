@@ -10,7 +10,7 @@ export type NotificationState = {
 const initialState = {
 	open: false,
 	message: "",
-	type: NotificationType.Info,
+	type: "info",
 } as NotificationState;
 
 export const notification = createSlice({

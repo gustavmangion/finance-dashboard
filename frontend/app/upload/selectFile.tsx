@@ -3,6 +3,10 @@ import materialStyles from "../styles/material.module.scss";
 import styles from "../styles/upload.module.scss";
 import { ChangeEvent, useState } from "react";
 import { LoadingButton } from "@mui/lab";
+import { dashboardApi } from "../apis/base/dashboard/dashboardService";
+import { useDispatch } from "react-redux";
+import { transactionApi } from "../apis/base/transaction/transactionService";
+import { accountApi } from "../apis/base/account/accountService";
 
 type Props = {
 	setUploadFiles: (val: File[]) => void;
@@ -23,6 +27,7 @@ export default function SelectFile({ setUploadFiles }: Props) {
 
 	const [loading, setLoading] = useState(false);
 	const [uploadError, setUploadError] = useState("");
+	const dispatch = useDispatch();
 
 	return (
 		<div className={styles.upload}>
@@ -57,6 +62,9 @@ export default function SelectFile({ setUploadFiles }: Props) {
 				}
 			}
 
+			dispatch(dashboardApi.util.invalidateTags(["dashboard"]));
+			dispatch(transactionApi.util.invalidateTags(["transactions"]));
+			dispatch(accountApi.util.invalidateTags(["accounts"]));
 			setUploadFiles(files);
 		} else setUploadError("File wasn't upload, please try again");
 	}

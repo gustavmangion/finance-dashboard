@@ -19,6 +19,7 @@ namespace api.Contexts
         public DbSet<StatementCode> StatementCodes { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<StatementAccount> StatementAccounts { get; set; }
+        public DbSet<Currency> Currencies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
