@@ -68,7 +68,7 @@ namespace api.Controllers
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
-            HandleGapsBetweenStatements(statement);
+            HandleGapsBetweenStatements(accounts, statement);
             _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
 
@@ -142,7 +142,7 @@ namespace api.Controllers
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
-            HandleGapsBetweenStatements(statement);
+            HandleGapsBetweenStatements(accounts, statement);
             _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
 
@@ -205,7 +205,7 @@ namespace api.Controllers
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
-            HandleGapsBetweenStatements(statement);
+            HandleGapsBetweenStatements(accounts, statement);
             _accountRepository.SaveChanges();
             DeleteStatementFile(model.UploadId, path);
 
@@ -365,13 +365,55 @@ namespace api.Controllers
             }
         }
 
-        private void HandleGapsBetweenStatements(Statement statement)
+        private void HandleGapsBetweenStatements(List<Account> accounts, Statement statement)
         {
-            Statement? previousStatement = _accountRepository.GetPreviousStatement(
-                statement.From.Value
-            );
+            List<string?> accountNumbers = statement.StatementAccounts
+                .Select(x => x.Account)
+                .Select(x => x.AccountNumber)
+                .ToList();
+            List<Account> accountsInStatement = accounts
+                .Where(x => accountNumbers.Contains(x.AccountNumber))
+                .ToList();
+
+            Statement? previousStatement = new Statement() { From = DateOnly.MinValue };
+            Statement? nextStatement = new Statement() { From = DateOnly.MaxValue };
+
+            foreach (Account account in accountsInStatement)
+            {
+                Statement? statementToCheck = account.AccountStatements
+                    .Select(x => x.Statement)
+                    .Where(y => y.From < statement.From)
+                    .OrderByDescending(y => y.From)
+                    .FirstOrDefault();
+                if (statementToCheck != null && statementToCheck.From > previousStatement.From)
+                {
+                    previousStatement = statementToCheck;
+                    if (previousStatement.To == statement.From.Value.AddDays(-1))
+                        break;
+                }
+            }
+
+            foreach (Account account in accountsInStatement)
+            {
+                Statement? statementToCheck = account.AccountStatements
+                    .Select(x => x.Statement)
+                    .Where(y => y.From > statement.From)
+                    .OrderBy(y => y.From)
+                    .FirstOrDefault();
+                if (statementToCheck != null && statementToCheck.From < nextStatement.From)
+                {
+                    nextStatement = statementToCheck;
+                    if (statement.To == nextStatement.From.Value.AddDays(-1))
+                        break;
+                }
+            }
+
+            if (previousStatement.From == DateOnly.MinValue)
+                previousStatement = null;
+            if (nextStatement.To == DateOnly.MaxValue)
+                nextStatement = null;
+
             List<Transaction> fillers = HandleGapBeforeStatement(statement, previousStatement);
-            Statement? nextStatement = _accountRepository.GetNextStatement(statement.To.Value);
             if (nextStatement != null)
                 fillers.AddRange(HandleGapAfterStatement(statement, nextStatement));
             _accountRepository.AddTransactions(fillers);
