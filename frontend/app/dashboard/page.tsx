@@ -21,6 +21,7 @@ import { FilterModel } from "../apis/base/dashboard/types";
 import NameValueListCard from "./nameValueListCard";
 import DonutCard from "./donutCard";
 import BarCard from "./barCard";
+import LineCard from "./lineCard";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -173,7 +174,7 @@ export default function DashboardPage(): React.ReactNode {
 						loading={expBrkIsLoading || expBrkIsFetching}
 						data={expBrkData}
 					/>
-					<BarCard
+					<LineCard
 						title="Expenses by Date"
 						loading={expDateIsLoading || expDateIsFetching}
 						data={expDateData}
