@@ -6,7 +6,7 @@ namespace api.Entities
     {
         public string Id { get; set; }
         public DateOnly Joined { get; set; } = DateOnly.FromDateTime(DateTime.Now);
-        public string BaseCurrency { get; set; }
+        public string BaseCurrency { get; set; } = "EUR";
 
         public virtual List<UserPortfolio> UserPortfolios { get; set; } = new List<UserPortfolio>();
     }
