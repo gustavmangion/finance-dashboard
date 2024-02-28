@@ -7,7 +7,7 @@ import React from "react";
 import Footer from "./components/footer";
 import Notification from "./components/notification";
 
-const inter = Roboto({ weight: "400", subsets: ["latin"] });
+const inter = Roboto({ weight: "300", subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "QazQuz - Finance Dashboard",
