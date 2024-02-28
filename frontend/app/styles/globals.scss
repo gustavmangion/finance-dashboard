@@ -12,6 +12,7 @@ body {
 	flex-direction: column;
 	width: 100%;
 	height: 100vh;
+	font-family: ;
 }
 
 main {
@@ -150,10 +151,4 @@ input {
 
 .MuiLinearProgress-root {
 	color: $primary;
-}
-
-// /--------------Google Chart----------------------/
-
-svg > g > g.google-visualization-tooltip {
-	pointer-events: none;
 }
