@@ -1,13 +1,13 @@
 import "./styles/globals.scss";
 import type { Metadata } from "next";
-import { Nunito_Sans } from "next/font/google";
+import { Roboto } from "next/font/google";
 import Providers from "./components/provider";
 import Navbar from "./components/navbar";
 import React from "react";
 import Footer from "./components/footer";
 import Notification from "./components/notification";
 
-const inter = Nunito_Sans({ subsets: ["latin"] });
+const inter = Roboto({ weight: "300", subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "QazQuz - Finance Dashboard",
