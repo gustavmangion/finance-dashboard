@@ -14,8 +14,21 @@ import { useState } from "react";
 import { NameValueModel } from "../apis/base/dashboard/types";
 import LoadError from "./loadError";
 import NoData from "./noData";
-import Chart from "react-google-charts";
-import { useMeasure } from "@uidotdev/usehooks";
+import {
+	CartesianGrid,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	Tooltip,
+	TooltipProps,
+	XAxis,
+	YAxis,
+} from "recharts";
+import {
+	NameType,
+	ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
+import { getMoneyFormat } from "../helpers/moneyHelper";
 
 type Props = {
 	title: string;
@@ -25,29 +38,38 @@ type Props = {
 
 export default function LineCard({ title, loading, data }: Props) {
 	const [expanded, setExpanded] = useState(false);
-	const [ref, { width, height }] = useMeasure();
-
-	const chartHeader = [
-		[
-			// { type: "date", label: "Date" },
-			// { type: "number", id: "Debit" },
-			"Date",
-			"Debit",
-		],
-	];
 
 	const chartData =
 		data === undefined
 			? []
 			: data
 					.map((row) => {
-						return [
-							new Date(row.name.split("/").reverse().join("/")),
-							parseFloat((Math.round(row.value * 100) / 100).toString()),
-						];
+						return {
+							name: new Date(row.name.split("/").reverse().join("/")),
+							value: parseFloat((Math.round(row.value * 100) / 100).toString()),
+						};
 					})
-					.sort((x, y) => x[0].valueOf() - y[0].valueOf());
-	console.log(chartData);
+					.sort((x, y) => x.name.valueOf() - y.name.valueOf());
+
+	const CustomToolTip = ({
+		active,
+		payload,
+		label,
+	}: TooltipProps<ValueType, NameType>) => {
+		if (active && payload && payload.length) {
+			const value = getMoneyFormat(+payload[0].value!);
+			return (
+				<div>
+					{label instanceof Date ? (
+						<p>{`${label.toLocaleDateString()}: ${value}`}</p>
+					) : (
+						<p>{`${label}: ${value}`}</p>
+					)}
+				</div>
+			);
+		}
+	};
+
 	return (
 		<Card className={styles.card}>
 			<CardContent
@@ -66,14 +88,7 @@ export default function LineCard({ title, loading, data }: Props) {
 				) : data.length === 0 ? (
 					<NoData />
 				) : (
-					<Chart
-						chartLanguage="en-GB"
-						chartType="Line"
-						data={[...chartHeader, ...chartData]}
-						options={{
-							legend: { position: "none" },
-						}}
-					/>
+					getChart()
 				)}
 			</CardContent>
 			<Modal open={expanded} onClose={() => setExpanded(false)}>
@@ -87,20 +102,7 @@ export default function LineCard({ title, loading, data }: Props) {
 								</Button>
 							</div>
 						</div>
-						<div ref={ref} style={{ height: "100%", paddingBottom: "1em" }}>
-							{data !== undefined ? (
-								<Chart
-									chartLanguage="en-GB"
-									chartType="Bar"
-									data={[...chartHeader, ...chartData]}
-									options={{
-										legend: { position: "none" },
-										height: height! / 1.1,
-										width: width!,
-									}}
-								/>
-							) : null}
-						</div>
+						{data !== undefined ? getChart() : null}
 					</div>
 				</Paper>
 			</Modal>
@@ -109,5 +111,24 @@ export default function LineCard({ title, loading, data }: Props) {
 
 	function handleExpandClick() {
 		if (!loading) setExpanded(true);
+	}
+
+	function getChart() {
+		return (
+			<ResponsiveContainer width="100%" height="100%">
+				<LineChart data={chartData}>
+					<Line type="monotone" dataKey="value" stroke="#1c5d99" />
+					<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+					<XAxis dataKey="name" tickFormatter={formatXAxis} />
+					<YAxis />
+					<Tooltip content={<CustomToolTip />} />
+				</LineChart>
+			</ResponsiveContainer>
+		);
+	}
+
+	function formatXAxis(item: any) {
+		if (item instanceof Date) return item.toLocaleDateString();
+		return item;
 	}
 }
