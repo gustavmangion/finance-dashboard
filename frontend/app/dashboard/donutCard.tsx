@@ -8,14 +8,13 @@ import {
 } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import materialStyles from "../styles/material.module.scss";
-import Chart from "react-google-charts";
+import { PieChart, Pie, ResponsiveContainer, Cell, Legend } from "recharts";
 import { NameValueModel } from "../apis/base/dashboard/types";
 import LoadError from "./loadError";
 import NoData from "./noData";
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { useState } from "react";
-import { useMeasure } from "@uidotdev/usehooks";
 
 type Props = {
 	title: string;
@@ -25,17 +24,26 @@ type Props = {
 
 export default function DonutCard({ title, loading, data }: Props) {
 	const [expanded, setExpanded] = useState(false);
-	const [ref, { width, height }] = useMeasure();
+	const sliceColors = [
+		"#1c5d99",
+		"#dba11c",
+		"#00aea3",
+		"#0084b6",
+		"#00a9b9",
+		"#00cba3",
+		"#8fe683",
+		"#4e62a7",
+		"#bf6bb4",
+	];
 
-	const chartHeader = [["Expense", "Amount"]];
 	const chartData =
 		data === undefined
 			? []
 			: data.map((row) => {
-					return [
-						row.name.replace(/([A-Z])/g, " $1").trim(),
-						parseFloat((Math.round(row.value * 100) / 100).toString()),
-					];
+					return {
+						name: row.name.replace(/([A-Z])/g, " $1").trim(),
+						value: parseFloat((Math.round(row.value * 100) / 100).toString()),
+					};
 			  });
 	return (
 		<Card className={styles.card}>
@@ -55,14 +63,7 @@ export default function DonutCard({ title, loading, data }: Props) {
 				) : data.length === 0 ? (
 					<NoData />
 				) : (
-					<Chart
-						chartType="PieChart"
-						data={[...chartHeader, ...chartData]}
-						options={{
-							chartArea: { width: "100%", height: "90%" },
-							pieHole: 0.4,
-						}}
-					/>
+					getChart(false)
 				)}
 			</CardContent>
 			<Modal open={expanded} onClose={() => setExpanded(false)}>
@@ -76,21 +77,7 @@ export default function DonutCard({ title, loading, data }: Props) {
 								</Button>
 							</div>
 						</div>
-						<div ref={ref} style={{ height: "100%", paddingBottom: "1em" }}>
-							{data !== undefined ? (
-								<Chart
-									chartType="PieChart"
-									data={[...chartHeader, ...chartData]}
-									options={{
-										chartArea: { width: "100%", height: "90%" },
-										pieHole: 0.4,
-										legend: { position: "labeled" },
-										height: height! / 1.1,
-										width: width!,
-									}}
-								/>
-							) : null}
-						</div>
+						{data !== undefined ? getChart(true) : null}
 					</div>
 				</Paper>
 			</Modal>
@@ -99,5 +86,30 @@ export default function DonutCard({ title, loading, data }: Props) {
 
 	function handleExpandClick() {
 		if (!loading) setExpanded(true);
+	}
+
+	function getChart(isExpanded: boolean) {
+		return (
+			<ResponsiveContainer height="100%">
+				<PieChart>
+					<Legend layout="horizontal" verticalAlign="top" align="center" />
+					<Pie
+						data={chartData}
+						dataKey="value"
+						nameKey="name"
+						innerRadius={50}
+						paddingAngle={isExpanded ? 4 : 8}
+						label
+					>
+						{chartData.map((entry, index) => (
+							<Cell
+								key={`cell-${index}`}
+								fill={sliceColors[index % sliceColors.length]}
+							/>
+						))}
+					</Pie>
+				</PieChart>
+			</ResponsiveContainer>
+		);
 	}
 }
