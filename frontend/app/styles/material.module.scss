@@ -16,6 +16,8 @@
 	outline: none;
 
 	.wide {
+		display: flex;
+		flex-direction: column;
 		width: 90vw;
 		height: 80vh;
 		// @media (min-width: $mobile-screen-width) {

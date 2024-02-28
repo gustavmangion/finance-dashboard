@@ -14,7 +14,15 @@ import { useState } from "react";
 import { NameValueModel } from "../apis/base/dashboard/types";
 import LoadError from "./loadError";
 import NoData from "./noData";
-import Chart from "react-google-charts";
+import {
+	CartesianGrid,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from "recharts";
 import { useMeasure } from "@uidotdev/usehooks";
 
 type Props = {
@@ -41,12 +49,12 @@ export default function LineCard({ title, loading, data }: Props) {
 			? []
 			: data
 					.map((row) => {
-						return [
-							new Date(row.name.split("/").reverse().join("/")),
-							parseFloat((Math.round(row.value * 100) / 100).toString()),
-						];
+						return {
+							name: new Date(row.name.split("/").reverse().join("/")),
+							value: parseFloat((Math.round(row.value * 100) / 100).toString()),
+						};
 					})
-					.sort((x, y) => x[0].valueOf() - y[0].valueOf());
+					.sort((x, y) => x.name.valueOf() - y.name.valueOf());
 	console.log(chartData);
 	return (
 		<Card className={styles.card}>
@@ -66,14 +74,15 @@ export default function LineCard({ title, loading, data }: Props) {
 				) : data.length === 0 ? (
 					<NoData />
 				) : (
-					<Chart
-						chartLanguage="en-GB"
-						chartType="Line"
-						data={[...chartHeader, ...chartData]}
-						options={{
-							legend: { position: "none" },
-						}}
-					/>
+					<ResponsiveContainer height="100%" width="100%">
+						<LineChart data={chartData}>
+							<Line type="monotone" dataKey="value" stroke="#8884d8" />
+							<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+							<XAxis dataKey="name" />
+							<YAxis />
+							<Tooltip />
+						</LineChart>
+					</ResponsiveContainer>
 				)}
 			</CardContent>
 			<Modal open={expanded} onClose={() => setExpanded(false)}>
@@ -87,20 +96,27 @@ export default function LineCard({ title, loading, data }: Props) {
 								</Button>
 							</div>
 						</div>
-						<div ref={ref} style={{ height: "100%", paddingBottom: "1em" }}>
-							{data !== undefined ? (
-								<Chart
-									chartLanguage="en-GB"
-									chartType="Bar"
-									data={[...chartHeader, ...chartData]}
-									options={{
-										legend: { position: "none" },
-										height: height! / 1.1,
-										width: width!,
-									}}
-								/>
-							) : null}
-						</div>
+						{/* <div
+							ref={ref}
+							style={
+								{
+									// height: "100%",
+									// paddingBottom: "1em",
+								}
+							}
+						> */}
+						{data !== undefined ? (
+							<ResponsiveContainer width="100%" height="100%">
+								<LineChart data={chartData}>
+									<Line type="monotone" dataKey="value" stroke="#8884d8" />
+									<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+									<XAxis dataKey="name" />
+									<YAxis />
+									<Tooltip />
+								</LineChart>
+							</ResponsiveContainer>
+						) : null}
+						{/* </div> */}
 					</div>
 				</Paper>
 			</Modal>
