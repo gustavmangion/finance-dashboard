@@ -20,9 +20,15 @@ import {
 	LineChart,
 	ResponsiveContainer,
 	Tooltip,
+	TooltipProps,
 	XAxis,
 	YAxis,
 } from "recharts";
+import {
+	NameType,
+	ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
+import { getMoneyFormat } from "../helpers/moneyHelper";
 
 type Props = {
 	title: string;
@@ -44,7 +50,26 @@ export default function LineCard({ title, loading, data }: Props) {
 						};
 					})
 					.sort((x, y) => x.name.valueOf() - y.name.valueOf());
-	console.log(chartData);
+
+	const CustomToolTip = ({
+		active,
+		payload,
+		label,
+	}: TooltipProps<ValueType, NameType>) => {
+		if (active && payload && payload.length) {
+			const value = getMoneyFormat(+payload[0].value!);
+			return (
+				<div>
+					{label instanceof Date ? (
+						<p>{`${label.toLocaleDateString()}: ${value}`}</p>
+					) : (
+						<p>{`${label}: ${value}`}</p>
+					)}
+				</div>
+			);
+		}
+	};
+
 	return (
 		<Card className={styles.card}>
 			<CardContent
@@ -63,15 +88,7 @@ export default function LineCard({ title, loading, data }: Props) {
 				) : data.length === 0 ? (
 					<NoData />
 				) : (
-					<ResponsiveContainer height="100%" width="100%">
-						<LineChart data={chartData}>
-							<Line type="monotone" dataKey="value" stroke="#8884d8" />
-							<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-							<XAxis dataKey="name" />
-							<YAxis />
-							<Tooltip />
-						</LineChart>
-					</ResponsiveContainer>
+					getChart()
 				)}
 			</CardContent>
 			<Modal open={expanded} onClose={() => setExpanded(false)}>
@@ -85,17 +102,7 @@ export default function LineCard({ title, loading, data }: Props) {
 								</Button>
 							</div>
 						</div>
-						{data !== undefined ? (
-							<ResponsiveContainer width="100%" height="100%">
-								<LineChart data={chartData}>
-									<Line type="monotone" dataKey="value" stroke="#8884d8" />
-									<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-									<XAxis dataKey="name" />
-									<YAxis />
-									<Tooltip />
-								</LineChart>
-							</ResponsiveContainer>
-						) : null}
+						{data !== undefined ? getChart() : null}
 					</div>
 				</Paper>
 			</Modal>
@@ -104,5 +111,24 @@ export default function LineCard({ title, loading, data }: Props) {
 
 	function handleExpandClick() {
 		if (!loading) setExpanded(true);
+	}
+
+	function getChart() {
+		return (
+			<ResponsiveContainer width="100%" height="100%">
+				<LineChart data={chartData}>
+					<Line type="monotone" dataKey="value" stroke="#1c5d99" />
+					<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+					<XAxis dataKey="name" tickFormatter={formatXAxis} />
+					<YAxis />
+					<Tooltip content={<CustomToolTip />} />
+				</LineChart>
+			</ResponsiveContainer>
+		);
+	}
+
+	function formatXAxis(item: any) {
+		if (item instanceof Date) return item.toLocaleDateString();
+		return item;
 	}
 }
