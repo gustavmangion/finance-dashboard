@@ -23,7 +23,6 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import { useMeasure } from "@uidotdev/usehooks";
 
 type Props = {
 	title: string;
@@ -33,16 +32,6 @@ type Props = {
 
 export default function LineCard({ title, loading, data }: Props) {
 	const [expanded, setExpanded] = useState(false);
-	const [ref, { width, height }] = useMeasure();
-
-	const chartHeader = [
-		[
-			// { type: "date", label: "Date" },
-			// { type: "number", id: "Debit" },
-			"Date",
-			"Debit",
-		],
-	];
 
 	const chartData =
 		data === undefined
@@ -96,15 +85,6 @@ export default function LineCard({ title, loading, data }: Props) {
 								</Button>
 							</div>
 						</div>
-						{/* <div
-							ref={ref}
-							style={
-								{
-									// height: "100%",
-									// paddingBottom: "1em",
-								}
-							}
-						> */}
 						{data !== undefined ? (
 							<ResponsiveContainer width="100%" height="100%">
 								<LineChart data={chartData}>
@@ -116,7 +96,6 @@ export default function LineCard({ title, loading, data }: Props) {
 								</LineChart>
 							</ResponsiveContainer>
 						) : null}
-						{/* </div> */}
 					</div>
 				</Paper>
 			</Modal>
