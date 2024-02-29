@@ -3,6 +3,7 @@ import {
 	Card,
 	CardContent,
 	CircularProgress,
+	IconButton,
 	List,
 	ListItem,
 	ListItemText,
@@ -24,6 +25,7 @@ import { getMoneyFormat } from "../helpers/moneyHelper";
 import { useState } from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseIcon from "@mui/icons-material/Close";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
 
 type Props = {
 	title: string;
@@ -31,6 +33,8 @@ type Props = {
 	data: NameValueModel[] | undefined;
 	width?: number;
 	disableExpand?: boolean;
+	drillDown?: boolean;
+	drillDownAction?: (id: string) => void;
 };
 
 export default function NameValueListCard({
@@ -39,6 +43,8 @@ export default function NameValueListCard({
 	data,
 	width = 1,
 	disableExpand = false,
+	drillDown = false,
+	drillDownAction,
 }: Props) {
 	let widthClass = styles.normalWide;
 	if (width === 2) widthClass = styles.doubleWide;
@@ -112,6 +118,9 @@ export default function NameValueListCard({
 						<TableRow>
 							<TableCell>Name</TableCell>
 							<TableCell>Amount</TableCell>
+							{drillDown && drillDownAction ? (
+								<TableCell>Details</TableCell>
+							) : null}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -119,6 +128,17 @@ export default function NameValueListCard({
 							<TableRow key={row.name}>
 								<TableCell>{row.name}</TableCell>
 								<TableCell>{getMoneyFormat(row.value)}</TableCell>
+								{drillDown && drillDownAction ? (
+									<TableCell>
+										<IconButton
+											size="small"
+											color="primary"
+											onClick={() => drillDownAction(row.name)}
+										>
+											<AnalyticsIcon />
+										</IconButton>
+									</TableCell>
+								) : null}
 							</TableRow>
 						))}
 					</TableBody>
