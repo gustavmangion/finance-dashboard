@@ -61,7 +61,8 @@ strong {
 	height: 100%;
 	padding: 1em;
 	text-align: center;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 
 	background: rgba(255, 255, 255, 0.62);
 	border-radius: 16px;
