@@ -22,8 +22,8 @@ import { FilterModel } from "../apis/base/dashboard/types";
 import NameValueListCard from "./nameValueListCard";
 import DonutCard from "./donutCard";
 import LineCard from "./lineCard";
-import TransactionModal from "./transactionModal";
 import Transaction from "../apis/base/transaction/types";
+import TransactionListModal from "./drilldown/transactionListModal";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -41,7 +41,7 @@ export default function DashboardPage(): React.ReactNode {
 	const [filterState, setFilterState] = useState(initialFilterState);
 
 	const [transactionDrillDownState, setTransactionDrillDownState] = useState({
-		expanded: false,
+		open: false,
 		title: "",
 		loading: false,
 		data: [] as Transaction[] | undefined,
@@ -90,6 +90,7 @@ export default function DashboardPage(): React.ReactNode {
 			setTransactionDrillDownState((state) => ({
 				...state,
 				data: cardTransResult.data,
+				loading: cardTransResult.isLoading || cardTransResult.isFetching,
 			}));
 	}, [cardTransResult]);
 
@@ -206,12 +207,12 @@ export default function DashboardPage(): React.ReactNode {
 					</div>
 				</div>
 				{transactionDrillDownState ? (
-					<TransactionModal
-						expanded={transactionDrillDownState.expanded}
+					<TransactionListModal
+						open={transactionDrillDownState.open}
 						title={transactionDrillDownState.title}
 						data={transactionDrillDownState.data}
 						loading={transactionDrillDownState.loading}
-						setExpanded={closeTransactionDrillDownModal}
+						setOpen={closeTransactionDrillDownModal}
 					/>
 				) : null}
 			</div>
@@ -238,7 +239,7 @@ export default function DashboardPage(): React.ReactNode {
 
 	function closeTransactionDrillDownModal() {
 		setTransactionDrillDownState({
-			expanded: false,
+			open: false,
 			data: [],
 			title: "",
 			loading: false,
@@ -256,9 +257,9 @@ export default function DashboardPage(): React.ReactNode {
 
 		cardTransTrigger({ ...filterModel });
 		setTransactionDrillDownState({
-			expanded: true,
-			title: `Transactions for card ${id}`,
-			loading: cardTransResult.isLoading || cardTransResult.isFetching,
+			open: true,
+			title: `Transactions for Card ${id}`,
+			loading: true,
 			data: cardTransResult.data,
 		});
 	}
