@@ -2,10 +2,8 @@
 using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using NLog.Filters;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Security.Principal;
-using System.Linq;
+using api.Helpers;
+using AutoMapper;
 
 namespace api.Controllers
 {
@@ -17,12 +15,16 @@ namespace api.Controllers
         private readonly IAccountRepository _accountRepository;
         private readonly ICurrencyRepository _currencyRepository;
         private readonly IPortfolioRepository _portfolioRepository;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IMapper _mapper;
 
         public DashboardController(
             IUserRepository userRepository,
             IAccountRepository accountRepository,
             ICurrencyRepository currencyRepository,
-            IPortfolioRepository portfolioRepository
+            IPortfolioRepository portfolioRepository,
+            ITransactionRepository transactionRepository,
+            IMapper mapper
         )
         {
             _userRepository =
@@ -33,6 +35,10 @@ namespace api.Controllers
                 currencyRepository ?? throw new ArgumentNullException(nameof(currencyRepository));
             _portfolioRepository =
                 portfolioRepository ?? throw new ArgumentNullException(nameof(portfolioRepository));
+            _transactionRepository =
+                transactionRepository
+                ?? throw new ArgumentNullException(nameof(transactionRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet("OverviewCards")]
@@ -145,7 +151,7 @@ namespace api.Controllers
         }
 
         [HttpGet("HighestSpendByVendor")]
-        public IActionResult GetHighestSpend([FromQuery] DashboardFilterModel filter)
+        public ActionResult GetHighestSpend([FromQuery] DashboardFilterModel filter)
         {
             if (IsFilterInvalid(filter))
                 return BadRequest(ModelState);
@@ -302,6 +308,22 @@ namespace api.Controllers
                     .OrderByDescending(a => a.Value)
                     .ToList()
             );
+        }
+
+        [HttpGet("CardTransactions")]
+        public ActionResult GetCardTransactions([FromQuery] DashboardFilterModel filter)
+        {
+            if (filter.FilterById == null)
+                ModelState.AddModelError("message", "Card number is required");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<Transaction> toReturn = _transactionRepository
+                .GetCardTransactions(filter.FilterById, filter.From, filter.To)
+                .OrderByDescending(x => x.Amount)
+                .Take(AppSettingHelper.DrillDownMaxRecords)
+                .ToList();
+            return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
         }
 
         private bool IsFilterInvalid(DashboardFilterModel filter)

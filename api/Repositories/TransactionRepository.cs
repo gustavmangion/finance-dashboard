@@ -43,5 +43,23 @@ namespace api.Repositories
                 resourceParameters.PageSize
             );
         }
+
+        public List<Transaction> GetCardTransactions(
+            string cardNo,
+            DateOnly? from = null,
+            DateOnly? to = null
+        )
+        {
+            IQueryable<Transaction> transactions = _context.Transactions.Where(
+                x => x.CardNo.Equals(cardNo)
+            );
+
+            if (from != null)
+                transactions.Where(x => from >= x.Date);
+            if (to != null)
+                transactions.Where(x => x.Date <= to);
+
+            return transactions.ToList();
+        }
     }
 }
