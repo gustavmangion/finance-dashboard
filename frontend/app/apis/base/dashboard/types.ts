@@ -10,17 +10,20 @@ export class FilterModel {
 	from: string;
 	to: string;
 	portfolioId: string | undefined;
+	filterById: string | undefined;
 
 	constructor(
 		baseCurrency: string,
 		from: Dayjs,
 		to: Dayjs,
-		portfolioId: string
+		portfolioId: string,
+		filterById: string = ""
 	) {
 		this.baseCurrency = baseCurrency;
 		this.from = from.toDate().toDateString();
 		this.to = to.toDate().toDateString();
 		this.portfolioId = portfolioId === "All" ? undefined : portfolioId;
+		this.filterById = filterById;
 	}
 }
 

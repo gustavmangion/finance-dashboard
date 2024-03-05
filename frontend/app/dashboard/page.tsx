@@ -12,6 +12,7 @@ import {
 	useGetHighestSpendByVendorQuery,
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
+	useLazyGetCardTransactionsQuery,
 } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/dashboard.module.scss";
@@ -20,14 +21,16 @@ import dayjs from "dayjs";
 import { FilterModel } from "../apis/base/dashboard/types";
 import NameValueListCard from "./nameValueListCard";
 import DonutCard from "./donutCard";
-import BarCard from "./barCard";
 import LineCard from "./lineCard";
+import TransactionModal from "./transactionModal";
+import Transaction from "../apis/base/transaction/types";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
 	const baseCurrency: string | undefined = useAppSelector(
 		(state) => state.userReducer.user?.baseCurrency
 	);
+
 	const portfolios = useAppSelector((state) => state.userReducer.portfolios);
 
 	const initialFilterState = {
@@ -36,6 +39,13 @@ export default function DashboardPage(): React.ReactNode {
 		portfolioId: "All",
 	};
 	const [filterState, setFilterState] = useState(initialFilterState);
+
+	const [transactionDrillDownState, setTransactionDrillDownState] = useState({
+		expanded: false,
+		title: "",
+		loading: false,
+		data: [] as Transaction[] | undefined,
+	});
 
 	const filterModel = new FilterModel(
 		baseCurrency!,
@@ -73,6 +83,15 @@ export default function DashboardPage(): React.ReactNode {
 		isFetching: expDateIsFetching,
 		data: expDateData,
 	} = useGetExpenseByDateQuery({ ...filterModel });
+
+	const [cardTransTrigger, cardTransResult] = useLazyGetCardTransactionsQuery();
+	useEffect(() => {
+		if (cardTransResult && cardTransResult.data)
+			setTransactionDrillDownState((state) => ({
+				...state,
+				data: cardTransResult.data,
+			}));
+	}, [cardTransResult]);
 
 	const authStatus = useSecurePage();
 	useEffect(() => {
@@ -163,6 +182,8 @@ export default function DashboardPage(): React.ReactNode {
 							title="Spend by Card"
 							loading={cardTotalIsLoading || cardTotalIsFetching}
 							data={cardTotalData}
+							drillDown
+							drillDownAction={(id) => showCardDrillDown(id)}
 						/>
 						<NameValueListCard
 							title="Top Spend"
@@ -184,6 +205,15 @@ export default function DashboardPage(): React.ReactNode {
 						/>
 					</div>
 				</div>
+				{transactionDrillDownState ? (
+					<TransactionModal
+						expanded={transactionDrillDownState.expanded}
+						title={transactionDrillDownState.title}
+						data={transactionDrillDownState.data}
+						loading={transactionDrillDownState.loading}
+						setExpanded={closeTransactionDrillDownModal}
+					/>
+				) : null}
 			</div>
 		);
 	}
@@ -204,5 +234,32 @@ export default function DashboardPage(): React.ReactNode {
 
 	function resetFilterState() {
 		setFilterState(initialFilterState);
+	}
+
+	function closeTransactionDrillDownModal() {
+		setTransactionDrillDownState({
+			expanded: false,
+			data: [],
+			title: "",
+			loading: false,
+		});
+	}
+
+	async function showCardDrillDown(id: string) {
+		const filterModel = new FilterModel(
+			baseCurrency!,
+			filterState.from,
+			filterState.to,
+			filterState.portfolioId,
+			id
+		);
+
+		cardTransTrigger({ ...filterModel });
+		setTransactionDrillDownState({
+			expanded: true,
+			title: `Transactions for card ${id}`,
+			loading: cardTransResult.isLoading || cardTransResult.isFetching,
+			data: cardTransResult.data,
+		});
 	}
 }

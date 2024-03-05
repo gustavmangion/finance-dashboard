@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 import getHeaders from "../headers";
 import NumberCard, { FilterModel, NameValueModel } from "./types";
+import Transaction from "../transaction/types";
 
 export const dashboardApi = createApi({
 	reducerPath: "dashboardApi",
@@ -52,6 +53,14 @@ export const dashboardApi = createApi({
 			}),
 			providesTags: ["dashboard"],
 		}),
+		getCardTransactions: builder.query<Transaction[], FilterModel>({
+			query: (filter: FilterModel) => ({
+				url: "/CardTransactions",
+				method: "GET",
+				params: { ...filter },
+			}),
+			providesTags: ["dashboard"],
+		}),
 	}),
 });
 
@@ -61,4 +70,5 @@ export const {
 	useGetHighestSpendByVendorQuery,
 	useGetExpenseBreakdownQuery,
 	useGetExpenseByDateQuery,
+	useLazyGetCardTransactionsQuery,
 } = dashboardApi;
