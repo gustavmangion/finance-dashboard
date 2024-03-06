@@ -216,7 +216,7 @@ export default function DashboardPage(): React.ReactNode {
 							title="Spend by Card"
 							loading={cardTotalIsLoading || cardTotalIsFetching}
 							data={cardTotalData}
-							drillDownAction={(id) => showCardDrillDown(id)}
+							drillDownAction={(id) => doDrillDown(id, "cardTrans")}
 						/>
 						<NameValueListCard
 							title="Top Spend"
@@ -224,7 +224,7 @@ export default function DashboardPage(): React.ReactNode {
 							data={highVenSpendData}
 							width={2}
 							showCount
-							drillDownAction={(id) => showVendorDrillDown(id)}
+							drillDownAction={(id) => doDrillDown(id, "vendorTrans")}
 						/>
 					</div>
 					<div className={styles.cardLayout}>
@@ -232,7 +232,7 @@ export default function DashboardPage(): React.ReactNode {
 							title="Expenses"
 							loading={expBrkIsLoading || expBrkIsFetching}
 							data={expBrkData}
-							drillDownAction={(id) => showExpenseCategoryDrillDown(id)}
+							drillDownAction={(id) => doDrillDown(id, "expenseCategory")}
 						/>
 						<LineCard
 							title="Expenses by Date"
@@ -299,7 +299,7 @@ export default function DashboardPage(): React.ReactNode {
 		});
 	}
 
-	async function showCardDrillDown(id: string) {
+	function doDrillDown(id: string, type: string) {
 		const filterModel = new FilterModel(
 			baseCurrency!,
 			filterState.from,
@@ -308,48 +308,47 @@ export default function DashboardPage(): React.ReactNode {
 			id
 		);
 
-		cardTransTrigger({ ...filterModel });
-		setTransactionDrillDownState({
-			open: true,
-			title: `Transactions for Card ${id}`,
-			loading: true,
-			data: cardTransResult.data,
-		});
-	}
+		var data: Transaction[] | NameValueModel[] | undefined = undefined;
+		var title: string = "";
+		var dataType = "";
 
-	async function showVendorDrillDown(id: string) {
-		const filterModel = new FilterModel(
-			baseCurrency!,
-			filterState.from,
-			filterState.to,
-			filterState.portfolioId,
-			id
-		);
+		switch (type) {
+			case "cardTrans":
+				cardTransTrigger({ ...filterModel });
+				title = `Transactions for Card ${id}`;
+				data = cardTransResult.data;
+				dataType = "trans";
+				break;
+			case "vendorTrans":
+				vendorTransTrigger({ ...filterModel });
+				title = `Transactions for ${id}`;
+				data = vendorTransResult.data;
+				dataType = "trans";
+				break;
+			case "expenseCategory":
+				categoryTransTrigger({ ...filterModel });
+				title = ` ${id} Transactions`;
+				data = categoryTransResult.data;
+				dataType = "nameValue";
+				break;
+			default:
+				throw new Error("Missing or invalid drill down type");
+		}
 
-		vendorTransTrigger({ ...filterModel });
-		setTransactionDrillDownState({
-			open: true,
-			title: `Transactions for ${id}`,
-			loading: true,
-			data: vendorTransResult.data,
-		});
-	}
-
-	async function showExpenseCategoryDrillDown(id: string) {
-		const filterModel = new FilterModel(
-			baseCurrency!,
-			filterState.from,
-			filterState.to,
-			filterState.portfolioId,
-			id
-		);
-
-		categoryTransTrigger({ ...filterModel });
-		setNameValueDrillDownState({
-			open: true,
-			title: ` ${id} Transactions`,
-			loading: true,
-			data: categoryTransResult.data,
-		});
+		if (dataType === "trans")
+			setTransactionDrillDownState({
+				open: true,
+				title: title,
+				loading: true,
+				data: data as Transaction[],
+			});
+		else if (dataType === "nameValue") {
+			setNameValueDrillDownState({
+				open: true,
+				title: title,
+				loading: true,
+				data: categoryTransResult.data,
+			});
+		}
 	}
 }
