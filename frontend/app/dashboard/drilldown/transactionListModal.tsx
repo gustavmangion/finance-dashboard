@@ -37,8 +37,6 @@ export default function TransactionListModal({
 	setOpen,
 	drillDownAction,
 }: Props) {
-	console.log(loading);
-	console.log(data);
 	return (
 		<Modal open={open} onClose={() => setOpen(false)}>
 			<Paper className={[materialStyles.modal, styles.expandList].join(" ")}>

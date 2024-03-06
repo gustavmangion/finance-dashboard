@@ -140,7 +140,6 @@ export default function LineCard({
 
 	function handleClick(x: any) {
 		const dateClicked: Date = x.activeLabel as Date;
-		console.log(dateClicked.toDateString());
 		if (drillDownAction) drillDownAction(dateClicked.toDateString());
 	}
 }
