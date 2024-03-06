@@ -13,6 +13,7 @@ import {
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
 	useLazyGetCardTransactionsQuery,
+	useLazyGetExpenseCategoryTransactionsQuery,
 	useLazyGetVendorTransactionsQuery,
 } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
@@ -105,6 +106,18 @@ export default function DashboardPage(): React.ReactNode {
 				loading: vendorTransResult.isLoading || vendorTransResult.isFetching,
 			}));
 	}, [vendorTransResult]);
+
+	const [categoryTransTrigger, categoryTransResult] =
+		useLazyGetExpenseCategoryTransactionsQuery();
+	useEffect(() => {
+		if (categoryTransResult && categoryTransResult.data)
+			setTransactionDrillDownState((state) => ({
+				...state,
+				data: categoryTransResult.data,
+				loading:
+					categoryTransResult.isLoading || categoryTransResult.isFetching,
+			}));
+	}, [categoryTransResult]);
 
 	const authStatus = useSecurePage();
 	useEffect(() => {
@@ -211,6 +224,7 @@ export default function DashboardPage(): React.ReactNode {
 							title="Expenses"
 							loading={expBrkIsLoading || expBrkIsFetching}
 							data={expBrkData}
+							drillDownAction={(id) => showExpenseCategoryDrillDown(id)}
 						/>
 						<LineCard
 							title="Expenses by Date"
@@ -290,6 +304,24 @@ export default function DashboardPage(): React.ReactNode {
 		setTransactionDrillDownState({
 			open: true,
 			title: `Transactions for ${id}`,
+			loading: true,
+			data: vendorTransResult.data,
+		});
+	}
+
+	async function showExpenseCategoryDrillDown(id: string) {
+		const filterModel = new FilterModel(
+			baseCurrency!,
+			filterState.from,
+			filterState.to,
+			filterState.portfolioId,
+			id
+		);
+
+		categoryTransTrigger({ ...filterModel });
+		setTransactionDrillDownState({
+			open: true,
+			title: ` ${id} Transactions`,
 			loading: true,
 			data: vendorTransResult.data,
 		});

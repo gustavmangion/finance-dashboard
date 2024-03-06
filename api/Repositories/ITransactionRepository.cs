@@ -18,5 +18,11 @@ namespace api.Repositories
             DateOnly? from = null,
             DateOnly? to = null
         );
+
+        List<Transaction> GetTransactionsByCategory(
+            TranCategory category,
+            DateOnly? from = null,
+            DateOnly? to = null
+        );
     }
 }

@@ -354,6 +354,31 @@ namespace api.Controllers
             return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
         }
 
+        [HttpGet("CategoryTransactions")]
+        public ActionResult GetTransactionsByCategory([FromQuery] DashboardFilterModel filter)
+        {
+            TranCategory category = new TranCategory();
+
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
+            if (filter.FilterById == null)
+                ModelState.AddModelError("message", "Category is required");
+            else if (!Enum.TryParse(filter.FilterById, out category))
+                ModelState.AddModelError("message", "Invalid category");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<Transaction> toReturn = _transactionRepository
+                .GetTransactionsByCategory(category, filter.From, filter.To)
+                .OrderBy(x => x.Amount)
+                .Take(AppSettingHelper.DrillDownMaxRecords)
+                .ToList();
+
+            toReturn = GetTransactionsConverted(toReturn, filter.BaseCurrency);
+
+            return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
+        }
+
         private bool IsFilterInvalid(DashboardFilterModel filter)
         {
             string userId = GetUserIdFromToken();

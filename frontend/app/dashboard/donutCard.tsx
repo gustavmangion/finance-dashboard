@@ -5,6 +5,7 @@ import {
 	CircularProgress,
 	Modal,
 	Paper,
+	Tooltip,
 } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import materialStyles from "../styles/material.module.scss";
@@ -20,9 +21,15 @@ type Props = {
 	title: string;
 	loading: boolean;
 	data: NameValueModel[] | undefined;
+	drillDownAction?: (id: string) => void;
 };
 
-export default function DonutCard({ title, loading, data }: Props) {
+export default function DonutCard({
+	title,
+	loading,
+	data,
+	drillDownAction,
+}: Props) {
 	const [expanded, setExpanded] = useState(false);
 	const sliceColors = [
 		"#1c5d99",
@@ -100,6 +107,8 @@ export default function DonutCard({ title, loading, data }: Props) {
 						innerRadius={50}
 						paddingAngle={isExpanded ? 4 : 8}
 						label
+						isAnimationActive={!expanded}
+						onClick={(x) => handleClick(x)}
 					>
 						{chartData.map((entry, index) => (
 							<Cell
@@ -111,5 +120,9 @@ export default function DonutCard({ title, loading, data }: Props) {
 				</PieChart>
 			</ResponsiveContainer>
 		);
+	}
+
+	function handleClick(x: any) {
+		if (drillDownAction) drillDownAction(x.name);
 	}
 }
