@@ -48,7 +48,8 @@ export default function DonutCard({
 			? []
 			: data.map((row) => {
 					return {
-						name: row.name.replace(/([A-Z])/g, " $1").trim(),
+						id: row.name,
+						name: row.name.replace(/([A-ZÖ][a-zö])/g, " $1").trim(),
 						value: parseFloat((Math.round(row.value * 100) / 100).toString()),
 					};
 			  });
@@ -123,6 +124,6 @@ export default function DonutCard({
 	}
 
 	function handleClick(x: any) {
-		if (drillDownAction) drillDownAction(x.name);
+		if (drillDownAction) drillDownAction(x.id);
 	}
 }
