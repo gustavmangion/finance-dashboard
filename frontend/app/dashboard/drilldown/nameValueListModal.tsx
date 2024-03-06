@@ -37,7 +37,7 @@ export default function NameValueListModal({
 	loading,
 	data,
 	showCount = false,
-	source,
+	source = "",
 	setOpen,
 	drillDownAction,
 }: Props) {
@@ -75,9 +75,7 @@ export default function NameValueListModal({
 							<TableCell>Name</TableCell>
 							<TableCell>Amount</TableCell>
 							{showCount ? <TableCell>Count</TableCell> : null}
-							{drillDownAction && source ? (
-								<TableCell>Details</TableCell>
-							) : null}
+							{drillDownAction ? <TableCell>Details</TableCell> : null}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -86,7 +84,7 @@ export default function NameValueListModal({
 								<TableCell>{row.name}</TableCell>
 								<TableCell>{getMoneyFormat(row.value)}</TableCell>
 								{showCount ? <TableCell>{row.count}</TableCell> : null}
-								{drillDownAction && source ? (
+								{drillDownAction ? (
 									<TableCell>
 										<IconButton
 											size="small"
