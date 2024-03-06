@@ -14,6 +14,7 @@ import { NameValueModel } from "../apis/base/dashboard/types";
 import LoadError from "./loadError";
 import NoData from "./noData";
 import CloseIcon from "@mui/icons-material/Close";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { useState } from "react";
 
@@ -60,10 +61,20 @@ export default function DonutCard({
 					" "
 				)}
 			>
-				<h4 onClick={handleExpandClick}>
-					{title}
-					<OpenInFullIcon className={styles.expandIcon} />
-				</h4>
+				<div className={styles.header}>
+					{drillDownAction ? (
+						<Tooltip
+							title="Drill-Down active: Press on a sector for details"
+							placement="right-start"
+						>
+							<FilterAltIcon className={styles.drillDownActiveIcon} />
+						</Tooltip>
+					) : null}
+					<h4 onClick={handleExpandClick}>
+						{title}
+						<OpenInFullIcon className={styles.expandIcon} />
+					</h4>
+				</div>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />
 				) : data === undefined ? (

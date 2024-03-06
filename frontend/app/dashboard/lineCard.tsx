@@ -5,10 +5,12 @@ import {
 	CircularProgress,
 	Modal,
 	Paper,
+	Tooltip,
 } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import CloseIcon from "@mui/icons-material/Close";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { useState } from "react";
 import { NameValueModel } from "../apis/base/dashboard/types";
@@ -19,7 +21,7 @@ import {
 	Line,
 	LineChart,
 	ResponsiveContainer,
-	Tooltip,
+	Tooltip as LineToolTip,
 	TooltipProps,
 	XAxis,
 	YAxis,
@@ -83,10 +85,20 @@ export default function LineCard({
 					" "
 				)}
 			>
-				<h4 onClick={handleExpandClick}>
-					{title}
-					<OpenInFullIcon className={styles.expandIcon} />
-				</h4>
+				<div className={styles.header}>
+					{drillDownAction ? (
+						<Tooltip
+							title="Drill-Down active: Press on a dates for details"
+							placement="right-start"
+						>
+							<FilterAltIcon className={styles.drillDownActiveIcon} />
+						</Tooltip>
+					) : null}
+					<h4 onClick={handleExpandClick}>
+						{title}
+						<OpenInFullIcon className={styles.expandIcon} />
+					</h4>
+				</div>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />
 				) : data === undefined ? (
@@ -127,7 +139,7 @@ export default function LineCard({
 					<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
 					<XAxis dataKey="name" tickFormatter={formatXAxis} />
 					<YAxis />
-					<Tooltip content={<CustomToolTip />} />
+					<LineToolTip content={<CustomToolTip />} />
 				</LineChart>
 			</ResponsiveContainer>
 		);
