@@ -31,7 +31,11 @@ const authOptions: AuthOptions = {
 			return refreshAccessToken(token);
 		},
 		async session({ session, token, user }) {
+			if (Date.now() < token.accessTokenExpires)
+				await refreshAccessToken(token);
+
 			session.user = token;
+
 			return session;
 		},
 	},
