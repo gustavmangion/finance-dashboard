@@ -8,6 +8,7 @@ namespace api.Helpers
         public static string? GoogleIAMAudiance { get; set; }
         public static string APIDBConnectionString { get; set; }
         public static string StatementCodeKey { get; set; }
+        public static int DrillDownMaxRecords = 30;
 
         public static class Currency
         {

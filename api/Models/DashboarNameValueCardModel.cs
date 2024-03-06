@@ -4,5 +4,6 @@
     {
         public string Name { get; set; }
         public decimal Value { get; set; }
+        public int Count { get; set; }
     }
 }

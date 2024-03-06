@@ -5,10 +5,12 @@ import {
 	CircularProgress,
 	Modal,
 	Paper,
+	Tooltip,
 } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import materialStyles from "../styles/material.module.scss";
 import CloseIcon from "@mui/icons-material/Close";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { useState } from "react";
 import { NameValueModel } from "../apis/base/dashboard/types";
@@ -19,7 +21,7 @@ import {
 	Line,
 	LineChart,
 	ResponsiveContainer,
-	Tooltip,
+	Tooltip as LineToolTip,
 	TooltipProps,
 	XAxis,
 	YAxis,
@@ -34,9 +36,15 @@ type Props = {
 	title: string;
 	loading: boolean;
 	data: NameValueModel[] | undefined;
+	drillDownAction?: (id: string) => void;
 };
 
-export default function LineCard({ title, loading, data }: Props) {
+export default function LineCard({
+	title,
+	loading,
+	data,
+	drillDownAction,
+}: Props) {
 	const [expanded, setExpanded] = useState(false);
 
 	const chartData =
@@ -77,10 +85,20 @@ export default function LineCard({ title, loading, data }: Props) {
 					" "
 				)}
 			>
-				<h4 onClick={handleExpandClick}>
-					{title}
-					<OpenInFullIcon className={styles.expandIcon} />
-				</h4>
+				<div className={styles.header}>
+					{drillDownAction ? (
+						<Tooltip
+							title="Drill-Down active: Press on a date for details"
+							placement="right-start"
+						>
+							<FilterAltIcon className={styles.drillDownActiveIcon} />
+						</Tooltip>
+					) : null}
+					<h4 onClick={handleExpandClick} className={styles.expandable}>
+						{title}
+						<OpenInFullIcon className={styles.expandIcon} />
+					</h4>
+				</div>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />
 				) : data === undefined ? (
@@ -95,6 +113,14 @@ export default function LineCard({ title, loading, data }: Props) {
 				<Paper className={[materialStyles.modal, styles.expandList].join(" ")}>
 					<div className={materialStyles.wide}>
 						<div className={styles.header}>
+							{drillDownAction ? (
+								<Tooltip
+									title="Drill-Down active: Press on a date for details"
+									placement="right-start"
+								>
+									<FilterAltIcon className={styles.drillDownActiveIcon} />
+								</Tooltip>
+							) : null}
 							<h3>{title}</h3>
 							<div>
 								<Button size="small" onClick={() => setExpanded(false)}>
@@ -116,12 +142,12 @@ export default function LineCard({ title, loading, data }: Props) {
 	function getChart() {
 		return (
 			<ResponsiveContainer width="100%" height="100%">
-				<LineChart data={chartData}>
+				<LineChart data={chartData} onClick={handleClick}>
 					<Line type="monotone" dataKey="value" stroke="#1c5d99" />
 					<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
 					<XAxis dataKey="name" tickFormatter={formatXAxis} />
 					<YAxis />
-					<Tooltip content={<CustomToolTip />} />
+					<LineToolTip content={<CustomToolTip />} />
 				</LineChart>
 			</ResponsiveContainer>
 		);
@@ -130,5 +156,10 @@ export default function LineCard({ title, loading, data }: Props) {
 	function formatXAxis(item: any) {
 		if (item instanceof Date) return item.toLocaleDateString();
 		return item;
+	}
+
+	function handleClick(x: any) {
+		const dateClicked: Date = x.activeLabel as Date;
+		if (drillDownAction) drillDownAction(dateClicked.toDateString());
 	}
 }

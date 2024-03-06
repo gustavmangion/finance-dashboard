@@ -7,5 +7,17 @@ namespace api.Repositories
     public interface ITransactionRepository
     {
         PagedList<Transaction> GetTransactions(TransactionResourceParameters resourceParameters);
+        List<Transaction> GetTransactions(DateOnly? from = null, DateOnly? to = null);
+        List<Transaction> GetCardTransactions(
+            string cardNo,
+            DateOnly? from = null,
+            DateOnly? to = null
+        );
+
+        List<Transaction> GetVendorTransactions(
+            string vendor,
+            DateOnly? from = null,
+            DateOnly? to = null
+        );
     }
 }
