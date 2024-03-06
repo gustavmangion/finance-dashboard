@@ -317,7 +317,7 @@ namespace api.Controllers
                 .ToList();
 
             List<DashboarNameValueCardModel> toReturn = new List<DashboarNameValueCardModel>();
-            for (int i = 0; i < dayDiff; i++)
+            for (int i = 0; i <= dayDiff; i++)
             {
                 string currDate = filter.From.AddDays(i).ToShortDateString();
                 DashboarNameValueCardModel? dataPointToday = data.Where(x => x.Name == currDate)
