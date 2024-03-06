@@ -109,7 +109,7 @@ export default function DonutCard({
 						paddingAngle={isExpanded ? 4 : 8}
 						label
 						isAnimationActive={!expanded}
-						onClick={(x) => handleClick(x)}
+						onClick={handleClick}
 					>
 						{chartData.map((entry, index) => (
 							<Cell
