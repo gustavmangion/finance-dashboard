@@ -34,9 +34,15 @@ type Props = {
 	title: string;
 	loading: boolean;
 	data: NameValueModel[] | undefined;
+	drillDownAction?: (id: string) => void;
 };
 
-export default function LineCard({ title, loading, data }: Props) {
+export default function LineCard({
+	title,
+	loading,
+	data,
+	drillDownAction,
+}: Props) {
 	const [expanded, setExpanded] = useState(false);
 
 	const chartData =
@@ -116,7 +122,7 @@ export default function LineCard({ title, loading, data }: Props) {
 	function getChart() {
 		return (
 			<ResponsiveContainer width="100%" height="100%">
-				<LineChart data={chartData}>
+				<LineChart data={chartData} onClick={handleClick}>
 					<Line type="monotone" dataKey="value" stroke="#1c5d99" />
 					<CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
 					<XAxis dataKey="name" tickFormatter={formatXAxis} />
@@ -130,5 +136,11 @@ export default function LineCard({ title, loading, data }: Props) {
 	function formatXAxis(item: any) {
 		if (item instanceof Date) return item.toLocaleDateString();
 		return item;
+	}
+
+	function handleClick(x: any) {
+		const dateClicked: Date = x.activeLabel as Date;
+		console.log(dateClicked.toDateString());
+		if (drillDownAction) drillDownAction(dateClicked.toDateString());
 	}
 }

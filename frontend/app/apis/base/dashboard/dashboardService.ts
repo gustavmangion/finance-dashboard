@@ -69,6 +69,14 @@ export const dashboardApi = createApi({
 			}),
 			providesTags: ["dashboard"],
 		}),
+		getTransactions: builder.query<Transaction[], FilterModel>({
+			query: (filter: FilterModel) => ({
+				url: "/Transactions",
+				method: "GET",
+				params: { ...filter },
+			}),
+			providesTags: ["dashboard"],
+		}),
 	}),
 });
 
@@ -81,4 +89,5 @@ export const {
 	useLazyGetCardTransactionsQuery,
 	useLazyGetVendorTransactionsQuery,
 	useLazyGetHighestSpendByVendorQuery,
+	useLazyGetTransactionsQuery,
 } = dashboardApi;

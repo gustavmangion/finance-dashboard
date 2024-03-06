@@ -14,6 +14,7 @@ import {
 	useGetTotalByCardQuery,
 	useLazyGetCardTransactionsQuery,
 	useLazyGetHighestSpendByVendorQuery,
+	useLazyGetTransactionsQuery,
 	useLazyGetVendorTransactionsQuery,
 } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
@@ -129,6 +130,17 @@ export default function DashboardPage(): React.ReactNode {
 			}));
 	}, [categoryTransResult]);
 
+	const [transactionsTrigger, transactionsResult] =
+		useLazyGetTransactionsQuery();
+	useEffect(() => {
+		if (transactionsResult && transactionsResult.data)
+			setTransactionDrillDownState((state) => ({
+				...state,
+				data: transactionsResult.data,
+				loading: transactionsResult.isLoading || transactionsResult.isFetching,
+			}));
+	}, [transactionsResult]);
+
 	const authStatus = useSecurePage();
 	useEffect(() => {
 		if (authStatus === AuthStatus.NotAuthorized) router.push("/");
@@ -240,6 +252,7 @@ export default function DashboardPage(): React.ReactNode {
 							title="Expenses by Date"
 							loading={expDateIsLoading || expDateIsFetching}
 							data={expDateData}
+							drillDownAction={(id) => doDrillDown(id, "dateTrans")}
 						/>
 					</div>
 				</div>
@@ -342,6 +355,14 @@ export default function DashboardPage(): React.ReactNode {
 				showCount = true;
 				drillDownSource = "vendorTrans";
 				break;
+			case "dateTrans":
+				filterModel.from = id;
+				filterModel.to = id;
+				transactionsTrigger({ ...filterModel });
+				title = "Transactions";
+				data = transactionsResult.data;
+				dataType = "trans";
+				break;
 			default:
 				throw new Error("Missing or invalid drill down type");
 		}
@@ -358,7 +379,7 @@ export default function DashboardPage(): React.ReactNode {
 				open: true,
 				title: title.replace(/([A-ZÖ][a-zö])/g, " $1").trim(),
 				loading: true,
-				data: categoryTransResult.data,
+				data: data as NameValueModel[],
 				showCount: showCount,
 				drillDownSource: drillDownSource,
 			});

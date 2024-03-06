@@ -44,6 +44,15 @@ namespace api.Repositories
             );
         }
 
+        public List<Transaction> GetTransactions(DateOnly? from, DateOnly? to)
+        {
+            IQueryable<Transaction> transactions = _context.Transactions;
+
+            transactions = FilterByDates(transactions, from, to);
+
+            return transactions.ToList();
+        }
+
         public List<Transaction> GetCardTransactions(
             string cardNo,
             DateOnly? from = null,

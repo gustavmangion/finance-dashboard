@@ -358,6 +358,25 @@ namespace api.Controllers
             return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
         }
 
+        [HttpGet("Transactions")]
+        public ActionResult GetTransactions([FromQuery] DashboardFilterModel filter)
+        {
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<Transaction> toReturn = _transactionRepository
+                .GetTransactions(filter.From, filter.To)
+                .OrderBy(x => x.Amount)
+                .Take(AppSettingHelper.DrillDownMaxRecords)
+                .ToList();
+
+            toReturn = GetTransactionsConverted(toReturn, filter.BaseCurrency);
+
+            return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
+        }
+
         private bool IsFilterInvalid(DashboardFilterModel filter)
         {
             string userId = GetUserIdFromToken();
