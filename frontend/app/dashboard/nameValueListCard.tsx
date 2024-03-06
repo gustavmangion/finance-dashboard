@@ -26,6 +26,7 @@ import { useState } from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseIcon from "@mui/icons-material/Close";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
+import NameValueListModal from "./drilldown/nameValueListModal";
 
 type Props = {
 	title: string;
@@ -70,19 +71,15 @@ export default function NameValueListCard({
 					getList()
 				)}
 			</CardContent>
-			<Modal open={expanded} onClose={() => setExpanded(false)}>
-				<Paper className={[materialStyles.modal, styles.expandList].join(" ")}>
-					<div className={styles.header}>
-						<h3>{title}</h3>
-						<div>
-							<Button size="small" onClick={() => setExpanded(false)}>
-								<CloseIcon />
-							</Button>
-						</div>
-					</div>
-					{data !== undefined ? getModalList() : null}
-				</Paper>
-			</Modal>
+			<NameValueListModal
+				open={expanded}
+				title={title}
+				loading={loading}
+				data={data}
+				showCount={showCount}
+				setOpen={(x) => setExpanded(x)}
+				drillDownAction={drillDownAction}
+			/>
 		</Card>
 	);
 
@@ -108,42 +105,5 @@ export default function NameValueListCard({
 
 	function handleExpandClick() {
 		if (!disableExpand && !loading) setExpanded(true);
-	}
-
-	function getModalList() {
-		return (
-			<TableContainer>
-				<Table stickyHeader size="small">
-					<TableHead>
-						<TableRow>
-							<TableCell>Name</TableCell>
-							<TableCell>Amount</TableCell>
-							{showCount ? <TableCell>Count</TableCell> : null}
-							{drillDownAction ? <TableCell>Details</TableCell> : null}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{data!.map((row) => (
-							<TableRow key={row.name}>
-								<TableCell>{row.name}</TableCell>
-								<TableCell>{getMoneyFormat(row.value)}</TableCell>
-								{showCount ? <TableCell>{row.count}</TableCell> : null}
-								{drillDownAction ? (
-									<TableCell>
-										<IconButton
-											size="small"
-											color="primary"
-											onClick={() => drillDownAction(row.name)}
-										>
-											<AnalyticsIcon />
-										</IconButton>
-									</TableCell>
-								) : null}
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		);
 	}
 }
