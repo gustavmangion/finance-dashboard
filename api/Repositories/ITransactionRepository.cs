@@ -12,5 +12,11 @@ namespace api.Repositories
             DateOnly? from = null,
             DateOnly? to = null
         );
+
+        List<Transaction> GetVendorTransactions(
+            string vendor,
+            DateOnly? from = null,
+            DateOnly? to = null
+        );
     }
 }

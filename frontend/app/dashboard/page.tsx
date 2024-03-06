@@ -13,6 +13,7 @@ import {
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
 	useLazyGetCardTransactionsQuery,
+	useLazyGetVendorTransactionsQuery,
 } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/dashboard.module.scss";
@@ -93,6 +94,17 @@ export default function DashboardPage(): React.ReactNode {
 				loading: cardTransResult.isLoading || cardTransResult.isFetching,
 			}));
 	}, [cardTransResult]);
+
+	const [vendorTransTrigger, vendorTransResult] =
+		useLazyGetVendorTransactionsQuery();
+	useEffect(() => {
+		if (vendorTransResult && vendorTransResult.data)
+			setTransactionDrillDownState((state) => ({
+				...state,
+				data: vendorTransResult.data,
+				loading: vendorTransResult.isLoading || vendorTransResult.isFetching,
+			}));
+	}, [vendorTransResult]);
 
 	const authStatus = useSecurePage();
 	useEffect(() => {
@@ -192,6 +204,8 @@ export default function DashboardPage(): React.ReactNode {
 							data={highVenSpendData}
 							width={2}
 							showCount
+							drillDown
+							drillDownAction={(id) => showVendorDrillDown(id)}
 						/>
 					</div>
 					<div className={styles.cardLayout}>
@@ -262,6 +276,24 @@ export default function DashboardPage(): React.ReactNode {
 			title: `Transactions for Card ${id}`,
 			loading: true,
 			data: cardTransResult.data,
+		});
+	}
+
+	async function showVendorDrillDown(id: string) {
+		const filterModel = new FilterModel(
+			baseCurrency!,
+			filterState.from,
+			filterState.to,
+			filterState.portfolioId,
+			id
+		);
+
+		vendorTransTrigger({ ...filterModel });
+		setTransactionDrillDownState({
+			open: true,
+			title: `Transactions for ${id}`,
+			loading: true,
+			data: vendorTransResult.data,
 		});
 	}
 }

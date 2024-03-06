@@ -4,6 +4,7 @@ using api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using api.Helpers;
 using AutoMapper;
+using NLog.Filters;
 
 namespace api.Controllers
 {
@@ -328,18 +329,27 @@ namespace api.Controllers
                 .Take(AppSettingHelper.DrillDownMaxRecords)
                 .ToList();
 
-            if (toReturn.Count > 0)
-            {
-                if (!toReturn[0].Account.Currency.Equals(filter.BaseCurrency))
-                {
-                    Currency rate = _currencyRepository.GetRate(
-                        filter.BaseCurrency,
-                        toReturn[0].Account.Currency
-                    );
-                    foreach (Transaction t in toReturn)
-                        t.Amount = t.Amount * (1 / rate.Value);
-                }
-            }
+            toReturn = GetTransactionsConverted(toReturn, filter.BaseCurrency);
+
+            return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
+        }
+
+        [HttpGet("VendorTransactions")]
+        public ActionResult GetTransactionsByVendor([FromQuery] DashboardFilterModel filter)
+        {
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
+            if (filter.FilterById == null)
+                ModelState.AddModelError("message", "Vendor name is required");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<Transaction> toReturn = _transactionRepository
+                .GetVendorTransactions(filter.FilterById, filter.From, filter.To)
+                .OrderBy(x => x.Date)
+                .ToList();
+
+            toReturn = GetTransactionsConverted(toReturn, filter.BaseCurrency);
 
             return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
         }
@@ -376,6 +386,26 @@ namespace api.Controllers
                 return 1;
             else
                 return rates.Where(x => x.To == accountCurrency).First().Value;
+        }
+
+        private List<Transaction> GetTransactionsConverted(
+            List<Transaction> transactions,
+            string toCurrency
+        )
+        {
+            if (transactions.Count > 0)
+            {
+                if (!transactions[0].Account.Currency.Equals(toCurrency))
+                {
+                    Currency rate = _currencyRepository.GetRate(
+                        toCurrency,
+                        transactions[0].Account.Currency
+                    );
+                    foreach (Transaction t in transactions)
+                        t.Amount = t.Amount * (1 / rate.Value);
+                }
+            }
+            return transactions;
         }
     }
 }
