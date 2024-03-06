@@ -11,6 +11,7 @@
         public DateOnly From { get; set; }
         public DateOnly To { get; set; }
         public Guid? PortfolioId { get; set; }
+        public string? FilterById { get; set; } = string.Empty;
 
         internal DateOnly FromPreviousPeriod
         {

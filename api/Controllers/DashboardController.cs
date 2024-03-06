@@ -2,10 +2,9 @@
 using api.Models;
 using api.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using api.Helpers;
+using AutoMapper;
 using NLog.Filters;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Security.Principal;
-using System.Linq;
 
 namespace api.Controllers
 {
@@ -17,12 +16,16 @@ namespace api.Controllers
         private readonly IAccountRepository _accountRepository;
         private readonly ICurrencyRepository _currencyRepository;
         private readonly IPortfolioRepository _portfolioRepository;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IMapper _mapper;
 
         public DashboardController(
             IUserRepository userRepository,
             IAccountRepository accountRepository,
             ICurrencyRepository currencyRepository,
-            IPortfolioRepository portfolioRepository
+            IPortfolioRepository portfolioRepository,
+            ITransactionRepository transactionRepository,
+            IMapper mapper
         )
         {
             _userRepository =
@@ -33,6 +36,10 @@ namespace api.Controllers
                 currencyRepository ?? throw new ArgumentNullException(nameof(currencyRepository));
             _portfolioRepository =
                 portfolioRepository ?? throw new ArgumentNullException(nameof(portfolioRepository));
+            _transactionRepository =
+                transactionRepository
+                ?? throw new ArgumentNullException(nameof(transactionRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet("OverviewCards")]
@@ -145,10 +152,13 @@ namespace api.Controllers
         }
 
         [HttpGet("HighestSpendByVendor")]
-        public IActionResult GetHighestSpend([FromQuery] DashboardFilterModel filter)
+        public ActionResult GetHighestSpend([FromQuery] DashboardFilterModel filter)
         {
             if (IsFilterInvalid(filter))
                 return BadRequest(ModelState);
+
+            TranCategory category = new TranCategory();
+            bool filterByCategory = Enum.TryParse(filter.FilterById, out category);
 
             List<Account> accounts = GetAccounts(filter);
             List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
@@ -168,6 +178,7 @@ namespace api.Controllers
                                 z.Date >= filter.From
                                 && z.Date <= filter.To
                                 && z.Type == TranType.Debit
+                                && (!filterByCategory || z.Category == category)
                         )
                         .GroupBy(z => z.Description)
                         .Select(
@@ -176,6 +187,7 @@ namespace api.Controllers
                                 {
                                     Name = a.First().Description,
                                     Value = Math.Abs(a.Sum(b => b.Amount * (1 / rate))),
+                                    Count = a.Count()
                                 }
                         )
                         .ToList()
@@ -189,11 +201,12 @@ namespace api.Controllers
                             new DashboarNameValueCardModel
                             {
                                 Name = y.First().Name,
-                                Value = y.Sum(z => z.Value)
+                                Value = y.Sum(z => z.Value),
+                                Count = y.Sum(z => z.Count)
                             }
                     )
                     .OrderByDescending(a => a.Value)
-                    .Take(30)
+                    .Take(AppSettingHelper.DrillDownMaxRecords)
                     .ToList()
             );
         }
@@ -289,19 +302,128 @@ namespace api.Controllers
                 );
             }
 
-            return Ok(
-                data.GroupBy(x => x.Name)
-                    .Select(
-                        y =>
-                            new DashboarNameValueCardModel
-                            {
-                                Name = y.First().Name,
-                                Value = y.Sum(z => z.Value)
-                            }
+            int dayDiff = filter.To.DayNumber - filter.From.DayNumber;
+
+            data = data.GroupBy(x => x.Name)
+                .Select(
+                    y =>
+                        new DashboarNameValueCardModel
+                        {
+                            Name = y.First().Name,
+                            Value = y.Sum(z => z.Value)
+                        }
+                )
+                .OrderByDescending(a => a.Value)
+                .ToList();
+
+            List<DashboarNameValueCardModel> toReturn = new List<DashboarNameValueCardModel>();
+            for (int i = 0; i <= dayDiff; i++)
+            {
+                string currDate = filter.From.AddDays(i).ToShortDateString();
+                DashboarNameValueCardModel? dataPointToday = data.Where(x => x.Name == currDate)
+                    .FirstOrDefault();
+
+                if (dataPointToday != null)
+                    toReturn.Add(dataPointToday);
+                else
+                    toReturn.Add(new DashboarNameValueCardModel { Name = currDate });
+            }
+
+            return Ok(toReturn);
+        }
+
+        [HttpGet("CardTransactions")]
+        public ActionResult GetCardTransactions([FromQuery] DashboardFilterModel filter)
+        {
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
+            if (filter.FilterById == null)
+                ModelState.AddModelError("message", "Card number is required");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<Transaction> toReturn = _transactionRepository
+                .GetCardTransactions(filter.FilterById, filter.From, filter.To)
+                .OrderBy(x => x.Amount)
+                .Take(AppSettingHelper.DrillDownMaxRecords)
+                .ToList();
+
+            toReturn = GetTransactionsConverted(toReturn, filter.BaseCurrency);
+
+            return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
+        }
+
+        [HttpGet("VendorTransactions")]
+        public ActionResult GetTransactionsByVendor([FromQuery] DashboardFilterModel filter)
+        {
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
+            if (filter.FilterById == null)
+                ModelState.AddModelError("message", "Vendor name is required");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<Account> accounts = GetAccounts(filter);
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
+            List<Transaction> transactions = new List<Transaction>();
+
+            List<string> accountCurrencies = accounts.Select(x => x.Currency).Distinct().ToList();
+            foreach (string currency in accountCurrencies)
+            {
+                decimal rate = GetRate(rates, currency, filter.BaseCurrency);
+
+                List<Transaction> currencyTrans = accounts
+                    .Where(x => x.Currency == currency)
+                    .SelectMany(y => y.Transactions)
+                    .Where(
+                        z =>
+                            z.Date >= filter.From
+                            && z.Date <= filter.To
+                            && z.Type == TranType.Debit
+                            && z.Description.Equals(filter.FilterById)
                     )
-                    .OrderByDescending(a => a.Value)
-                    .ToList()
-            );
+                    .ToList();
+                foreach (Transaction trans in currencyTrans)
+                    trans.Amount = trans.Amount * (1 / rate);
+
+                transactions.AddRange(currencyTrans);
+            }
+
+            return Ok(_mapper.Map<List<TransactionModel>>(transactions.OrderBy(x => x.Amount)));
+        }
+
+        [HttpGet("Transactions")]
+        public ActionResult GetTransactions([FromQuery] DashboardFilterModel filter)
+        {
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            List<Account> accounts = GetAccounts(filter);
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
+            List<Transaction> transactions = new List<Transaction>();
+
+            List<string> accountCurrencies = accounts.Select(x => x.Currency).Distinct().ToList();
+            foreach (string currency in accountCurrencies)
+            {
+                decimal rate = GetRate(rates, currency, filter.BaseCurrency);
+
+                List<Transaction> currencyTrans = accounts
+                    .Where(x => x.Currency == currency)
+                    .SelectMany(y => y.Transactions)
+                    .Where(
+                        z =>
+                            z.Date >= filter.From && z.Date <= filter.To && z.Type == TranType.Debit
+                    )
+                    .ToList();
+                foreach (Transaction trans in currencyTrans)
+                    trans.Amount = trans.Amount * (1 / rate);
+
+                transactions.AddRange(currencyTrans);
+            }
+
+            return Ok(_mapper.Map<List<TransactionModel>>(transactions.OrderBy(x => x.Amount)));
         }
 
         private bool IsFilterInvalid(DashboardFilterModel filter)
@@ -336,6 +458,26 @@ namespace api.Controllers
                 return 1;
             else
                 return rates.Where(x => x.To == accountCurrency).First().Value;
+        }
+
+        private List<Transaction> GetTransactionsConverted(
+            List<Transaction> transactions,
+            string toCurrency
+        )
+        {
+            if (transactions.Count > 0)
+            {
+                if (!transactions[0].Account.Currency.Equals(toCurrency))
+                {
+                    Currency rate = _currencyRepository.GetRate(
+                        toCurrency,
+                        transactions[0].Account.Currency
+                    );
+                    foreach (Transaction t in transactions)
+                        t.Amount = t.Amount * (1 / rate.Value);
+                }
+            }
+            return transactions;
         }
     }
 }

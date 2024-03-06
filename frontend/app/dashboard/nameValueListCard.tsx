@@ -1,29 +1,19 @@
 import {
-	Button,
 	Card,
 	CardContent,
 	CircularProgress,
 	List,
 	ListItem,
 	ListItemText,
-	Modal,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
 } from "@mui/material";
 import { NameValueModel } from "../apis/base/dashboard/types";
 import styles from "../styles/dashboard.module.scss";
-import materialStyles from "../styles/material.module.scss";
 import NoData from "./noData";
 import LoadError from "./loadError";
 import { getMoneyFormat } from "../helpers/moneyHelper";
 import { useState } from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import CloseIcon from "@mui/icons-material/Close";
+import NameValueListModal from "./drilldown/nameValueListModal";
 
 type Props = {
 	title: string;
@@ -31,6 +21,8 @@ type Props = {
 	data: NameValueModel[] | undefined;
 	width?: number;
 	disableExpand?: boolean;
+	showCount?: boolean;
+	drillDownAction?: (id: string) => void;
 };
 
 export default function NameValueListCard({
@@ -39,16 +31,19 @@ export default function NameValueListCard({
 	data,
 	width = 1,
 	disableExpand = false,
+	showCount = false,
+	drillDownAction,
 }: Props) {
 	let widthClass = styles.normalWide;
 	if (width === 2) widthClass = styles.doubleWide;
 
 	const [expanded, setExpanded] = useState(false);
+	const headerClassName: string = disableExpand ? "" : styles.expandable;
 
 	return (
 		<Card className={[styles.card, styles.nameValueCard].join(" ")}>
 			<CardContent className={[styles.medium, styles.normalWide].join(" ")}>
-				<h4 onClick={handleExpandClick}>
+				<h4 onClick={handleExpandClick} className={headerClassName}>
 					{title}
 					{!disableExpand ? (
 						<OpenInFullIcon className={styles.expandIcon} />
@@ -64,19 +59,15 @@ export default function NameValueListCard({
 					getList()
 				)}
 			</CardContent>
-			<Modal open={expanded} onClose={() => setExpanded(false)}>
-				<Paper className={[materialStyles.modal, styles.expandList].join(" ")}>
-					<div className={styles.header}>
-						<h3>{title}</h3>
-						<div>
-							<Button size="small" onClick={() => setExpanded(false)}>
-								<CloseIcon />
-							</Button>
-						</div>
-					</div>
-					{data !== undefined ? getModalList() : null}
-				</Paper>
-			</Modal>
+			<NameValueListModal
+				open={expanded}
+				title={title}
+				loading={loading}
+				data={data}
+				showCount={showCount}
+				setOpen={(x) => setExpanded(x)}
+				drillDownAction={drillDownAction}
+			/>
 		</Card>
 	);
 
@@ -102,28 +93,5 @@ export default function NameValueListCard({
 
 	function handleExpandClick() {
 		if (!disableExpand && !loading) setExpanded(true);
-	}
-
-	function getModalList() {
-		return (
-			<TableContainer>
-				<Table stickyHeader size="small">
-					<TableHead>
-						<TableRow>
-							<TableCell>Name</TableCell>
-							<TableCell>Amount</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{data!.map((row) => (
-							<TableRow key={row.name}>
-								<TableCell>{row.name}</TableCell>
-								<TableCell>{getMoneyFormat(row.value)}</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		);
 	}
 }

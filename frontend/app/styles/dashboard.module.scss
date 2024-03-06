@@ -39,9 +39,34 @@
 	max-width: 90vw;
 	padding: 0.1em;
 
+	.header {
+		display: grid;
+		grid-template-columns: 1fr 8fr 1fr;
+		place-items: center;
+
+		.drillDownActiveIcon {
+			width: 0.6em !important;
+			height: 0.6em !important;
+			margin-left: 1em;
+			cursor: help;
+			margin-right: auto;
+			color: $primary;
+		}
+
+		h4 {
+			grid-column: 2;
+		}
+	}
+
 	h4 {
 		font-size: 1.2em;
 		font-weight: 200;
+		margin-left: auto;
+		margin-right: auto;
+
+		&.expandable {
+			cursor: pointer;
+		}
 	}
 	p {
 		color: $primary;
@@ -83,7 +108,6 @@
 	margin-left: 0.2em;
 	cursor: pointer;
 }
-
 .expandList {
 	max-height: 70vh;
 
@@ -92,7 +116,16 @@
 		grid-template-columns: 1fr 2fr 1fr;
 		width: 100%;
 
+		.drillDownActiveIcon {
+			color: $primary;
+		}
+
 		h3 {
+			grid-column: 2;
+			text-align: center;
+		}
+
+		h5 {
 			grid-column: 2;
 			text-align: center;
 		}
@@ -100,6 +133,10 @@
 		div {
 			justify-self: end;
 		}
+	}
+
+	.narrowColumn {
+		width: 1em;
 	}
 }
 
