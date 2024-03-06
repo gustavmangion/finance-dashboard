@@ -131,7 +131,6 @@ export default function FilterPanel({
 	}
 
 	function handleSelectChange(e: SelectChangeEvent) {
-		console.log("here");
 		setFilterState({
 			...filterState,
 			[e.target.name]: e.target.value,

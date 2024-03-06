@@ -5,6 +5,7 @@ import {
 	CircularProgress,
 	Modal,
 	Paper,
+	Tooltip,
 } from "@mui/material";
 import styles from "../styles/dashboard.module.scss";
 import materialStyles from "../styles/material.module.scss";
@@ -13,6 +14,7 @@ import { NameValueModel } from "../apis/base/dashboard/types";
 import LoadError from "./loadError";
 import NoData from "./noData";
 import CloseIcon from "@mui/icons-material/Close";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { useState } from "react";
 
@@ -20,9 +22,15 @@ type Props = {
 	title: string;
 	loading: boolean;
 	data: NameValueModel[] | undefined;
+	drillDownAction?: (id: string) => void;
 };
 
-export default function DonutCard({ title, loading, data }: Props) {
+export default function DonutCard({
+	title,
+	loading,
+	data,
+	drillDownAction,
+}: Props) {
 	const [expanded, setExpanded] = useState(false);
 	const sliceColors = [
 		"#1c5d99",
@@ -41,7 +49,8 @@ export default function DonutCard({ title, loading, data }: Props) {
 			? []
 			: data.map((row) => {
 					return {
-						name: row.name.replace(/([A-Z])/g, " $1").trim(),
+						id: row.name,
+						name: row.name.replace(/([A-ZÖ][a-zö])/g, " $1").trim(),
 						value: parseFloat((Math.round(row.value * 100) / 100).toString()),
 					};
 			  });
@@ -52,10 +61,20 @@ export default function DonutCard({ title, loading, data }: Props) {
 					" "
 				)}
 			>
-				<h4 onClick={handleExpandClick}>
-					{title}
-					<OpenInFullIcon className={styles.expandIcon} />
-				</h4>
+				<div className={styles.header}>
+					{drillDownAction ? (
+						<Tooltip
+							title="Drill-Down active: Press on a sector for details"
+							placement="right-start"
+						>
+							<FilterAltIcon className={styles.drillDownActiveIcon} />
+						</Tooltip>
+					) : null}
+					<h4 onClick={handleExpandClick} className={styles.expandable}>
+						{title}
+						<OpenInFullIcon className={styles.expandIcon} />
+					</h4>
+				</div>
 				{loading ? (
 					<CircularProgress className={styles.spinner} />
 				) : data === undefined ? (
@@ -70,6 +89,14 @@ export default function DonutCard({ title, loading, data }: Props) {
 				<Paper className={[materialStyles.modal, styles.expandList].join(" ")}>
 					<div className={materialStyles.wide}>
 						<div className={styles.header}>
+							{drillDownAction ? (
+								<Tooltip
+									title="Drill-Down active: Press on a sector for details"
+									placement="right-start"
+								>
+									<FilterAltIcon className={styles.drillDownActiveIcon} />
+								</Tooltip>
+							) : null}
 							<h3>{title}</h3>
 							<div>
 								<Button size="small" onClick={() => setExpanded(false)}>
@@ -100,6 +127,8 @@ export default function DonutCard({ title, loading, data }: Props) {
 						innerRadius={50}
 						paddingAngle={isExpanded ? 4 : 8}
 						label
+						isAnimationActive={!expanded}
+						onClick={handleClick}
 					>
 						{chartData.map((entry, index) => (
 							<Cell
@@ -111,5 +140,9 @@ export default function DonutCard({ title, loading, data }: Props) {
 				</PieChart>
 			</ResponsiveContainer>
 		);
+	}
+
+	function handleClick(x: any) {
+		if (drillDownAction) drillDownAction(x.id);
 	}
 }
