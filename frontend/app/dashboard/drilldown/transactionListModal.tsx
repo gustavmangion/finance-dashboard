@@ -25,7 +25,6 @@ type Props = {
 	title: string;
 	loading: boolean;
 	data: Transaction[] | undefined;
-	drillDown?: boolean;
 	setOpen: (open: boolean) => void;
 	drillDownAction?: (id: string) => void;
 };
@@ -35,7 +34,6 @@ export default function TransactionListModal({
 	title,
 	loading,
 	data,
-	drillDown = false,
 	setOpen,
 	drillDownAction,
 }: Props) {
@@ -75,9 +73,7 @@ export default function TransactionListModal({
 							<TableCell>Date</TableCell>
 							<TableCell>Name</TableCell>
 							<TableCell>Amount</TableCell>
-							{drillDown && drillDownAction ? (
-								<TableCell>Details</TableCell>
-							) : null}
+							{drillDownAction ? <TableCell>Details</TableCell> : null}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -86,7 +82,7 @@ export default function TransactionListModal({
 								<TableCell>{row.tranDate}</TableCell>
 								<TableCell>{row.description}</TableCell>
 								<TableCell>{getMoneyFormat(row.amount * -1)}</TableCell>
-								{drillDown && drillDownAction ? (
+								{drillDownAction ? (
 									<TableCell>
 										<IconButton
 											size="small"

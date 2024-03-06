@@ -195,7 +195,6 @@ export default function DashboardPage(): React.ReactNode {
 							title="Spend by Card"
 							loading={cardTotalIsLoading || cardTotalIsFetching}
 							data={cardTotalData}
-							drillDown
 							drillDownAction={(id) => showCardDrillDown(id)}
 						/>
 						<NameValueListCard
@@ -204,7 +203,6 @@ export default function DashboardPage(): React.ReactNode {
 							data={highVenSpendData}
 							width={2}
 							showCount
-							drillDown
 							drillDownAction={(id) => showVendorDrillDown(id)}
 						/>
 					</div>

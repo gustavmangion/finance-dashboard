@@ -34,7 +34,6 @@ type Props = {
 	width?: number;
 	disableExpand?: boolean;
 	showCount?: boolean;
-	drillDown?: boolean;
 	drillDownAction?: (id: string) => void;
 };
 
@@ -45,7 +44,6 @@ export default function NameValueListCard({
 	width = 1,
 	disableExpand = false,
 	showCount = false,
-	drillDown = false,
 	drillDownAction,
 }: Props) {
 	let widthClass = styles.normalWide;
@@ -121,9 +119,7 @@ export default function NameValueListCard({
 							<TableCell>Name</TableCell>
 							<TableCell>Amount</TableCell>
 							{showCount ? <TableCell>Count</TableCell> : null}
-							{drillDown && drillDownAction ? (
-								<TableCell>Details</TableCell>
-							) : null}
+							{drillDownAction ? <TableCell>Details</TableCell> : null}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -132,7 +128,7 @@ export default function NameValueListCard({
 								<TableCell>{row.name}</TableCell>
 								<TableCell>{getMoneyFormat(row.value)}</TableCell>
 								{showCount ? <TableCell>{row.count}</TableCell> : null}
-								{drillDown && drillDownAction ? (
+								{drillDownAction ? (
 									<TableCell>
 										<IconButton
 											size="small"
