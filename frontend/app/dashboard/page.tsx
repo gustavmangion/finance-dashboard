@@ -55,6 +55,8 @@ export default function DashboardPage(): React.ReactNode {
 		title: "",
 		loading: false,
 		data: [] as NameValueModel[] | undefined,
+		showCount: false,
+		drillDownSource: "",
 	});
 
 	const filterModel = new FilterModel(
@@ -256,7 +258,10 @@ export default function DashboardPage(): React.ReactNode {
 						title={nameValueDrillDownState.title}
 						data={nameValueDrillDownState.data}
 						loading={nameValueDrillDownState.loading}
+						showCount={nameValueDrillDownState.showCount}
+						source={nameValueDrillDownState.drillDownSource}
 						setOpen={closeNameValueDrillDownModal}
+						drillDownAction={(id, source) => doDrillDown(id, source)}
 					/>
 				) : null}
 			</div>
@@ -296,6 +301,8 @@ export default function DashboardPage(): React.ReactNode {
 			data: [],
 			title: "",
 			loading: false,
+			showCount: false,
+			drillDownSource: "",
 		});
 	}
 
@@ -309,8 +316,10 @@ export default function DashboardPage(): React.ReactNode {
 		);
 
 		var data: Transaction[] | NameValueModel[] | undefined = undefined;
-		var title: string = "";
 		var dataType = "";
+		var title: string = "";
+		var showCount: boolean = false;
+		var drillDownSource: string = "";
 
 		switch (type) {
 			case "cardTrans":
@@ -330,6 +339,8 @@ export default function DashboardPage(): React.ReactNode {
 				title = ` ${id} Transactions`;
 				data = categoryTransResult.data;
 				dataType = "nameValue";
+				showCount = true;
+				drillDownSource = "vendorTrans";
 				break;
 			default:
 				throw new Error("Missing or invalid drill down type");
@@ -348,6 +359,8 @@ export default function DashboardPage(): React.ReactNode {
 				title: title,
 				loading: true,
 				data: categoryTransResult.data,
+				showCount: showCount,
+				drillDownSource: drillDownSource,
 			});
 		}
 	}
