@@ -88,7 +88,7 @@ export default function LineCard({
 				<div className={styles.header}>
 					{drillDownAction ? (
 						<Tooltip
-							title="Drill-Down active: Press on a dates for details"
+							title="Drill-Down active: Press on a date for details"
 							placement="right-start"
 						>
 							<FilterAltIcon className={styles.drillDownActiveIcon} />
@@ -113,6 +113,14 @@ export default function LineCard({
 				<Paper className={[materialStyles.modal, styles.expandList].join(" ")}>
 					<div className={materialStyles.wide}>
 						<div className={styles.header}>
+							{drillDownAction ? (
+								<Tooltip
+									title="Drill-Down active: Press on a date for details"
+									placement="right-start"
+								>
+									<FilterAltIcon className={styles.drillDownActiveIcon} />
+								</Tooltip>
+							) : null}
 							<h3>{title}</h3>
 							<div>
 								<Button size="small" onClick={() => setExpanded(false)}>
