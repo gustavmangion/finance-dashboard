@@ -349,14 +349,14 @@ export default function DashboardPage(): React.ReactNode {
 		if (dataType === "trans")
 			setTransactionDrillDownState({
 				open: true,
-				title: title,
+				title: title.replace(/([A-ZÖ][a-zö])/g, " $1").trim(),
 				loading: true,
 				data: data as Transaction[],
 			});
 		else if (dataType === "nameValue") {
 			setNameValueDrillDownState({
 				open: true,
-				title: title,
+				title: title.replace(/([A-ZÖ][a-zö])/g, " $1").trim(),
 				loading: true,
 				data: categoryTransResult.data,
 				showCount: showCount,
