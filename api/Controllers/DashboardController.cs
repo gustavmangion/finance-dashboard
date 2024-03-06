@@ -348,14 +348,33 @@ namespace api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            List<Transaction> toReturn = _transactionRepository
-                .GetVendorTransactions(filter.FilterById, filter.From, filter.To)
-                .OrderBy(x => x.Date)
-                .ToList();
+            List<Account> accounts = GetAccounts(filter);
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
+            List<Transaction> transactions = new List<Transaction>();
 
-            toReturn = GetTransactionsConverted(toReturn, filter.BaseCurrency);
+            List<string> accountCurrencies = accounts.Select(x => x.Currency).Distinct().ToList();
+            foreach (string currency in accountCurrencies)
+            {
+                decimal rate = GetRate(rates, currency, filter.BaseCurrency);
 
-            return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
+                List<Transaction> currencyTrans = accounts
+                    .Where(x => x.Currency == currency)
+                    .SelectMany(y => y.Transactions)
+                    .Where(
+                        z =>
+                            z.Date >= filter.From
+                            && z.Date <= filter.To
+                            && z.Type == TranType.Debit
+                            && z.Description.Equals(filter.FilterById)
+                    )
+                    .ToList();
+                foreach (Transaction trans in currencyTrans)
+                    trans.Amount = trans.Amount * (1 / rate);
+
+                transactions.AddRange(currencyTrans);
+            }
+
+            return Ok(_mapper.Map<List<TransactionModel>>(transactions.OrderBy(x => x.Amount)));
         }
 
         [HttpGet("Transactions")]
@@ -366,15 +385,30 @@ namespace api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            List<Transaction> toReturn = _transactionRepository
-                .GetTransactions(filter.From, filter.To)
-                .OrderBy(x => x.Amount)
-                .Take(AppSettingHelper.DrillDownMaxRecords)
-                .ToList();
+            List<Account> accounts = GetAccounts(filter);
+            List<Currency> rates = _currencyRepository.GetRates(filter.BaseCurrency, accounts);
+            List<Transaction> transactions = new List<Transaction>();
 
-            toReturn = GetTransactionsConverted(toReturn, filter.BaseCurrency);
+            List<string> accountCurrencies = accounts.Select(x => x.Currency).Distinct().ToList();
+            foreach (string currency in accountCurrencies)
+            {
+                decimal rate = GetRate(rates, currency, filter.BaseCurrency);
 
-            return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
+                List<Transaction> currencyTrans = accounts
+                    .Where(x => x.Currency == currency)
+                    .SelectMany(y => y.Transactions)
+                    .Where(
+                        z =>
+                            z.Date >= filter.From && z.Date <= filter.To && z.Type == TranType.Debit
+                    )
+                    .ToList();
+                foreach (Transaction trans in currencyTrans)
+                    trans.Amount = trans.Amount * (1 / rate);
+
+                transactions.AddRange(currencyTrans);
+            }
+
+            return Ok(_mapper.Map<List<TransactionModel>>(transactions.OrderBy(x => x.Amount)));
         }
 
         private bool IsFilterInvalid(DashboardFilterModel filter)
