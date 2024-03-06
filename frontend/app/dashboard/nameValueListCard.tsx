@@ -1,31 +1,18 @@
 import {
-	Button,
 	Card,
 	CardContent,
 	CircularProgress,
-	IconButton,
 	List,
 	ListItem,
 	ListItemText,
-	Modal,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
 } from "@mui/material";
 import { NameValueModel } from "../apis/base/dashboard/types";
 import styles from "../styles/dashboard.module.scss";
-import materialStyles from "../styles/material.module.scss";
 import NoData from "./noData";
 import LoadError from "./loadError";
 import { getMoneyFormat } from "../helpers/moneyHelper";
 import { useState } from "react";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import CloseIcon from "@mui/icons-material/Close";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
 import NameValueListModal from "./drilldown/nameValueListModal";
 
 type Props = {
