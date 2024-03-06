@@ -74,21 +74,6 @@ namespace api.Repositories
             return transactions.ToList();
         }
 
-        public List<Transaction> GetTransactionsByCategory(
-            TranCategory category,
-            DateOnly? from = null,
-            DateOnly? to = null
-        )
-        {
-            IQueryable<Transaction> transactions = _context.Transactions.Where(
-                x => x.Category.Equals(category)
-            );
-
-            transactions = FilterByDates(transactions, from, to);
-
-            return transactions.ToList();
-        }
-
         private IQueryable<Transaction> FilterByDates(
             IQueryable<Transaction> transactions,
             DateOnly? from,

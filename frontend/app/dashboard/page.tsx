@@ -13,19 +13,20 @@ import {
 	useGetOverviewCardsQuery,
 	useGetTotalByCardQuery,
 	useLazyGetCardTransactionsQuery,
-	useLazyGetExpenseCategoryTransactionsQuery,
+	useLazyGetHighestSpendByVendorQuery,
 	useLazyGetVendorTransactionsQuery,
 } from "../apis/base/dashboard/dashboardService";
 import { useAppSelector } from "../hooks/reduxHook";
 import styles from "../styles/dashboard.module.scss";
 import FilterPanel from "./filterPanel";
 import dayjs from "dayjs";
-import { FilterModel } from "../apis/base/dashboard/types";
+import { FilterModel, NameValueModel } from "../apis/base/dashboard/types";
 import NameValueListCard from "./nameValueListCard";
 import DonutCard from "./donutCard";
 import LineCard from "./lineCard";
 import Transaction from "../apis/base/transaction/types";
 import TransactionListModal from "./drilldown/transactionListModal";
+import NameValueListModal from "./drilldown/nameValueListModal";
 
 export default function DashboardPage(): React.ReactNode {
 	const router = useRouter();
@@ -47,6 +48,13 @@ export default function DashboardPage(): React.ReactNode {
 		title: "",
 		loading: false,
 		data: [] as Transaction[] | undefined,
+	});
+
+	const [nameValueDrillDownState, setNameValueDrillDownState] = useState({
+		open: false,
+		title: "",
+		loading: false,
+		data: [] as NameValueModel[] | undefined,
 	});
 
 	const filterModel = new FilterModel(
@@ -108,10 +116,10 @@ export default function DashboardPage(): React.ReactNode {
 	}, [vendorTransResult]);
 
 	const [categoryTransTrigger, categoryTransResult] =
-		useLazyGetExpenseCategoryTransactionsQuery();
+		useLazyGetHighestSpendByVendorQuery();
 	useEffect(() => {
 		if (categoryTransResult && categoryTransResult.data)
-			setTransactionDrillDownState((state) => ({
+			setNameValueDrillDownState((state) => ({
 				...state,
 				data: categoryTransResult.data,
 				loading:
@@ -242,6 +250,15 @@ export default function DashboardPage(): React.ReactNode {
 						setOpen={closeTransactionDrillDownModal}
 					/>
 				) : null}
+				{nameValueDrillDownState ? (
+					<NameValueListModal
+						open={nameValueDrillDownState.open}
+						title={nameValueDrillDownState.title}
+						data={nameValueDrillDownState.data}
+						loading={nameValueDrillDownState.loading}
+						setOpen={closeNameValueDrillDownModal}
+					/>
+				) : null}
 			</div>
 		);
 	}
@@ -266,6 +283,15 @@ export default function DashboardPage(): React.ReactNode {
 
 	function closeTransactionDrillDownModal() {
 		setTransactionDrillDownState({
+			open: false,
+			data: [],
+			title: "",
+			loading: false,
+		});
+	}
+
+	function closeNameValueDrillDownModal() {
+		setNameValueDrillDownState({
 			open: false,
 			data: [],
 			title: "",
@@ -319,11 +345,11 @@ export default function DashboardPage(): React.ReactNode {
 		);
 
 		categoryTransTrigger({ ...filterModel });
-		setTransactionDrillDownState({
+		setNameValueDrillDownState({
 			open: true,
 			title: ` ${id} Transactions`,
 			loading: true,
-			data: vendorTransResult.data,
+			data: categoryTransResult.data,
 		});
 	}
 }
