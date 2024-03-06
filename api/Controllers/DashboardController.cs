@@ -313,6 +313,8 @@ namespace api.Controllers
         [HttpGet("CardTransactions")]
         public ActionResult GetCardTransactions([FromQuery] DashboardFilterModel filter)
         {
+            if (!_currencyRepository.CurrencyExists(filter.BaseCurrency))
+                ModelState.AddModelError("message", "Currency does not exist");
             if (filter.FilterById == null)
                 ModelState.AddModelError("message", "Card number is required");
             if (!ModelState.IsValid)
@@ -320,9 +322,23 @@ namespace api.Controllers
 
             List<Transaction> toReturn = _transactionRepository
                 .GetCardTransactions(filter.FilterById, filter.From, filter.To)
-                .OrderByDescending(x => x.Amount)
+                .OrderBy(x => x.Amount)
                 .Take(AppSettingHelper.DrillDownMaxRecords)
                 .ToList();
+
+            if (toReturn.Count > 0)
+            {
+                if (!toReturn[0].Account.Currency.Equals(filter.BaseCurrency))
+                {
+                    Currency rate = _currencyRepository.GetRate(
+                        filter.BaseCurrency,
+                        toReturn[0].Account.Currency
+                    );
+                    foreach (Transaction t in toReturn)
+                        t.Amount = t.Amount * (1 / rate.Value);
+                }
+            }
+
             return Ok(_mapper.Map<List<TransactionModel>>(toReturn));
         }
 

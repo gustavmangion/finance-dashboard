@@ -85,7 +85,7 @@ export default function TransactionListModal({
 							<TableRow key={row.id}>
 								<TableCell>{row.tranDate}</TableCell>
 								<TableCell>{row.description}</TableCell>
-								<TableCell>{getMoneyFormat(row.amount)}</TableCell>
+								<TableCell>{getMoneyFormat(row.amount * -1)}</TableCell>
 								{drillDown && drillDownAction ? (
 									<TableCell>
 										<IconButton

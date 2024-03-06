@@ -54,10 +54,10 @@ namespace api.Repositories
                 x => x.CardNo.Equals(cardNo)
             );
 
-            if (from != null)
-                transactions.Where(x => from >= x.Date);
-            if (to != null)
-                transactions.Where(x => x.Date <= to);
+            if (from.HasValue)
+                transactions = transactions.Where(x => from <= x.Date);
+            if (to.HasValue)
+                transactions = transactions.Where(x => x.Date <= to);
 
             return transactions.ToList();
         }
