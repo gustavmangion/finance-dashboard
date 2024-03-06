@@ -206,7 +206,7 @@ namespace api.Controllers
                             }
                     )
                     .OrderByDescending(a => a.Value)
-                    .Take(30)
+                    .Take(AppSettingHelper.DrillDownMaxRecords)
                     .ToList()
             );
         }
