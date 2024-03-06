@@ -63,6 +63,10 @@
 		font-weight: 200;
 		margin-left: auto;
 		margin-right: auto;
+
+		&.expandable {
+			cursor: pointer;
+		}
 	}
 	p {
 		color: $primary;

@@ -94,7 +94,7 @@ export default function LineCard({
 							<FilterAltIcon className={styles.drillDownActiveIcon} />
 						</Tooltip>
 					) : null}
-					<h4 onClick={handleExpandClick}>
+					<h4 onClick={handleExpandClick} className={styles.expandable}>
 						{title}
 						<OpenInFullIcon className={styles.expandIcon} />
 					</h4>

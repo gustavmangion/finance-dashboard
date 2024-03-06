@@ -38,11 +38,12 @@ export default function NameValueListCard({
 	if (width === 2) widthClass = styles.doubleWide;
 
 	const [expanded, setExpanded] = useState(false);
+	const headerClassName: string = disableExpand ? "" : styles.expandable;
 
 	return (
 		<Card className={[styles.card, styles.nameValueCard].join(" ")}>
 			<CardContent className={[styles.medium, styles.normalWide].join(" ")}>
-				<h4 onClick={handleExpandClick}>
+				<h4 onClick={handleExpandClick} className={headerClassName}>
 					{title}
 					{!disableExpand ? (
 						<OpenInFullIcon className={styles.expandIcon} />
