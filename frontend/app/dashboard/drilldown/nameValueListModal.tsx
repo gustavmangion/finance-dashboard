@@ -26,7 +26,7 @@ type Props = {
 	loading: boolean;
 	data: NameValueModel[] | undefined;
 	showCount?: boolean;
-	source: string;
+	source?: string;
 	setOpen: (open: boolean) => void;
 	drillDownAction?: (id: string, source: string) => void;
 };
@@ -75,7 +75,7 @@ export default function NameValueListModal({
 							<TableCell>Name</TableCell>
 							<TableCell>Amount</TableCell>
 							{showCount ? <TableCell>Count</TableCell> : null}
-							{drillDownAction && source !== "" ? (
+							{drillDownAction && source ? (
 								<TableCell>Details</TableCell>
 							) : null}
 						</TableRow>
@@ -86,12 +86,12 @@ export default function NameValueListModal({
 								<TableCell>{row.name}</TableCell>
 								<TableCell>{getMoneyFormat(row.value)}</TableCell>
 								{showCount ? <TableCell>{row.count}</TableCell> : null}
-								{drillDownAction && source !== "" ? (
+								{drillDownAction && source ? (
 									<TableCell>
 										<IconButton
 											size="small"
 											color="primary"
-											onClick={() => drillDownAction(row.name, source)}
+											onClick={() => drillDownAction(row.name, source!)}
 										>
 											<AnalyticsIcon />
 										</IconButton>
