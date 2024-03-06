@@ -191,6 +191,7 @@ export default function DashboardPage(): React.ReactNode {
 							loading={highVenSpendIsLoading || highVenSpendIsFetching}
 							data={highVenSpendData}
 							width={2}
+							showCount
 						/>
 					</div>
 					<div className={styles.cardLayout}>

@@ -33,6 +33,7 @@ type Props = {
 	data: NameValueModel[] | undefined;
 	width?: number;
 	disableExpand?: boolean;
+	showCount?: boolean;
 	drillDown?: boolean;
 	drillDownAction?: (id: string) => void;
 };
@@ -43,6 +44,7 @@ export default function NameValueListCard({
 	data,
 	width = 1,
 	disableExpand = false,
+	showCount = false,
 	drillDown = false,
 	drillDownAction,
 }: Props) {
@@ -118,6 +120,7 @@ export default function NameValueListCard({
 						<TableRow>
 							<TableCell>Name</TableCell>
 							<TableCell>Amount</TableCell>
+							{showCount ? <TableCell>Count</TableCell> : null}
 							{drillDown && drillDownAction ? (
 								<TableCell>Details</TableCell>
 							) : null}
@@ -128,6 +131,7 @@ export default function NameValueListCard({
 							<TableRow key={row.name}>
 								<TableCell>{row.name}</TableCell>
 								<TableCell>{getMoneyFormat(row.value)}</TableCell>
+								{showCount ? <TableCell>{row.count}</TableCell> : null}
 								{drillDown && drillDownAction ? (
 									<TableCell>
 										<IconButton

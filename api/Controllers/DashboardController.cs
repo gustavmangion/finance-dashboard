@@ -182,6 +182,7 @@ namespace api.Controllers
                                 {
                                     Name = a.First().Description,
                                     Value = Math.Abs(a.Sum(b => b.Amount * (1 / rate))),
+                                    Count = a.Count()
                                 }
                         )
                         .ToList()
@@ -195,7 +196,8 @@ namespace api.Controllers
                             new DashboarNameValueCardModel
                             {
                                 Name = y.First().Name,
-                                Value = y.Sum(z => z.Value)
+                                Value = y.Sum(z => z.Value),
+                                Count = y.Sum(z => z.Count)
                             }
                     )
                     .OrderByDescending(a => a.Value)

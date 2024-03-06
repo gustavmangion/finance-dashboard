@@ -30,4 +30,5 @@ export class FilterModel {
 export interface NameValueModel {
 	name: string;
 	value: number;
+	count: number;
 }
