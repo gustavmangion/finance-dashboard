@@ -302,19 +302,34 @@ namespace api.Controllers
                 );
             }
 
-            return Ok(
-                data.GroupBy(x => x.Name)
-                    .Select(
-                        y =>
-                            new DashboarNameValueCardModel
-                            {
-                                Name = y.First().Name,
-                                Value = y.Sum(z => z.Value)
-                            }
-                    )
-                    .OrderByDescending(a => a.Value)
-                    .ToList()
-            );
+            int dayDiff = filter.To.DayNumber - filter.From.DayNumber;
+
+            data = data.GroupBy(x => x.Name)
+                .Select(
+                    y =>
+                        new DashboarNameValueCardModel
+                        {
+                            Name = y.First().Name,
+                            Value = y.Sum(z => z.Value)
+                        }
+                )
+                .OrderByDescending(a => a.Value)
+                .ToList();
+
+            List<DashboarNameValueCardModel> toReturn = new List<DashboarNameValueCardModel>();
+            for (int i = 0; i < dayDiff; i++)
+            {
+                string currDate = filter.From.AddDays(i).ToShortDateString();
+                DashboarNameValueCardModel? dataPointToday = data.Where(x => x.Name == currDate)
+                    .FirstOrDefault();
+
+                if (dataPointToday != null)
+                    toReturn.Add(dataPointToday);
+                else
+                    toReturn.Add(new DashboarNameValueCardModel { Name = currDate });
+            }
+
+            return Ok(toReturn);
         }
 
         [HttpGet("CardTransactions")]
