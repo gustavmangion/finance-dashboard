@@ -49,7 +49,7 @@ namespace api.Helpers
             Currency.APIKey = config.GetSection("Currency").GetSection("APIKey").Value;
         }
 
-        public static string getStatementFileDirectory(Guid id)
+        public static string GetStatementFileDirectory(Guid id)
         {
             return Path.Combine(
                 Directory.GetCurrentDirectory(),

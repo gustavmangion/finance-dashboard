@@ -105,6 +105,9 @@ namespace api.Controllers
             _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
 
+            if (statementId != null)
+                DeleteStatementFile(statementId);
+
             return Ok(
                 new StatementUploadResultModel()
                 {
@@ -141,7 +144,7 @@ namespace api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string path = AppSettingHelper.getStatementFileDirectory(model.UploadId);
+            string path = AppSettingHelper.GetStatementFileDirectory(model.UploadId);
 
             if (!System.IO.File.Exists(path))
             {
@@ -181,7 +184,7 @@ namespace api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string path = AppSettingHelper.getStatementFileDirectory(model.UploadId);
+            string path = AppSettingHelper.GetStatementFileDirectory(model.UploadId);
 
             if (!System.IO.File.Exists(path))
             {
@@ -329,7 +332,7 @@ namespace api.Controllers
 
             using (
                 Stream fileStream = new FileStream(
-                    AppSettingHelper.getStatementFileDirectory(statement.Id),
+                    AppSettingHelper.GetStatementFileDirectory(statement.Id),
                     FileMode.Create
                 )
             )
@@ -338,11 +341,11 @@ namespace api.Controllers
             return statement.Id;
         }
 
-        private void DeleteStatementFile(Guid id, string path)
+        private void DeleteStatementFile(Guid id)
         {
             try
             {
-                System.IO.File.Delete(path);
+                System.IO.File.Delete(AppSettingHelper.GetStatementFileDirectory(id));
             }
             catch (Exception e)
             {
