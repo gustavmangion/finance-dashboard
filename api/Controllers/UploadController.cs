@@ -64,6 +64,17 @@ namespace api.Controllers
         {
             List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
 
+            //Match bank statement using account id
+            string? statementBank = GetStatementBank(content, accounts);
+            if (statementBank == null)
+            {
+                if (statementId == null)
+                    statementId = SaveStatementAndFile(file, userId);
+                return Ok(HandleNewBank(statementId.Value));
+            }
+
+            Statement statement = GetStatement(content, accounts, userId, statementBank);
+
             if (!skipAccountValidation)
             {
                 //Check for not setup accounts
@@ -76,12 +87,11 @@ namespace api.Controllers
                 {
                     if (statementId == null)
                         statementId = SaveStatementAndFile(file, userId);
-                    return Ok(HandleNewAccount(statementId.Value, userId, accountsToBeSetup));
+                    return Ok(HandleNewAccount(statementId.Value, accountsToBeSetup));
                 }
             }
 
             //Parse statement transactions
-            Statement statement = GetStatement(content, accounts, userId);
             if (
                 _accountRepository.StatementAlreadyUploaded(
                     accounts[0].Id,
@@ -103,6 +113,17 @@ namespace api.Controllers
                     uploadId = new Guid()
                 }
             );
+        }
+
+        private string? GetStatementBank(string content, List<Account> accounts)
+        {
+            foreach (Account account in accounts)
+            {
+                if (content.Contains(account.AccountNumber))
+                    return account.BankName;
+            }
+
+            return null;
         }
 
         [HttpPost("StatementPassword")]
@@ -193,6 +214,7 @@ namespace api.Controllers
             string content,
             List<Account> dbAccounts,
             string userId,
+            string bankName,
             Guid? statementId = null
         )
         {
@@ -282,9 +304,13 @@ namespace api.Controllers
             };
         }
 
+        private StatementUploadResultModel HandleNewBank(Guid fileId)
+        {
+            return new StatementUploadResultModel() { uploadId = fileId, needBankName = true };
+        }
+
         private StatementUploadResultModel HandleNewAccount(
             Guid fileId,
-            string userId,
             List<string> accountsToSetup
         )
         {

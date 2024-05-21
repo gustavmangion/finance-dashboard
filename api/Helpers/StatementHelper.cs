@@ -32,7 +32,7 @@ namespace api.Helpers
                     for (int i = 1; i < pageCount; i++)
                     {
                         //Page numbering is 1 indexed
-                        Page page = document.GetPage(i + 1);
+                        Page page = document.GetPage(i);
                         content += page.Text;
                     }
                     return CleanNextPageEntities(content);
