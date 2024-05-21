@@ -5,6 +5,7 @@ using api.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using System.Linq;
 
 namespace api.Controllers
 {
@@ -50,15 +51,36 @@ namespace api.Controllers
             if (string.IsNullOrEmpty(content))
                 return Ok(HandleNeedStatementPassword(file, userId));
 
-            List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
-            List<string> accountsToBeSetup = GetNotSetupAccounts(
-                content,
-                accounts.Select(x => x.AccountNumber).ToList()
-            );
-            accountsToBeSetup.RemoveAt(0);
-            if (accountsToBeSetup.Count > 0)
-                return Ok(HandleNewAccount(file, userId, accountsToBeSetup));
+            return DoUploadStatement(userId, content, file);
+        }
 
+        private ActionResult DoUploadStatement(
+            string userId,
+            string content,
+            IFormFile? file = null,
+            Guid? statementId = null,
+            bool skipAccountValidation = false
+        )
+        {
+            List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
+
+            if (!skipAccountValidation)
+            {
+                //Check for not setup accounts
+                List<string> accountsToBeSetup = GetNotSetupAccounts(
+                    content,
+                    accounts.Select(x => x.AccountNumber).ToList()
+                );
+                accountsToBeSetup.RemoveAt(0);
+                if (accountsToBeSetup.Count > 0)
+                {
+                    if (statementId == null)
+                        statementId = SaveStatementAndFile(file, userId);
+                    return Ok(HandleNewAccount(statementId.Value, userId, accountsToBeSetup));
+                }
+            }
+
+            //Parse statement transactions
             Statement statement = GetStatement(content, accounts, userId);
             if (
                 _accountRepository.StatementAlreadyUploaded(
@@ -68,6 +90,7 @@ namespace api.Controllers
                 )
             )
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
+
             HandleGapsBetweenStatements(accounts, statement);
             _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
@@ -114,46 +137,14 @@ namespace api.Controllers
             }
 
             if (string.IsNullOrEmpty(content))
-            {
                 return Ok(new StatementUploadResultModel() { needPassword = true, });
-            }
 
             _accountRepository.AddStatementCode(
                 new StatementCode() { UserId = userId, Code = code, }
             );
             _accountRepository.SaveChanges();
 
-            List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
-            List<string> accountsToBeSetup = GetNotSetupAccounts(
-                content,
-                accounts.Select(x => x.AccountNumber).ToList()
-            );
-            accountsToBeSetup.RemoveAt(0); //Remove page part
-            if (accountsToBeSetup.Count > 0)
-                return Ok(HandleNewAccount(model.UploadId, userId, accountsToBeSetup));
-
-            Statement statement = GetStatement(content, accounts, userId, model.UploadId);
-            if (
-                _accountRepository.StatementAlreadyUploaded(
-                    accounts[0].Id,
-                    statement.From.Value,
-                    statement.To.Value,
-                    statement
-                )
-            )
-                return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
-            HandleGapsBetweenStatements(accounts, statement);
-            _accountRepository.SaveChanges();
-            DeleteStatementFile(model.UploadId, path);
-
-            return Ok(
-                new StatementUploadResultModel()
-                {
-                    accountsToSetup = new List<string>(),
-                    needPassword = false,
-                    uploadId = new Guid()
-                }
-            );
+            return DoUploadStatement(userId, content, statementId: model.UploadId);
         }
 
         [HttpPost("ResubmitUpload")]
@@ -195,28 +186,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
 
-            Statement statement = GetStatement(content, accounts, userId, model.UploadId);
-            if (
-                _accountRepository.StatementAlreadyUploaded(
-                    accounts[0].Id,
-                    statement.From.Value,
-                    statement.To.Value,
-                    statement
-                )
-            )
-                return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
-            HandleGapsBetweenStatements(accounts, statement);
-            _accountRepository.SaveChanges();
-            DeleteStatementFile(model.UploadId, path);
-
-            return Ok(
-                new StatementUploadResultModel()
-                {
-                    accountsToSetup = new List<string>(),
-                    needPassword = false,
-                    uploadId = new Guid()
-                }
-            );
+            return DoUploadStatement(userId, content, skipAccountValidation: true);
         }
 
         private Statement GetStatement(
@@ -310,17 +280,6 @@ namespace api.Controllers
                 uploadId = statementId,
                 needPassword = true,
             };
-        }
-
-        private StatementUploadResultModel HandleNewAccount(
-            IFormFile file,
-            string userId,
-            List<string> accountsToSetup
-        )
-        {
-            Guid statementId = SaveStatementAndFile(file, userId);
-
-            return HandleNewAccount(statementId, userId, accountsToSetup);
         }
 
         private StatementUploadResultModel HandleNewAccount(
