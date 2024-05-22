@@ -111,9 +111,9 @@ namespace api.Controllers
             return Ok(
                 new StatementUploadResultModel()
                 {
-                    accountsToSetup = new List<string>(),
-                    needPassword = false,
-                    uploadId = new Guid()
+                    AccountsToSetup = new List<string>(),
+                    NeedPassword = false,
+                    UploadId = new Guid()
                 }
             );
         }
@@ -161,7 +161,7 @@ namespace api.Controllers
             }
 
             if (string.IsNullOrEmpty(content))
-                return Ok(new StatementUploadResultModel() { needPassword = true, });
+                return Ok(new StatementUploadResultModel() { NeedPassword = true, });
 
             _accountRepository.AddStatementCode(
                 new StatementCode() { UserId = userId, Code = code, }
@@ -302,14 +302,14 @@ namespace api.Controllers
 
             return new StatementUploadResultModel()
             {
-                uploadId = statementId,
-                needPassword = true,
+                UploadId = statementId,
+                NeedPassword = true,
             };
         }
 
         private StatementUploadResultModel HandleNewBank(Guid fileId)
         {
-            return new StatementUploadResultModel() { uploadId = fileId, needBankName = true };
+            return new StatementUploadResultModel() { UploadId = fileId, NeedBankName = true };
         }
 
         private StatementUploadResultModel HandleNewAccount(
@@ -319,8 +319,8 @@ namespace api.Controllers
         {
             return new StatementUploadResultModel()
             {
-                uploadId = fileId,
-                accountsToSetup = accountsToSetup
+                UploadId = fileId,
+                AccountsToSetup = accountsToSetup
             };
         }
 
