@@ -11,6 +11,7 @@ export class UploadStatementResponse {
 	accountsToSetup: string[] = [];
 	statementAlreadyUploaded: Boolean = false;
 	bankId: string = "";
+	statementFirstPage: Uint8Array = new Uint8Array();
 }
 
 export class SetNewStatementPassword {

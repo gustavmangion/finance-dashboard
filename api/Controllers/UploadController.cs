@@ -75,7 +75,7 @@ namespace api.Controllers
             {
                 if (statementId == null)
                     statementId = SaveStatementAndFile(file, userId);
-                return Ok(HandleNewBank(statementId.Value));
+                return Ok(HandleNewBank(statementId.Value, userId));
             }
 
             Statement statement = GetStatement(content, accounts, userId, bankId);
@@ -364,9 +364,22 @@ namespace api.Controllers
             };
         }
 
-        private StatementUploadResultModel HandleNewBank(Guid fileId)
+        private StatementUploadResultModel HandleNewBank(Guid fileId, string userId)
         {
-            return new StatementUploadResultModel() { UploadId = fileId, NeedBankName = true };
+            List<string> statementCodes = _accountRepository
+                .GetStatementCodes(userId)
+                .Select(x => x.Code)
+                .ToList();
+            byte[] firstPageImageStream = StatementHelper.GetFirstPageAsImage(
+                AppSettingHelper.GetStatementFileDirectory(fileId),
+                statementCodes
+            );
+            return new StatementUploadResultModel()
+            {
+                UploadId = fileId,
+                NeedBankName = true,
+                StatementFirstPage = firstPageImageStream
+            };
         }
 
         private StatementUploadResultModel HandleNewAccount(

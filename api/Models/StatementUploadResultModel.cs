@@ -8,5 +8,6 @@
         public List<string> AccountsToSetup { get; set; } = new List<string>();
         public bool StatementAlreadyUploaded { get; set; }
         public Guid BankId { get; set; } = new Guid();
+        public byte[] StatementFirstPage { get; set; } = new byte[0];
     }
 }

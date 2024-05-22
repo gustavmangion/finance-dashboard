@@ -1,4 +1,5 @@
 ﻿using api.Entities;
+using Syncfusion.PdfToImageConverter;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
@@ -9,6 +10,38 @@ namespace api.Helpers
     public class StatementHelper
     {
         private static TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+
+        public static byte[] GetFirstPageAsImage(string path, List<string> passwords)
+        {
+            if (!File.Exists(path))
+                throw new Exception("File no longer exists");
+
+            List<string> decryptedPasswords = new List<string>();
+
+            foreach (string passsword in passwords)
+                decryptedPasswords.Add(EncryptionHelper.DecryptString(passsword));
+
+            using (
+                FileStream inputStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite)
+            )
+            {
+                PdfToImageConverter imageConverter = new PdfToImageConverter();
+                foreach (string pwd in decryptedPasswords)
+                {
+                    imageConverter.Load(inputStream, pwd);
+                    if (imageConverter.PageCount > 0)
+                        break;
+                }
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    Stream s = imageConverter.Convert(0, 1, false, false).First();
+                    s.Position = 0;
+                    s.CopyTo(ms);
+                    return ms.ToArray();
+                }
+            }
+        }
 
         public static string OpenStatementFile(Stream fileStream, List<string> passwords)
         {

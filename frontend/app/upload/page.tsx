@@ -26,6 +26,9 @@ export default function UploadPage() {
 	const [formStep, setFormStep] = useState(0);
 	const [fileId, setFileId] = useState("");
 	const [bankId, setBankId] = useState("");
+	const [statementFirstPage, setStatementFirstPage] = useState<Uint8Array>(
+		new Uint8Array()
+	);
 	const [accountsToBeSetup, setAccountsToBeSetup] = useState<string[]>([]);
 	const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 	const [uploadIndex, setUploadIndex] = useState(0);
@@ -49,7 +52,6 @@ export default function UploadPage() {
 				setFormStep(1);
 				uploadStatement(uploadFiles[uploadIndex]).then((result) => {
 					if ("data" in result) {
-						console.log(result.data);
 						const response: UploadStatementResponse = result.data;
 						if (
 							response.statementAlreadyUploaded &&
@@ -65,6 +67,7 @@ export default function UploadPage() {
 							setFormStep(3);
 							setFileId(response.uploadId);
 							setBankId(response.bankId);
+							setStatementFirstPage(response.statementFirstPage);
 							setAccountsToBeSetup(response.accountsToSetup);
 							setUploadDone(false);
 						} else if (response.accountsToSetup.length > 0) {
@@ -111,6 +114,7 @@ export default function UploadPage() {
 					<FilePassword
 						fileId={fileId}
 						setFormStep={setFormStep}
+						setStatementFirstPage={setStatementFirstPage}
 						setAccountsToBeSetup={setAccountsToBeSetup}
 						handleNextFile={HandleNextFile}
 						setStatementAlreadyUploaded={setStatementsAlreadyUploaded}
@@ -118,6 +122,7 @@ export default function UploadPage() {
 				) : formStep === 3 ? (
 					<BankName
 						fileId={fileId}
+						statementFirstPage={statementFirstPage}
 						setFormStep={setFormStep}
 						setBankId={setBankId}
 						setAccountsToBeSetup={setAccountsToBeSetup}
@@ -154,6 +159,7 @@ export default function UploadPage() {
 		setFormStep(0);
 		setFileId("");
 		setBankId("");
+		setStatementFirstPage(new Uint8Array());
 		setAccountsToBeSetup([]);
 		setStatementsAlreadyUploaded(false);
 		setUploadError(false);

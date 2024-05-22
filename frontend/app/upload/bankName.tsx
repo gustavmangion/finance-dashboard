@@ -16,9 +16,11 @@ import {
 import { useDispatch } from "react-redux";
 import { displayError } from "../stores/notificationSlice";
 import UploadingSpinner from "./uploadingSpinner";
+import Image from "next/image";
 
 type Props = {
 	fileId: string;
+	statementFirstPage: Uint8Array;
 	setFormStep: (val: number) => void;
 	setBankId: (val: string) => void;
 	setAccountsToBeSetup: (val: string[]) => void;
@@ -28,6 +30,7 @@ type Props = {
 
 export default function BankName({
 	fileId,
+	statementFirstPage,
 	setFormStep,
 	setBankId,
 	setAccountsToBeSetup,
@@ -48,7 +51,7 @@ export default function BankName({
 				<UploadingSpinner />
 			) : (
 				<>
-					<h3>Add a new bank account</h3>
+					<h3>Chose statement bank</h3>
 					<form onSubmit={handleSubmit}>
 						<Select
 							name="bank"
@@ -61,6 +64,15 @@ export default function BankName({
 						>
 							{mapBankOptions()}
 						</Select>
+						<Image
+							className={styles.statementView}
+							alt="First page of statement"
+							src={"data:image/png;base64," + statementFirstPage.toString()}
+							width={0}
+							height={0}
+							sizes="100%"
+							style={{ width: "80%", height: "auto" }}
+						/>
 						<Box className={materialStyles.buttonsContainer}>
 							<Button variant="contained" type="submit">
 								Next
