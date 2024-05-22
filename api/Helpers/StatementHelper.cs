@@ -62,10 +62,10 @@ namespace api.Helpers
                     string content = string.Empty;
                     int pageCount = document.NumberOfPages;
 
-                    for (int i = 1; i < pageCount; i++)
+                    for (int i = 0; i < pageCount; i++)
                     {
                         //Page numbering is 1 indexed
-                        Page page = document.GetPage(i);
+                        Page page = document.GetPage(i + 1);
                         content += page.Text;
                     }
                     return CleanNextPageEntities(content);
