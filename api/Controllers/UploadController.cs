@@ -2,6 +2,7 @@
 using api.Helpers;
 using api.Models;
 using api.Repositories;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
@@ -16,15 +17,18 @@ namespace api.Controllers
     {
         private readonly ILogger<UploadController> _logger;
         private readonly IAccountRepository _accountRepository;
+        private readonly IMapper _mapper;
 
         public UploadController(
             ILogger<UploadController> logger,
-            IAccountRepository accountRepository
+            IAccountRepository accountRepository,
+            IMapper mapper
         )
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _accountRepository =
                 accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpPost("UploadStatement")]
@@ -59,21 +63,23 @@ namespace api.Controllers
             string content,
             IFormFile? file = null,
             Guid? statementId = null,
-            bool skipAccountValidation = false
+            bool skipAccountValidation = false,
+            Guid? bankId = null
         )
         {
             List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
 
             //Match bank statement using account id
-            string? statementBank = GetStatementBank(content, accounts);
-            if (statementBank == null)
+            if (bankId == null)
+                bankId = GetStatementBank(content, accounts);
+            if (bankId == null)
             {
                 if (statementId == null)
                     statementId = SaveStatementAndFile(file, userId);
                 return Ok(HandleNewBank(statementId.Value));
             }
 
-            Statement statement = GetStatement(content, accounts, userId, statementBank);
+            Statement statement = GetStatement(content, accounts, userId, bankId);
 
             if (!skipAccountValidation)
             {
@@ -87,7 +93,7 @@ namespace api.Controllers
                 {
                     if (statementId == null)
                         statementId = SaveStatementAndFile(file, userId);
-                    return Ok(HandleNewAccount(statementId.Value, accountsToBeSetup));
+                    return Ok(HandleNewAccount(statementId.Value, accountsToBeSetup, bankId.Value));
                 }
             }
 
@@ -118,12 +124,12 @@ namespace api.Controllers
             );
         }
 
-        private string? GetStatementBank(string content, List<Account> accounts)
+        private Guid? GetStatementBank(string content, List<Account> accounts)
         {
             foreach (Account account in accounts)
             {
-                if (content.Contains(account.AccountNumber))
-                    return account.BankName;
+                if (content.Contains(account.AccountNumber!))
+                    return account.BankId;
             }
 
             return null;
@@ -171,6 +177,52 @@ namespace api.Controllers
             return DoUploadStatement(userId, content, statementId: model.UploadId);
         }
 
+        [HttpGet("Banks")]
+        public ActionResult GetBanks()
+        {
+            return Ok(_mapper.Map<List<BankModel>>(_accountRepository.GetBanks()));
+        }
+
+        [HttpPost("StatementBank")]
+        public ActionResult SetStatementBankName(StatementBankNameModel model)
+        {
+            string userId = GetUserIdFromToken();
+
+            if (model.UploadId == new Guid())
+                ModelState.AddModelError("message", "Upload id is required");
+            else if (!_accountRepository.PendingStatementExists(userId, model.UploadId))
+                ModelState.AddModelError("message", "Upload id does not exist");
+            if (model.BankId == new Guid())
+                ModelState.AddModelError("message", "Bank Id is required");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string path = AppSettingHelper.GetStatementFileDirectory(model.UploadId);
+
+            if (!System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError("message", "File no longer exists");
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                string content = OpenStatementFile(model.UploadId, userId);
+                return DoUploadStatement(
+                    userId,
+                    content,
+                    skipAccountValidation: true,
+                    bankId: model.BankId
+                );
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("message", e.Message);
+                return BadRequest(ModelState);
+            }
+        }
+
         [HttpPost("ResubmitUpload")]
         public ActionResult ResubmitUpload(StatementResubmitModel model)
         {
@@ -184,13 +236,24 @@ namespace api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string path = AppSettingHelper.GetStatementFileDirectory(model.UploadId);
-
-            if (!System.IO.File.Exists(path))
+            try
             {
-                ModelState.AddModelError("message", "File no longer exists");
+                string content = OpenStatementFile(model.UploadId, userId);
+                return DoUploadStatement(userId, content, skipAccountValidation: true);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("message", e.Message);
                 return BadRequest(ModelState);
             }
+        }
+
+        private string OpenStatementFile(Guid uploadId, string userId)
+        {
+            string path = AppSettingHelper.GetStatementFileDirectory(uploadId);
+
+            if (!System.IO.File.Exists(path))
+                throw new Exception("File no longer exists");
 
             string content = string.Empty;
             List<Account> accounts = _accountRepository.GetAccounts(userId);
@@ -200,24 +263,19 @@ namespace api.Controllers
                 .ToList();
 
             using (Stream stream = new FileStream(path, FileMode.Open))
-            {
                 content = StatementHelper.OpenStatementFile(stream, statementCodes);
-            }
 
             if (string.IsNullOrEmpty(content))
-            {
-                ModelState.AddModelError("message", "Unable to process statement");
-                return BadRequest(ModelState);
-            }
+                throw new Exception("Unable to process statement");
 
-            return DoUploadStatement(userId, content, skipAccountValidation: true);
+            return content;
         }
 
         private Statement GetStatement(
             string content,
             List<Account> dbAccounts,
             string userId,
-            string bankName,
+            Guid? bankId,
             Guid? statementId = null
         )
         {
@@ -314,13 +372,15 @@ namespace api.Controllers
 
         private StatementUploadResultModel HandleNewAccount(
             Guid fileId,
-            List<string> accountsToSetup
+            List<string> accountsToSetup,
+            Guid bankId
         )
         {
             return new StatementUploadResultModel()
             {
                 UploadId = fileId,
-                AccountsToSetup = accountsToSetup
+                AccountsToSetup = accountsToSetup,
+                BankId = bankId
             };
         }
 
@@ -336,7 +396,9 @@ namespace api.Controllers
                     FileMode.Create
                 )
             )
+            {
                 file.CopyTo(fileStream);
+            }
 
             return statement.Id;
         }

@@ -20,6 +20,7 @@ namespace api.Contexts
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<StatementAccount> StatementAccounts { get; set; }
         public DbSet<Currency> Currencies { get; set; }
+        public DbSet<Bank> Banks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

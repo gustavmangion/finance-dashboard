@@ -131,6 +131,11 @@ namespace api.Repositories
             _context.Transactions.RemoveRange(transactions);
         }
 
+        public List<Bank> GetBanks()
+        {
+            return _context.Banks.ToList();
+        }
+
         public bool SaveChanges()
         {
             return _context.SaveChanges() >= 0;

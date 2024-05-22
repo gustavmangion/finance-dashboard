@@ -36,6 +36,8 @@ namespace api.Profiles
                         )
                 );
             ;
+
+            CreateMap<Bank, BankModel>();
         }
     }
 }
