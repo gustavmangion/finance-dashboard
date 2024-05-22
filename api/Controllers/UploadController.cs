@@ -106,7 +106,7 @@ namespace api.Controllers
             _accountRepository.SaveChanges();
 
             if (statementId != null)
-                DeleteStatementFile(statementId);
+                DeleteStatementFile(statementId.Value);
 
             return Ok(
                 new StatementUploadResultModel()
