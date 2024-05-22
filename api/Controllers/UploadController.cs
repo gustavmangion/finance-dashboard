@@ -80,21 +80,13 @@ namespace api.Controllers
             }
 
             Statement statement = GetStatement(content, accounts, userId, bankId);
-
-            if (!skipAccountValidation)
+            if (statement.AccountsNotSetup.Count > 0)
             {
-                //Check for not setup accounts
-                List<string> accountsToBeSetup = GetNotSetupAccounts(
-                    content,
-                    accounts.Select(x => x.AccountNumber).ToList()
+                if (statementId == null)
+                    statementId = SaveStatementAndFile(file, userId);
+                return Ok(
+                    HandleNewAccount(statementId.Value, statement.AccountsNotSetup, bankId.Value)
                 );
-                accountsToBeSetup.RemoveAt(0);
-                if (accountsToBeSetup.Count > 0)
-                {
-                    if (statementId == null)
-                        statementId = SaveStatementAndFile(file, userId);
-                    return Ok(HandleNewAccount(statementId.Value, accountsToBeSetup, bankId.Value));
-                }
             }
 
             //Parse statement transactions
@@ -212,6 +204,7 @@ namespace api.Controllers
                 return DoUploadStatement(
                     userId,
                     content,
+                    statementId: model.UploadId,
                     skipAccountValidation: true,
                     bankId: model.BankId
                 );
@@ -292,6 +285,14 @@ namespace api.Controllers
                 (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
             }
 
+            statement.AccountsNotSetup = GetNotSetupAccounts(
+                content,
+                dbAccounts.Select(x => x.AccountNumber).ToList()
+            );
+            if (statement.AccountsNotSetup.Count > 0)
+            {
+                return statement;
+            }
             List<Account> stAccountTransactions = StatementHelper.GetAccountsWithTransactions(
                 content
             );
@@ -350,7 +351,7 @@ namespace api.Controllers
                 if (!accountNumbers.Contains(accNo))
                     notSetup.Add(accNo);
             }
-
+            notSetup.RemoveAt(0);
             return notSetup;
         }
 

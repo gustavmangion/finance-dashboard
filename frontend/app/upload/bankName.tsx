@@ -20,6 +20,7 @@ import UploadingSpinner from "./uploadingSpinner";
 type Props = {
 	fileId: string;
 	setFormStep: (val: number) => void;
+	setAccountsToBeSetup: (val: string[]) => void;
 	handleNextFile: (uploadError: boolean) => void;
 	setStatementAlreadyUploaded: (val: boolean) => void;
 };
@@ -27,6 +28,7 @@ type Props = {
 export default function BankName({
 	fileId,
 	setFormStep,
+	setAccountsToBeSetup,
 	handleNextFile,
 	setStatementAlreadyUploaded,
 }: Props) {
@@ -100,6 +102,7 @@ export default function BankName({
 					handleNextFile(false);
 				} else if (response.accountsToSetup.length === 0) handleNextFile(false);
 				else {
+					setAccountsToBeSetup(response.accountsToSetup);
 					setFormStep(4);
 				}
 			} else {

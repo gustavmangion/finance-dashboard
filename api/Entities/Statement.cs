@@ -1,4 +1,6 @@
-﻿namespace api.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace api.Entities
 {
     public class Statement
     {
@@ -11,5 +13,8 @@
         public virtual List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public virtual List<StatementAccount> StatementAccounts { get; set; } =
             new List<StatementAccount>();
+
+        [NotMapped]
+        public List<string> AccountsNotSetup { get; set; } = new List<string>();
     }
 }

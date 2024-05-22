@@ -62,6 +62,7 @@ export default function UploadPage() {
 						} else if (response.needBankName) {
 							setFormStep(3);
 							setFileId(response.uploadId);
+							setAccountsToBeSetup(response.accountsToSetup);
 							setUploadDone(false);
 						} else if (response.accountsToSetup.length > 0) {
 							setFormStep(4);
@@ -115,6 +116,7 @@ export default function UploadPage() {
 					<BankName
 						fileId={fileId}
 						setFormStep={setFormStep}
+						setAccountsToBeSetup={setAccountsToBeSetup}
 						handleNextFile={HandleNextFile}
 						setStatementAlreadyUploaded={setStatementsAlreadyUploaded}
 					/>
