@@ -10,7 +10,7 @@ export class UploadStatementResponse {
 	needBankName: Boolean = false;
 	accountsToSetup: string[] = [];
 	statementAlreadyUploaded: Boolean = false;
-	bankName: string = "";
+	bankId: string = "";
 }
 
 export class SetNewStatementPassword {

@@ -25,6 +25,7 @@ export default function UploadPage() {
 
 	const [formStep, setFormStep] = useState(0);
 	const [fileId, setFileId] = useState("");
+	const [bankId, setBankId] = useState("");
 	const [accountsToBeSetup, setAccountsToBeSetup] = useState<string[]>([]);
 	const [uploadFiles, setUploadFiles] = useState<File[]>([]);
 	const [uploadIndex, setUploadIndex] = useState(0);
@@ -48,6 +49,7 @@ export default function UploadPage() {
 				setFormStep(1);
 				uploadStatement(uploadFiles[uploadIndex]).then((result) => {
 					if ("data" in result) {
+						console.log(result.data);
 						const response: UploadStatementResponse = result.data;
 						if (
 							response.statementAlreadyUploaded &&
@@ -62,6 +64,7 @@ export default function UploadPage() {
 						} else if (response.needBankName) {
 							setFormStep(3);
 							setFileId(response.uploadId);
+							setBankId(response.bankId);
 							setAccountsToBeSetup(response.accountsToSetup);
 							setUploadDone(false);
 						} else if (response.accountsToSetup.length > 0) {
@@ -116,6 +119,7 @@ export default function UploadPage() {
 					<BankName
 						fileId={fileId}
 						setFormStep={setFormStep}
+						setBankId={setBankId}
 						setAccountsToBeSetup={setAccountsToBeSetup}
 						handleNextFile={HandleNextFile}
 						setStatementAlreadyUploaded={setStatementsAlreadyUploaded}
@@ -123,6 +127,7 @@ export default function UploadPage() {
 				) : (
 					<CreateAccount
 						uploadId={fileId}
+						bankId={bankId}
 						accountsToBeSetup={accountsToBeSetup}
 						handleNextFile={HandleNextFile}
 					/>
@@ -148,6 +153,7 @@ export default function UploadPage() {
 		setUploadFiles([]);
 		setFormStep(0);
 		setFileId("");
+		setBankId("");
 		setAccountsToBeSetup([]);
 		setStatementsAlreadyUploaded(false);
 		setUploadError(false);

@@ -24,12 +24,14 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 type Props = {
 	uploadId: string;
+	bankId: string;
 	accountsToBeSetup: string[];
 	handleNextFile: (uploadError: boolean) => void;
 };
 
 export default function CreateAccount({
 	uploadId,
+	bankId,
 	accountsToBeSetup,
 	handleNextFile,
 }: Props) {
@@ -161,6 +163,7 @@ export default function CreateAccount({
 		newAccount.name = formState.name;
 		newAccount.portfolioId = formState.portfolio;
 		newAccount.accountNumber = accountsToBeSetup[index];
+		newAccount.bankId = bankId;
 
 		createAccount(newAccount).then((result) => {
 			setLoading(false);

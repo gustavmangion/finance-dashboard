@@ -50,6 +50,7 @@ namespace api.Controllers
             newAccount.Name = model.Name;
             newAccount.AccountNumber = model.AccountNumber;
             newAccount.PortfolioId = model.PortfolioId;
+            newAccount.BankId = model.BankId;
             _accountRepository.AddAccount(newAccount);
 
             _accountRepository.SaveChanges();

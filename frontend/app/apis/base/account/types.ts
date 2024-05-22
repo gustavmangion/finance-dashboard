@@ -15,7 +15,7 @@ export class AccountCreationModel {
 	portfolioId: string = "";
 	name: string = "";
 	accountNumber: string = "";
-	bankName: string = "";
+	bankId: string = "";
 }
 
 export class EditAccountModel {
