@@ -63,7 +63,6 @@ namespace api.Controllers
             string content,
             IFormFile? file = null,
             Guid? statementId = null,
-            bool skipAccountValidation = false,
             Guid? bankId = null
         )
         {
@@ -205,7 +204,6 @@ namespace api.Controllers
                     userId,
                     content,
                     statementId: model.UploadId,
-                    skipAccountValidation: true,
                     bankId: model.BankId
                 );
             }
@@ -232,7 +230,7 @@ namespace api.Controllers
             try
             {
                 string content = OpenStatementFile(model.UploadId, userId);
-                return DoUploadStatement(userId, content, skipAccountValidation: true);
+                return DoUploadStatement(userId, content);
             }
             catch (Exception e)
             {
