@@ -87,10 +87,12 @@ export default function FilePassword({
 				else if (response.statementAlreadyUploaded) {
 					setStatementAlreadyUploaded(true);
 					handleNextFile(false);
+				} else if (response.needBankName) {
+					setFormStep(3);
 				} else if (response.accountsToSetup.length === 0) handleNextFile(false);
 				else {
 					setAccountsToBeSetup(response.accountsToSetup);
-					setFormStep(3);
+					setFormStep(4);
 				}
 			} else {
 				dispatch(displayError(null));

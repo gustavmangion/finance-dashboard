@@ -17,6 +17,7 @@ import { displayError } from "../stores/notificationSlice";
 import UploadSuccessModal from "./uploadSuccessModal";
 import { useAppSelector } from "../hooks/reduxHook";
 import { setFirstUploadDone, setUser } from "../stores/userSlice";
+import BankName from "./bankName";
 
 export default function UploadPage() {
 	const authStatus = useSecurePage();
@@ -58,8 +59,12 @@ export default function UploadPage() {
 							setFormStep(2);
 							setFileId(response.uploadId);
 							setUploadDone(false);
-						} else if (response.accountsToSetup.length > 0) {
+						} else if (response.needBankName) {
 							setFormStep(3);
+							setFileId(response.uploadId);
+							setUploadDone(false);
+						} else if (response.accountsToSetup.length > 0) {
+							setFormStep(4);
 							setFileId(response.uploadId);
 							setAccountsToBeSetup(response.accountsToSetup);
 							setUploadDone(false);
@@ -103,6 +108,13 @@ export default function UploadPage() {
 						fileId={fileId}
 						setFormStep={setFormStep}
 						setAccountsToBeSetup={setAccountsToBeSetup}
+						handleNextFile={HandleNextFile}
+						setStatementAlreadyUploaded={setStatementsAlreadyUploaded}
+					/>
+				) : formStep === 3 ? (
+					<BankName
+						fileId={fileId}
+						setFormStep={setFormStep}
 						handleNextFile={HandleNextFile}
 						setStatementAlreadyUploaded={setStatementsAlreadyUploaded}
 					/>

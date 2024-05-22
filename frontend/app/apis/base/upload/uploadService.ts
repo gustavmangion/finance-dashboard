@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getHeaders from "../headers";
-import { ResubmitUpload, SetNewStatementPassword } from "./types";
+import {
+	Bank,
+	ResubmitUpload,
+	SetNewStatementPassword,
+	SetBank,
+} from "./types";
 
 export const uploadApi = createApi({
 	reducerPath: "uploadApi",
@@ -11,6 +16,9 @@ export const uploadApi = createApi({
 		},
 	}),
 	endpoints: (builder) => ({
+		getBanks: builder.query<Bank[], null>({
+			query: () => "/banks",
+		}),
 		uploadStatement: builder.mutation({
 			query: (payload: File) => {
 				const body = new FormData();
@@ -31,6 +39,13 @@ export const uploadApi = createApi({
 				body: { ...payload },
 			}),
 		}),
+		setBank: builder.mutation({
+			query: (payload: SetBank) => ({
+				url: "/statementBank",
+				method: "POST",
+				body: { ...payload },
+			}),
+		}),
 		resubmitUpload: builder.mutation({
 			query: (payload: ResubmitUpload) => ({
 				url: "/resubmitUpload",
@@ -42,7 +57,9 @@ export const uploadApi = createApi({
 });
 
 export const {
+	useGetBanksQuery,
 	useUploadStatementMutation,
 	useSetNewPasswordMutation,
+	useSetBankMutation,
 	useResubmitUploadMutation,
 } = uploadApi;
