@@ -15,7 +15,7 @@ namespace api.Entities
         public string Name { get; set; }
 
         [MaxLength(45)]
-        public Guid? BankId { get; set; }
+        public string? BankId { get; set; }
         public virtual Bank Bank { get; set; }
         public string? IBAN { get; set; }
         public string? Currency { get; set; }

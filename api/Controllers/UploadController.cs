@@ -63,7 +63,7 @@ namespace api.Controllers
             string content,
             IFormFile? file = null,
             Guid? statementId = null,
-            Guid? bankId = null
+            string? bankId = null
         )
         {
             List<Account> accounts = _accountRepository.GetAccounts(userId).ToList();
@@ -78,7 +78,7 @@ namespace api.Controllers
                 return Ok(HandleNewBank(statementId.Value, userId));
             }
 
-            Bank? bank = _accountRepository.GetBank(bankId.Value);
+            Bank? bank = _accountRepository.GetBank(bankId);
             if (bank == null)
             {
                 ModelState.AddModelError("message", "Invalid Bank");
@@ -88,9 +88,7 @@ namespace api.Controllers
             {
                 if (statementId == null)
                     statementId = SaveStatementAndFile(file, userId);
-                return Ok(
-                    HandleNewAccount(statementId.Value, statement.AccountsNotSetup, bankId.Value)
-                );
+                return Ok(HandleNewAccount(statementId.Value, statement.AccountsNotSetup, bankId));
             }
 
             //Parse statement transactions
@@ -271,7 +269,7 @@ namespace api.Controllers
             string content,
             List<Account> dbAccounts,
             string userId,
-            Guid? bankId,
+            string bank,
             Guid? statementId = null
         )
         {
@@ -390,7 +388,7 @@ namespace api.Controllers
         private StatementUploadResultModel HandleNewAccount(
             Guid fileId,
             List<string> accountsToSetup,
-            Guid bankId
+            string bankId
         )
         {
             return new StatementUploadResultModel()

@@ -131,9 +131,14 @@ namespace api.Repositories
             _context.Transactions.RemoveRange(transactions);
         }
 
-        public Bank? GetBank(Guid id)
+        public Bank? GetBank(string id)
         {
             return _context.Banks.Find(id);
+        }
+
+        public bool BankExists(string id)
+        {
+            return _context.Banks.Any(x => x.Id == id);
         }
 
         public List<Bank> GetBanks()
