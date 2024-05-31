@@ -131,6 +131,11 @@ namespace api.Repositories
             _context.Transactions.RemoveRange(transactions);
         }
 
+        public Bank? GetBank(Guid id)
+        {
+            return _context.Banks.Find(id);
+        }
+
         public List<Bank> GetBanks()
         {
             return _context.Banks.ToList();

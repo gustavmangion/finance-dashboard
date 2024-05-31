@@ -26,6 +26,7 @@ namespace api.Repositories
         List<StatementCode> GetStatementCodes(string userId);
         bool PendingStatementExists(string userId, Guid id);
         void DeleteTransactions(List<Transaction> transactions);
+        Bank? GetBank(Guid id);
         List<Bank> GetBanks();
         bool SaveChanges();
     }

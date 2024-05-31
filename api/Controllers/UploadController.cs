@@ -78,7 +78,12 @@ namespace api.Controllers
                 return Ok(HandleNewBank(statementId.Value, userId));
             }
 
-            Statement statement = GetStatement(content, accounts, userId, bankId);
+            Bank? bank = _accountRepository.GetBank(bankId.Value);
+            if (bank == null)
+            {
+                ModelState.AddModelError("message", "Invalid Bank");
+                return BadRequest(ModelState);
+            }
             if (statement.AccountsNotSetup.Count > 0)
             {
                 if (statementId == null)
