@@ -18,7 +18,7 @@ namespace api.Repositories
             Guid accountId,
             DateOnly from,
             DateOnly to,
-            Statement? currentStatement = null
+            Guid statementIdToOmit
         );
         void AddStatementAccount(StatementAccount statementAccount);
         void AddTransactions(List<Transaction> transactions);

@@ -90,15 +90,14 @@ namespace api.Repositories
             Guid accountId,
             DateOnly from,
             DateOnly to,
-            Statement? statement = null
+            Guid statementIdToOmit
         )
         {
             return _context.Accounts
                 .Where(x => x.Id == accountId)
                 .First()
                 .AccountStatements.Select(xa => xa.Statement)
-                .Where(xa => xa != statement)
-                .Any(xs => xs.From == from && xs.To == to);
+                .Any(xs => xs.From == from && xs.To == to && xs.Id != statementIdToOmit);
         }
 
         public void AddStatementAccount(StatementAccount statementAccount)
