@@ -5,6 +5,6 @@
         public Guid PortfolioId { get; set; }
         public string Name { get; set; }
         public string AccountNumber { get; set; }
-        public Guid BankId { get; set; }
+        public string BankId { get; set; }
     }
 }

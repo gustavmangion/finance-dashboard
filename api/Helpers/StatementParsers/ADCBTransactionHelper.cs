@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace api.Helpers
+namespace api.Helpers.StatementHelpers
 {
-    public static class TransactionHelper
+    public static class ADCBTransactionHelper
     {
         private static readonly Regex _secondPartRegex = new Regex(
             "([0-9]{2}/[0-9]{2}/[0-9]{4})|([0-9,]*\\.[0-9]{2})"
@@ -91,7 +91,7 @@ namespace api.Helpers
 
             int cardRefStart = p1.Trim().LastIndexOf(" ") + 1;
             string lastPiece = p1.Substring(cardRefStart);
-            while (!Char.IsNumber(lastPiece[0]))
+            while (!char.IsNumber(lastPiece[0]))
             {
                 cardRefStart++;
                 lastPiece = p1.Substring(cardRefStart);

@@ -47,7 +47,7 @@ namespace api.Controllers
                 .Select(x => x.Code)
                 .ToList();
 
-            string content = StatementHelper.OpenStatementFile(
+            string content = StatementHelper.OpenAndGetStatementFileContent(
                 file.OpenReadStream(),
                 statementCodes
             );
@@ -78,12 +78,21 @@ namespace api.Controllers
                 return Ok(HandleNewBank(statementId.Value, userId));
             }
 
-            Bank? bank = _accountRepository.GetBank(bankId);
-            if (bank == null)
+            if (!_accountRepository.BankExists(bankId))
             {
                 ModelState.AddModelError("message", "Invalid Bank");
                 return BadRequest(ModelState);
             }
+
+            Statement statement = new Statement();
+
+            if (statementId != null)
+                statement = _accountRepository.GetStatement(statementId.Value)!;
+            else
+                statement.UploadedUserId = userId;
+
+            StatementHelper.GetStatement(content, bankId, accounts, statement);
+
             if (statement.AccountsNotSetup.Count > 0)
             {
                 if (statementId == null)
@@ -102,7 +111,8 @@ namespace api.Controllers
                 return Ok(new StatementUploadResultModel() { StatementAlreadyUploaded = true, });
 
             HandleGapsBetweenStatements(accounts, statement);
-            _accountRepository.AddStatement(statement);
+            if (statementId == null)
+                _accountRepository.AddStatement(statement);
             _accountRepository.SaveChanges();
 
             if (statementId != null)
@@ -118,7 +128,7 @@ namespace api.Controllers
             );
         }
 
-        private Guid? GetStatementBank(string content, List<Account> accounts)
+        private string? GetStatementBank(string content, List<Account> accounts)
         {
             foreach (Account account in accounts)
             {
@@ -157,7 +167,10 @@ namespace api.Controllers
 
             using (Stream stream = new FileStream(path, FileMode.Open))
             {
-                content = StatementHelper.OpenStatementFile(stream, new List<string>() { code });
+                content = StatementHelper.OpenAndGetStatementFileContent(
+                    stream,
+                    new List<string>() { code }
+                );
             }
 
             if (string.IsNullOrEmpty(content))
@@ -186,7 +199,7 @@ namespace api.Controllers
                 ModelState.AddModelError("message", "Upload id is required");
             else if (!_accountRepository.PendingStatementExists(userId, model.UploadId))
                 ModelState.AddModelError("message", "Upload id does not exist");
-            if (model.BankId == new Guid())
+            if (string.IsNullOrEmpty(model.BankId))
                 ModelState.AddModelError("message", "Bank Id is required");
 
             if (!ModelState.IsValid)
@@ -233,7 +246,7 @@ namespace api.Controllers
             try
             {
                 string content = OpenStatementFile(model.UploadId, userId);
-                return DoUploadStatement(userId, content);
+                return DoUploadStatement(userId, content, statementId: model.UploadId);
             }
             catch (Exception e)
             {
@@ -257,103 +270,12 @@ namespace api.Controllers
                 .ToList();
 
             using (Stream stream = new FileStream(path, FileMode.Open))
-                content = StatementHelper.OpenStatementFile(stream, statementCodes);
+                content = StatementHelper.OpenAndGetStatementFileContent(stream, statementCodes);
 
             if (string.IsNullOrEmpty(content))
                 throw new Exception("Unable to process statement");
 
             return content;
-        }
-
-        private Statement GetStatement(
-            string content,
-            List<Account> dbAccounts,
-            string userId,
-            string bank,
-            Guid? statementId = null
-        )
-        {
-            Statement statement;
-            if (statementId == null)
-            {
-                statement = new Statement();
-                (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
-                statement.UploadedUserId = userId;
-            }
-            else
-            {
-                statement = _accountRepository.GetStatement(statementId.Value);
-                (statement.From, statement.To) = StatementHelper.GetStatementDates(content);
-            }
-
-            statement.AccountsNotSetup = GetNotSetupAccounts(
-                content,
-                dbAccounts.Select(x => x.AccountNumber).ToList()
-            );
-            if (statement.AccountsNotSetup.Count > 0)
-            {
-                return statement;
-            }
-            List<Account> stAccountTransactions = StatementHelper.GetAccountsWithTransactions(
-                content
-            );
-            foreach (Account stAccount in stAccountTransactions)
-            {
-                Account dbAccount = dbAccounts
-                    .Where(x => x.AccountNumber == stAccount.AccountNumber)
-                    .First();
-
-                Transaction balanceBroughtForward = stAccount.Transactions
-                    .Where(x => x.Category == TranCategory.BalanceBroughtForward)
-                    .First();
-                stAccount.Transactions.Remove(balanceBroughtForward);
-                decimal balanceCarriedForward =
-                    balanceBroughtForward.Amount + stAccount.Transactions.Sum(x => x.Amount);
-
-                StatementAccount statementAccount = new StatementAccount()
-                {
-                    Statement = statement,
-                    Account = dbAccount,
-                    BalanceBroughtForward = balanceBroughtForward.Amount,
-                    BalanceCarriedForward = balanceCarriedForward
-                };
-
-                statement.StatementAccounts.Add(statementAccount);
-
-                if (string.IsNullOrEmpty(dbAccount.IBAN))
-                    UpdateAccountDetails(stAccount, dbAccount);
-
-                stAccount.Transactions.ForEach(x =>
-                {
-                    x.Account = dbAccount;
-                    x.Statement = statement;
-                });
-
-                statement.Transactions.AddRange(stAccount.Transactions);
-            }
-            return statement;
-        }
-
-        private void UpdateAccountDetails(Account newDetails, Account currentDetails)
-        {
-            currentDetails.AccountNumber = newDetails.AccountNumber;
-            currentDetails.IBAN = newDetails.IBAN;
-            currentDetails.Currency = newDetails.Currency;
-        }
-
-        private List<string> GetNotSetupAccounts(string content, List<string> accountNumbers)
-        {
-            List<string> notSetup = new List<string>();
-
-            string[] contentSplit = content.Split("Account Details: ");
-            foreach (string s in contentSplit)
-            {
-                string accNo = s.Substring(0, 14);
-                if (!accountNumbers.Contains(accNo))
-                    notSetup.Add(accNo);
-            }
-            notSetup.RemoveAt(0);
-            return notSetup;
         }
 
         private object? HandleNeedStatementPassword(IFormFile file, string userId)

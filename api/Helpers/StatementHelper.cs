@@ -1,4 +1,5 @@
 ﻿using api.Entities;
+using api.Helpers.StatementHelpers;
 using Syncfusion.PdfToImageConverter;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -9,7 +10,73 @@ namespace api.Helpers
 {
     public class StatementHelper
     {
-        private static TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+        public static IStatementParser GetParser(string bankId)
+        {
+            switch (bankId)
+            {
+                case "ADCB":
+                    return new ADCBStatementParser();
+                default:
+                    throw new Exception("Invalid Bank");
+            }
+        }
+
+        public static void GetStatement(
+            string content,
+            string bankId,
+            List<Account> dbAccounts,
+            Statement statement
+        )
+        {
+            IStatementParser parser = GetParser(bankId);
+            content = parser.Init(content);
+
+            (statement.From, statement.To) = parser.GetStatementDates(content);
+
+            statement.AccountsNotSetup = GetNotSetupAccounts(
+                parser.GetAccountNumbers(content),
+                dbAccounts.Select(x => x.AccountNumber).ToList()
+            );
+
+            if (statement.AccountsNotSetup.Count > 0)
+                return;
+
+            List<Account> accounts = parser.GetAccountsWithTransactions(content);
+            foreach (Account stAccount in accounts)
+            {
+                Account dbAccount = dbAccounts
+                    .Where(x => x.AccountNumber == stAccount.AccountNumber)
+                    .First();
+
+                Transaction balanceBroughtForward = stAccount.Transactions
+                    .Where(x => x.Category == TranCategory.BalanceBroughtForward)
+                    .First();
+                stAccount.Transactions.Remove(balanceBroughtForward);
+                decimal balanceCarriedForward =
+                    balanceBroughtForward.Amount + stAccount.Transactions.Sum(x => x.Amount);
+
+                StatementAccount statementAccount = new StatementAccount()
+                {
+                    Statement = statement,
+                    Account = dbAccount,
+                    BalanceBroughtForward = balanceBroughtForward.Amount,
+                    BalanceCarriedForward = balanceCarriedForward
+                };
+
+                statement.StatementAccounts.Add(statementAccount);
+
+                if (string.IsNullOrEmpty(dbAccount.IBAN))
+                    UpdateAccountDetails(stAccount, dbAccount);
+
+                stAccount.Transactions.ForEach(x =>
+                {
+                    x.Account = dbAccount;
+                    x.Statement = statement;
+                });
+
+                statement.Transactions.AddRange(stAccount.Transactions);
+            }
+        }
 
         public static byte[] GetFirstPageAsImage(string path, List<string> passwords)
         {
@@ -43,7 +110,10 @@ namespace api.Helpers
             }
         }
 
-        public static string OpenStatementFile(Stream fileStream, List<string> passwords)
+        public static string OpenAndGetStatementFileContent(
+            Stream fileStream,
+            List<string> passwords
+        )
         {
             List<string> decryptedPasswords = new List<string>();
 
@@ -68,7 +138,7 @@ namespace api.Helpers
                         Page page = document.GetPage(i + 1);
                         content += page.Text;
                     }
-                    return CleanNextPageEntities(content);
+                    return content;
                 }
             }
             catch (Exception e)
@@ -85,114 +155,28 @@ namespace api.Helpers
             }
         }
 
-        private static string CleanNextPageEntities(string text)
+        internal static List<string> GetNotSetupAccounts(
+            List<string> accountNumbersInStatement,
+            List<string> accountNumbers
+        )
         {
-            string pattern =
-                "(Page [0-9] of [0-9]Transactions Details for the period from "
-                + "[0-9]{2}/[0-9]{2}/[0-9]{4} to [0-9]{2}/[0-9]{2}/[0-9]{4}DateDescriptionChq"
-                + "/Ref No.Value DateDebitCreditBalance)";
+            List<string> notSetup = new List<string>();
 
-            return Regex.Replace(text, pattern, "");
-        }
-
-        public static (DateOnly, DateOnly) GetStatementDates(string content)
-        {
-            string pattern =
-                "Transactions Details for the period from "
-                + "([0-9]{2}/[0-9]{2}/[0-9]{4}) to ([0-9]{2}/[0-9]{2}/[0-9]{4})";
-            Regex regex = new Regex(pattern);
-            MatchCollection matches = regex.Matches(content);
-
-            if (matches.Count == 0 || matches[0].Groups.Count != 3)
-                throw new Exception("Unable to find statement date range");
-
-            try
+            foreach (string s in accountNumbersInStatement)
             {
-                return (
-                    DateOnly.Parse(matches[0].Groups[1].Value, new CultureInfo("en-GB")),
-                    DateOnly.Parse(matches[0].Groups[2].Value, new CultureInfo("en-GB"))
-                );
+                string accNo = s.Substring(0, 14);
+                if (!accountNumbers.Contains(accNo))
+                    notSetup.Add(accNo);
             }
-            catch (FormatException)
-            {
-                return (
-                    DateOnly.Parse(matches[0].Groups[1].Value, new CultureInfo("en-US")),
-                    DateOnly.Parse(matches[0].Groups[2].Value, new CultureInfo("en-US"))
-                );
-            }
+            notSetup.RemoveAt(0);
+            return notSetup;
         }
 
-        public static List<Account> GetAccountsWithTransactions(string content)
+        internal static void UpdateAccountDetails(Account newDetails, Account currentDetails)
         {
-            List<Account> accounts = new List<Account>();
-
-            string[] accountsContent = content.Split("Account Details: ");
-            for (int i = 1; i < accountsContent.Length; i++)
-            {
-                Account account = GetAccount(accountsContent[i]);
-                account.Transactions = GetTransactions(accountsContent[i]);
-
-                accounts.Add(account);
-            }
-
-            return accounts;
-        }
-
-        private static Account GetAccount(string content)
-        {
-            Account account = new Account();
-            account.AccountNumber = content.Substring(0, 14);
-            account.IBAN = content.Substring(content.IndexOf("IBAN: ") + 6, 23);
-            account.Currency = content.Substring(content.IndexOf("Currency: ") + 10, 3);
-
-            return account;
-        }
-
-        private static List<Transaction> GetTransactions(string content)
-        {
-            List<Transaction> transactions = new List<Transaction>();
-
-            Regex regex = new Regex(
-                "([0-9]{2}\\/[0-9]{2}\\/[0-9]{4}.*?)"
-                    + "(?=[0-9]{2}\\/[0-9]{2}\\/[0-9]{4})|([0-9]{2}\\/[0-9]{2}\\/[0-9]{4}.*)Total"
-            );
-            List<string> transactionsContent = regex
-                .Split(content)
-                .Where(x => !string.IsNullOrEmpty(x))
-                .ToList();
-            transactions.Add(TransactionHelper.GetBalanceBroughtForward(transactionsContent[1]));
-            for (int i = 2; i < transactionsContent.Count - 1; i += 2)
-            {
-                transactions.Add(
-                    GetTransaction(transactionsContent[i], transactionsContent[i + 1])
-                );
-            }
-
-            return transactions;
-        }
-
-        private static Transaction GetTransaction(string p1, string p2)
-        {
-            Transaction transaction = new Transaction();
-            if (p1.Substring(10, 3) == "PUR")
-                TransactionHelper.getPurchase(p1, transaction);
-            else if (p1.Contains("I/W CLEARING CHEQUE"))
-                TransactionHelper.getChequeDebit(p1, transaction);
-            else if (p1.Contains("ATM WDL"))
-                TransactionHelper.getATMWithdrawal(p1, transaction);
-            else if (p1.Contains("B/O"))
-                TransactionHelper.getBankTransferCredit(p1, transaction);
-            else if (p1.Substring(10, 3) == "REF")
-                TransactionHelper.getRefund(p1, transaction);
-            else if (p1.Substring(10, 6) == "SALARY")
-                TransactionHelper.getSalary(p1, transaction);
-            else
-                TransactionHelper.getMiscellaneousCharge(p1, transaction);
-
-            TransactionHelper.getSecondPart(p2, transaction);
-
-            transaction.Description = textInfo.ToTitleCase(transaction.Description.ToLower());
-            return transaction;
+            currentDetails.AccountNumber = newDetails.AccountNumber;
+            currentDetails.IBAN = newDetails.IBAN;
+            currentDetails.Currency = newDetails.Currency;
         }
     }
 }
