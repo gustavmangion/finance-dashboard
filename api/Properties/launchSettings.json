@@ -6,7 +6,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "APIDBConn": "Server=financeappsql-do-user-14563964-0.b.db.ondigitalocean.com; Port=25060; Database=qazquzdev; Uid=development; Pwd=AVNS_djjfVeZd4KYTHqi8isi; SSL Mode=Required",
+        "APIDBConn": "Server=192.168.2.40; Port=9306; Database=qazquzdev; Uid=development; Pwd=AVNS_djjfVeZd4KYTHqi8isi; SSL Mode=Required",
         "StatementCodeKey": "CcCFtFwivbquNVyIGig9"
       },
       "dotnetRunMessages": true,
